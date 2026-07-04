@@ -1,6 +1,6 @@
 # P1-WP01 — Repo scaffold + CI skeleton
 
-State: planned (awaiting user approval)          Last session: 2026-07-03
+State: verify (implementation complete; CI-run + deliberate-red PR evidence pending push via LL Git)          Last session: 2026-07-04
 
 ## Scope
 1. Monorepo folder layout: `app/`, `backend/`, `docs/` (VitePress moved in later), `help/` (placeholder), `tools/`, `tests/fixtures/golden/`.
@@ -35,7 +35,24 @@ State: planned (awaiting user approval)          Last session: 2026-07-03
 - Renovate/Dependabot enable.
 
 ## Implementation notes
-*(filled by LL Backend Dev / LL Frontend Dev during implementation)*
+- 2026-07-04 (LL Backend Dev) — Backend scaffold implemented (scope item 3 only):
+  - `backend/LeafLedger.sln`, `backend/Directory.Build.props` (net9.0, nullable, implicit usings, `TreatWarningsAsErrors`, .NET analyzers `latest-recommended`, `EnforceCodeStyleInBuild`).
+  - `backend/src/LeafLedger.SharedKernel/` — intentionally empty classlib (types arrive in P1-WP03).
+  - `backend/src/LeafLedger.Host/` — minimal API, `MapHealthChecks("/health")`; smoke-verified: GET /health → 200 "Healthy".
+  - `backend/tests/LeafLedger.ArchitectureTests/` — xunit 2.9.2 + NetArchTest.Rules 1.3.2; 3 boundary tests encoding Part 3 §5 rules (SharedKernel references no other LeafLedger assembly; `*.Domain` free of Host/EF/AspNetCore deps; EF Core confined to `*.Infrastructure`). Trivially green on the skeleton by design.
+  - Actual results: `dotnet build` succeeded; `dotnet test` 3/3 passed.
+  - Remaining for this WP (other sessions): `app/` frontend scaffold, `tools/check-page-budget.cjs`, `.github/workflows/pr.yml` + `main.yml`, root `.gitignore`/`.editorconfig`/README pointers, placeholder folders (`help/`, `tests/fixtures/golden/`), deliberate-red gate verification.
+  - Note: repo root has no `.gitignore` yet — `backend/**/bin|obj` must not be committed until scope item 5 lands.
+- 2026-07-04 (LL Frontend Dev) — Remaining scope implemented (items 1, 2, 4, 5):
+  - `app/`: Vite 8.1 + React 19.2 + TS 6.0 strict (`strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `noImplicitReturns` added to template flags). Local path `C:\Programming\LeafLedger\Accounting` absent — source material read from GitHub `Lokkeccs/Accounting` instead.
+  - Layer folders `src/api` (generated-only, README sentinel), `src/application`, `src/features`, `src/app` (placeholder `App.tsx`).
+  - `eslint.config.js` (flat): boundary rules adapted from old repo — features ⇸ `**/api/**` + `**/app/**`; application ⇸ features/app; `fetch` banned outside `src/api` (`no-restricted-globals`/`-properties`); `src/api/**` lint-ignored.
+  - Vitest configured (`tests/smoke.test.ts`); `tools/check-page-budget.cjs` ported behavior-identical from old `scripts/check-page-budget.cjs` (450/550 lines, 30/40 imports, 20/28 states, baseline+strict); baseline empty; targets `src/app/App.tsx` + `src/features/**Page.tsx`.
+  - Workflows: `pr.yml` (frontend gates, backend build+test, gitleaks, npm audit high+, dotnet vulnerable-package check — all blocking), `main.yml` (same + no-op deploy placeholders).
+  - Root: `.gitignore` (node/dotnet/publish/.env), `.editorconfig`, README rewritten with layout + spec/tracker pointers; `help/.gitkeep`, `tests/fixtures/golden/.gitkeep`.
+  - Actual results: `npm run lint`, `npm run typecheck`, `npm test` (1/1), `npm run check:page-budget` all green. Deliberate violation file (`features` importing `../api/client` + bare `fetch`) → 2 lint errors, exit 1; file removed. Backend `dotnet build`/`test` unchanged.
+  - Outstanding (not agent-completable locally): first CI run on GitHub + deliberate-red **PR** evidence (acceptance criteria 3–4) — needs LL Git to push branch/PR; then branch protection etc. (manual user steps).
+  - Deviation noted for LL Architect: scaffold is a single client at `app/` per this plan's wording; target spec §7 (2026-07-04) shows `app/web|companion|shared` — split deferred to P3 re-platform planning.
 
 ## QA verdict
 *(filled by LL QA Reviewer only)*

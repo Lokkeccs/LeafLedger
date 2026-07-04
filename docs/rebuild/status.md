@@ -18,7 +18,7 @@
 
 | WP | Title | State | Notes |
 |---|---|---|---|
-| P1-WP01 | Repo scaffold + CI skeleton (all gates blocking) | planned | [plan](./plans/P1-WP01-repo-scaffold-ci.md) |
+| P1-WP01 | Repo scaffold + CI skeleton (all gates blocking) | verify | [plan](./plans/P1-WP01-repo-scaffold-ci.md) — implementation done; CI-run + red-PR evidence pending push |
 | P1-WP02 | docker-compose local dev (Postgres + API stub) | planned | |
 | P1-WP03 | SharedKernel: Money, Ids, Period, Result | planned | |
 | P1-WP04 | OpenAPI → generated TS client pipeline | planned | |
@@ -39,3 +39,5 @@
 | Date | WP | Agent | Result |
 |---|---|---|---|
 | 2026-07-03 | — | (seeding) | Repo cloned; specs, agents, instructions, tracker, P1-WP01 plan seeded |
+| 2026-07-04 | P1-WP01 | LL Backend Dev | Backend scaffold: sln, Directory.Build.props, SharedKernel (empty), Host `/health` (200 verified), arch tests 3/3 green |
+| 2026-07-04 | P1-WP01 | LL Frontend Dev | Frontend scaffold, boundary ESLint, vitest, page-budget tool, workflows, root hygiene; all local gates green; boundary rules verified to fail |

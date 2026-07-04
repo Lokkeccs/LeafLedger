@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Intentionally empty: Money, Ids, Period, Result<T> arrive in P1-WP03. -->
+
+</Project>

@@ -1,0 +1,25 @@
+# Node
+node_modules/
+dist/
+*.local
+npm-debug.log*
+
+# .NET
+bin/
+obj/
+publish/
+*.user
+.vs/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Editors / OS
+.DS_Store
+Thumbs.db
+
+# Test output
+TestResults/
+coverage/
