@@ -3,6 +3,8 @@
 > Companion to [04-implementation-plan.md](./04-implementation-plan.md). Scopes the greenfield rebuild into delivery tiers. The feature inventory is derived from the audited current app (17 feature folders + backend capabilities, Part 1 §2/§7).
 >
 > **Scoping principle:** adoption is per user/space. **No data is migrated** — existing users start fresh spaces in the new app (assisted by CSV export from old → import into new, plus an opening-balance path). A user can switch as soon as every feature they *actually use* is covered: simple personal/business users switch at M1; subledger-heavy users when M2 lands.
+>
+> **Client strategy (2026-07-04):** the full product is **desktop-first** (web + Microsoft Store MSIX of the same build); phones get a lightweight **companion app** (dashboards + document capture) in M3 — phone feature-parity is a non-goal.
 
 ## Tier overview
 
@@ -40,7 +42,7 @@ Everything a simple business or personal space needs day-to-day:
 | Imports | CSV/XLSX import: column mapping, bank/full/split modes, **server-side staging**, row editing, automation rules (description-assign, transfer-match), booking via posting API, import batch history | Settlement-matching + investment-lot columns in M2 |
 | Master data | Users, business partners (+accounts/groups), projects, currencies — CRUD + import/export | — |
 | Reports & dashboard | Trial balance, balance sheet, P&L, account detail/drill, overview dashboard (server-computed) | Cash-flow statement, pivots, drill-everything in M2 |
-| Shell | i18n (all 5 locales from day one — corpus ports wholesale), theming, date/number format prefs, installable PWA shell, help-site link | Onboarding = functional space-creation wizard; guided "Get Started" checklists in M2 |
+| Shell | i18n (all 5 locales from day one — corpus ports wholesale), theming, date/number format prefs, installable PWA shell + **Microsoft Store MSIX package**, help-site link. **Desktop-first**: min width ~tablet landscape; phone parity is explicitly NOT an M1 goal (companion app covers phones in M3) | Onboarding = functional space-creation wizard; guided "Get Started" checklists in M2 |
 | Admin | Space settings, member management, license activation | Per-space purge (admin API) — M0 backend, UI in M2 |
 
 **MVP acceptance:** golden-master parity on the reference ledgers + invariant suite green + a Playwright journey for every M1 flow — plus a validated self-migration path (old-app export → new-app import round-trip for accounts, journal, master data).
@@ -63,7 +65,7 @@ Everything a simple business or personal space needs day-to-day:
 
 Priority-ordered proposal:
 
-1. **Swiss QR-bill ingestion + OCR** (Azure Document Intelligence): scan/upload QR-Rechnung or receipt → prefilled entry proposal. The flagship "the rebuild gave you something new" feature. (Plan Phase 5 builds the Documents module; full UX matures here.)
+1. **Phone companion app** (small React PWA from `app/companion/`): dashboards (read-only), **document/QR-bill capture** → upload → Document Intelligence → prefilled entry proposal appears in the full app; notifications. This is where the Swiss QR-Rechnung flagship lands — capture on the phone, book on the desktop. (Phase 5 builds the Documents module; companion UX matures here. Capacitor wrapper only if store listings are wanted.)
 2. **Bank statement automation**: camt.053 import, then bank-API connectivity (EBICS/openbanking) — builds on the Imports module.
 3. Web push notifications (re-introduced server-driven — reminders, invitations, period-close nudges)
 4. Recurring/template entries & scheduled posting

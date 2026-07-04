@@ -54,7 +54,7 @@ The server owns all state. The client becomes a thin, fast, cache-aware React ap
 | OPFS attachment bytes | **Drop** | Direct SAS upload/download; no local byte store |
 | tesseract.js client OCR | **Replace → Azure AI Document Intelligence** | Far better receipt/invoice extraction; enables **Swiss QR-bill (QR-Rechnung) ingestion** — a flagship product improvement for the Swiss market |
 | `xlsx@0.18.5` (known CVEs) | **Replace** | `exceljs` (xlsx write/read) + `papaparse` (CSV); import *logic* (mapping, automation rules) ports unchanged |
-| Vite 8 **beta** + patched `vite-plugin-pwa` + patch-package | **Replace** | Latest stable Vite; PWA reduced to manifest + static-shell precache (installability without sync machinery); no source patches without ADR + expiry |
+| Vite 8 **beta** + patched `vite-plugin-pwa` + patch-package | **Replace** | Latest stable Vite; PWA reduced to manifest + static-shell precache; the same build is packaged for the **Microsoft Store via PWABuilder/MSIX**; no source patches without ADR + expiry |
 | Workbox periodicsync / Web Push plumbing | **Drop / defer** | Push notifications return later as a server-driven feature if needed |
 | Service-worker data logic | **Drop** | Shell caching only |
 | Hand-rolled HS256 license JWT + client-side gating + dead TS function | **Replace** | Server-side entitlement middleware per request; licensing table in Postgres; client only renders what the server grants |
@@ -170,23 +170,31 @@ POST   /api/v1/admin/spaces/{spaceId}/purge              // platform-admin, soft
 - OpenAPI is the **single contract**: TS client + types generated into the frontend on every build; schema-diff gate in CI kills payload drift permanently.
 - ProblemDetails everywhere; consistent `/api/v1` prefix (ends the current mixed-prefix mess); rate limiting middleware; pagination, filtering, and error conventions documented once in SharedKernel.
 
-## 7. Frontend structure
+## 7. Frontend structure (two clients, one stack)
+
+**Decision (2026-07-04):** the full product is **desktop-first** (web + Microsoft Store); phones get a lightweight **companion app** (dashboards + document capture), not feature parity.
 
 ```
-src/
-  api/                 // GENERATED client + types (do not edit)
-  application/         // mutations/queries (TanStack Query), view-model hooks,
+app/
+  web/                 // FULL product — desktop-first (min width ~tablet landscape)
+    src/
+      api/             // GENERATED client + types (do not edit; from app/shared build)
+      application/     // mutations/queries (TanStack Query), view-model hooks,
                        // light pre-validation mirroring server rules (UX only)
-  features/            // React pages/components; import application/, never api/ directly? 
-                       // (convention: features → application → api)
-  shared/              // UI primitives, i18n, formatting contexts
-  app/                 // shell, routing, providers, error boundaries
+      features/        // React pages/components (features → application → api)
+      app/             // shell, routing, providers, error boundaries
+  companion/           // PHONE companion — small React PWA:
+                       // dashboards (read-only queries), document/QR-bill capture → upload,
+                       // notifications. No posting UI, no subledgers, no settings.
+  shared/              // generated OpenAPI client, design tokens, i18n corpus, auth glue
 ```
 
 - **TanStack Query** replaces the DataApi/Dexie layer: caching, request dedupe, optimistic updates, invalidation keyed by SignalR pings — snappy UX without owning a database.
 - Same ESLint boundary enforcement + page-budget ratchet (450 lines / 30 imports), blocking in CI; `JournalEntryPage`-scale files are structurally impossible.
 - **One posting flow**: manual entry and import booking both build the same `PostJournalEntry` request; balance/tolerance logic exists once server-side, mirrored once client-side for instant feedback, both pinned by shared golden fixtures.
-- PWA: manifest + static shell precache only. Offline = read-only "you're offline" state with last-fetched cache; no queued writes in v1 (revisit only with real user demand — and then as server-drafts, not replication).
+- **Desktop-first pays down complexity**: multi-pane/dense layouts, keyboard shortcuts; mobile responsiveness is NOT a requirement for the full app (the old `useTableBreakpoint`-style responsive-table machinery is not ported). Only the companion is phone-optimized.
+- **Distribution:** web app = Vercel; **Microsoft Store = MSIX package of the same PWA build (PWABuilder)** — no WinUI, no second codebase; wrap with Tauri later only if deep OS integration is demanded. Companion = installable PWA (Android/iOS browser); a Capacitor wrapper is an additive later step only if App Store/Play Store listings are wanted.
+- PWA scope for both clients: manifest + static shell precache only. Offline = read-only "you're offline" state with last-fetched cache; no queued writes in v1 (revisit only with real user demand — and then as server-drafts, not replication).
 
 ## 8. Security model
 
