@@ -7,7 +7,7 @@
 
 | WP | Title | State | Notes |
 |---|---|---|---|
-| P0-WP01 | Lock down /maintenance/* endpoints | planned | S2 emergency — first |
+| P0-WP01 | Lock down /maintenance/* endpoints | done | Guard: Maintenance:Enabled flag (default OFF → 404) + AdminIdentities allowlist (403) + X-Maintenance-Confirm header (400). 8 unit tests. **Deployed to prod 2026-07-04** (health 200, endpoint 401/404). Old-repo commit pending. |
 | P0-WP02 | Wire guard scripts into GitHub Actions (old repo) | planned | |
 | P0-WP03 | Fix boundary violation (importUtils → data/fxConversion) | planned | |
 | P0-WP04 | Verify/close export coverage (accounts, journal, master data) | planned | Self-migration path |
