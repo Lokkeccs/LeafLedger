@@ -1,6 +1,6 @@
 # P1-WP01 — Repo scaffold + CI skeleton
 
-State: verify (implementation complete; CI-run + deliberate-red PR evidence pending push via LL Git)          Last session: 2026-07-04
+State: done (QA PASS 2026-07-05 — merged to main via PR #3; all 5 acceptance criteria met with CI evidence)          Last session: 2026-07-05
 
 ## Scope
 1. Monorepo folder layout: `app/`, `backend/`, `docs/` (VitePress moved in later), `help/` (placeholder), `tools/`, `tests/fixtures/golden/`.
@@ -56,3 +56,27 @@ State: verify (implementation complete; CI-run + deliberate-red PR evidence pend
 
 ## QA verdict
 *(filled by LL QA Reviewer only)*
+
+### 2026-07-05 — LL QA Reviewer — PASS (state → done)
+
+All five acceptance criteria met; verified against the **merged `main`** (`8da1449`, PR #3), not a stale local tree.
+
+**Acceptance criteria:**
+1. ✅ Frontend `lint`/`typecheck`/`test` green — re-run on merged main: `lint`=0, `typecheck`=0, `test`=1/1. Also green in PR #3 CI.
+2. ✅ Backend `dotnet build`/`test` green — re-run on merged main (Release): 0 warnings/0 errors, tests 3/3. Also green in PR #3 CI.
+3. ✅ PR workflow runs all gates and passes — **PR #3** run [28720930005](https://github.com/Lokkeccs/LeafLedger/actions/runs/28720930005): Frontend, Backend, gitleaks, Dependency audit all `success`.
+4. ✅ Deliberate red PR — **PR #4** run [28752538837](https://github.com/Lokkeccs/LeafLedger/actions/runs/28752538837): Frontend gate `failure` on a boundary-import + banned-`fetch` + unused-var violation, while Backend/gitleaks/Dependency-audit stayed green (selective block). Throwaway branch/PR closed + deleted afterward.
+5. ✅ No file over budget (`App.tsx` 9 lines/0 imports/0 states); no build artifacts/`.env`/secrets tracked; gitleaks `success` on PR #3.
+
+**Boundary gates proven to block (not vacuously green):** in the prior QA pass, ESLint failed (exit 1) and NetArchTest `DomainNamespacesDependOnlyOnSharedKernel` failed (exit 1) on planted violations; both reverted, suites green after. PR #4 reproduces the ESLint block in real CI.
+
+**Financial integrity:** N/A by design — no domain/money/posting code in this WP (matches non-goals); SharedKernel intentionally empty.
+
+**Security:** `/health` is the only endpoint (public by design); least-privilege workflow permissions (`contents: read`); no secrets/artifacts tracked; gitleaks + dependency audit green.
+
+**Notes / carry-forward (non-blocking):**
+- Deviation (logged for LL Architect): single `app/` client vs spec §7 `web/companion/shared` — deferred to P3.
+- Guideline files (PR template, `.github/instructions/**`, ADR template) from the 2026-07-04 session are **not** on `main` — they were bundled into an unmerged local stray commit (`2731d12`) that also swept unrelated in-progress files; recommend handling as a separate small WP/PR.
+- Manual user steps remain (branch protection require-checks, Environments) — outside agent scope.
+
+**Verdict: PASS.** State → done. P1-WP01 is complete and merged.
