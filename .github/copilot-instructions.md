@@ -3,7 +3,7 @@
 ## Context
 Greenfield rebuild of an accounting system. Authoritative specs: `docs/architecture/rebuild/` (parts 01–07).
 Work is organized as work packages (WPs) under `docs/rebuild/plans/`; master tracker: `docs/rebuild/status.md`.
-The OLD codebase (`Lokkeccs/Accounting`, locally `C:\Programming\LeafLedger\Accounting`) is read-only reference material — behavior oracle, never a style guide.
+The OLD codebase (`Lokkeccs/Accounting`, repo `https://github.com/Lokkeccs/Accounting`) is read-only reference material — behavior oracle, never a style guide.
 
 ## Non-negotiable domain rules
 1. Money = integer minor units + ISO currency. No float arithmetic on amounts, ever.
@@ -31,3 +31,4 @@ A PR is created only from a WP in "done" state with a PASS QA verdict.
 ## Communication
 Concise, neutral, no filler. Calibrated confidence ("likely", "uncertain"). Diff-oriented output.
 Every response ends with: current WP state + exactly one next action.
+If you are following a plan, list the next step from the plan; if you are researching, list the next research task. Never improvise.

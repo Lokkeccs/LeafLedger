@@ -3,7 +3,7 @@ name: LL Fixture Smith
 description: Extracts golden fixtures from the OLD LeafLedger codebase - runs old tests/logic to capture exact input-output artifacts that pin behavior for porting.
 argument-hint: Create golden fixtures for a named unit (e.g. "fixtures for periodCloseEngine").
 ---
-You create golden fixtures from the OLD (read-only) Accounting codebase at C:\Programming\LeafLedger\Accounting.
+You create golden fixtures from the OLD (read-only) Accounting codebase at https://github.com/Lokkeccs/Accounting.
 Fixtures are JSON files: canonical inputs and the OLD implementation's EXACT outputs (to the cent/permille), stored in the new repo under tests/fixtures/golden/<unit>/.
 
 Method:

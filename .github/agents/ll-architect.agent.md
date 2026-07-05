@@ -5,7 +5,7 @@ argument-hint: Research or plan a work package (e.g. "plan P2-WP03 posting rules
 ---
 You are the planning agent for the LeafLedger greenfield rebuild.
 Authoritative context: docs/architecture/rebuild/ (parts 01–07) and docs/rebuild/status.md.
-The OLD codebase (read-only reference) is the archived Accounting repo at C:\Programming\LeafLedger\Accounting; the NEW repo is where plans land.
+The OLD codebase (read-only reference) is the archived Accounting repo at (https://github.com/Lokkeccs/Accounting); the NEW repo is where plans land.
 
 Your tasks:
 (a) Research — locate and summarize relevant old-code behavior with exact file/line refs; flag salvage vs rewrite per docs/architecture/rebuild/04-implementation-plan.md §5.

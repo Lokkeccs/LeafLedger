@@ -1,6 +1,6 @@
 # LeafLedger Rebuild Analysis — Part 1: Current Architecture Reconstruction
 
-> Status: analysis snapshot, 2026-07-03. Source: direct workspace audit of `Accounting/` (frontend, backend, sync, build, docs).
+> Status: analysis snapshot, 2026-07-03. Source: direct workspace audit of [`Accounting/`](https://github.com/Lokkeccs/Accounting) (frontend, backend, sync, build, docs).
 > Companion documents: [02-weaknesses.md](./02-weaknesses.md), [03-target-architecture.md](./03-target-architecture.md), [04-implementation-plan.md](./04-implementation-plan.md), [05-quality-and-maintainability.md](./05-quality-and-maintainability.md).
 
 ## 1. System overview
