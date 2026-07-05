@@ -19,7 +19,7 @@
 | WP | Title | State | Notes |
 |---|---|---|---|
 | P1-WP01 | Repo scaffold + CI skeleton (all gates blocking) | done | [plan](./plans/P1-WP01-repo-scaffold-ci.md) — QA PASS 2026-07-05; merged via PR #3 (all gates green), red-gate proven via PR #4 |
-| P1-WP02 | docker-compose local dev (Postgres + API stub) | planned | |
+| P1-WP02 | docker-compose local dev (Postgres + API stub) | planned | [plan](./plans/P1-WP02-docker-compose-local-dev.md) — awaiting approval |
 | P1-WP03 | SharedKernel: Money, Ids, Period, Result | planned | |
 | P1-WP04 | OpenAPI → generated TS client pipeline | planned | |
 | P1-WP05 | ADR log + ADR-001 (online-first + Postgres + no-migration) | planned | |
@@ -42,3 +42,4 @@
 | 2026-07-04 | P1-WP01 | LL Backend Dev | Backend scaffold: sln, Directory.Build.props, SharedKernel (empty), Host `/health` (200 verified), arch tests 3/3 green |
 | 2026-07-04 | P1-WP01 | LL Frontend Dev | Frontend scaffold, boundary ESLint, vitest, page-budget tool, workflows, root hygiene; all local gates green; boundary rules verified to fail |
 | 2026-07-05 | P1-WP01 | LL QA Reviewer | PASS → done: verified on merged main (backend 3/3, frontend lint/typecheck/test/budget green); PR #3 CI all-green (criterion 3); PR #4 red-gate proven (criterion 4) |
+| 2026-07-05 | P1-WP02 | LL Architect | Plan drafted: docker-compose (Postgres+API stub), DB readiness health check, Testcontainers integration pattern (main-branch gate); awaiting approval |
