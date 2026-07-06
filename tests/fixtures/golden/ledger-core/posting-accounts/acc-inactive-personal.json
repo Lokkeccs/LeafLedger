@@ -1,0 +1,30 @@
+{
+  "input": {
+    "purpose": "personal",
+    "accounts": [
+      {
+        "id": 1,
+        "isActive": false
+      }
+    ],
+    "references": [
+      {
+        "accountId": 1,
+        "txDate": "2026-05-15"
+      }
+    ]
+  },
+  "expected": {
+    "error": {
+      "type": "PostingValidityError",
+      "issues": [
+        {
+          "entityType": "account",
+          "entityId": 1,
+          "reason": "inactive",
+          "txDate": "2026-05-15"
+        }
+      ]
+    }
+  }
+}

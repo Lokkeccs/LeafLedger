@@ -1,0 +1,32 @@
+{
+  "input": {
+    "projects": [
+      {
+        "id": 10,
+        "startDate": "2026-05-01",
+        "endDate": "2026-05-31"
+      }
+    ],
+    "references": [
+      {
+        "projectId": 10,
+        "txDate": "2026-06-15",
+        "source": "transaction:projectId"
+      }
+    ]
+  },
+  "expected": {
+    "error": {
+      "type": "PostingValidityError",
+      "issues": [
+        {
+          "entityType": "project",
+          "entityId": 10,
+          "reason": "expired",
+          "txDate": "2026-06-15",
+          "source": "transaction:projectId"
+        }
+      ]
+    }
+  }
+}

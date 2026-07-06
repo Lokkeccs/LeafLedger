@@ -1,0 +1,22 @@
+{
+  "input": {
+    "purpose": "personal",
+    "accounts": [
+      {
+        "id": 1,
+        "isActive": true,
+        "validFrom": "2026-06-01",
+        "validTo": "2026-06-30"
+      }
+    ],
+    "references": [
+      {
+        "accountId": 1,
+        "txDate": "2026-05-15"
+      }
+    ]
+  },
+  "expected": {
+    "ok": true
+  }
+}

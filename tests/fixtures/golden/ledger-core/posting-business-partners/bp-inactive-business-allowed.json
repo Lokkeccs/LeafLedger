@@ -1,0 +1,20 @@
+{
+  "input": {
+    "purpose": "business",
+    "businessPartners": [
+      {
+        "id": 5,
+        "isActive": false
+      }
+    ],
+    "references": [
+      {
+        "businessPartnerId": 5,
+        "txDate": "2026-05-15"
+      }
+    ]
+  },
+  "expected": {
+    "ok": true
+  }
+}

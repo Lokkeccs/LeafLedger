@@ -1,0 +1,16 @@
+{
+  "input": {
+    "txDate": "2026-05-15",
+    "periods": [
+      {
+        "name": "Jan 2026",
+        "startDate": "2026-01-01",
+        "endDate": "2026-01-31",
+        "state": "open"
+      }
+    ]
+  },
+  "expected": {
+    "ok": true
+  }
+}

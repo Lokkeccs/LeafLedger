@@ -1,0 +1,20 @@
+{
+  "input": {
+    "purpose": "personal",
+    "users": [
+      {
+        "id": 7,
+        "validTo": "2026-05-01"
+      }
+    ],
+    "references": [
+      {
+        "userId": 7,
+        "txDate": "2026-05-15"
+      }
+    ]
+  },
+  "expected": {
+    "ok": true
+  }
+}

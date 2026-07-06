@@ -1,0 +1,25 @@
+{
+  "input": {
+    "purpose": "business",
+    "users": [],
+    "references": [
+      {
+        "userId": 7,
+        "txDate": "2026-05-15"
+      }
+    ]
+  },
+  "expected": {
+    "error": {
+      "type": "PostingValidityError",
+      "issues": [
+        {
+          "entityType": "user",
+          "entityId": 7,
+          "reason": "missing",
+          "txDate": "2026-05-15"
+        }
+      ]
+    }
+  }
+}

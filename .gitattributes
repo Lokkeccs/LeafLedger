@@ -3,3 +3,8 @@
 # endings must be identical on every OS. Force LF regardless of core.autocrlf.
 backend/openapi/*.json text eol=lf
 app/src/api/schema.d.ts text eol=lf
+
+# Golden fixtures + capture harness (P2-WP01). Captured with LF and verified by
+# byte-identical re-capture (the porting oracle), so pin LF on every OS.
+tests/fixtures/golden/** text eol=lf
+tools/fixtures/** text eol=lf

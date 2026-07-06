@@ -1,0 +1,30 @@
+{
+  "input": {
+    "purpose": "business",
+    "businessPartners": [
+      {
+        "id": 5,
+        "validTo": "2026-05-01"
+      }
+    ],
+    "references": [
+      {
+        "businessPartnerId": 5,
+        "txDate": "2026-05-15"
+      }
+    ]
+  },
+  "expected": {
+    "error": {
+      "type": "PostingValidityError",
+      "issues": [
+        {
+          "entityType": "businessPartner",
+          "entityId": 5,
+          "reason": "expired",
+          "txDate": "2026-05-15"
+        }
+      ]
+    }
+  }
+}

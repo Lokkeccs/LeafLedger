@@ -1,0 +1,21 @@
+{
+  "input": {
+    "purpose": "personal",
+    "account": {
+      "currency": "USD",
+      "type": "asset",
+      "group": "bank accounts"
+    },
+    "txDate": "2026-05-15"
+  },
+  "expected": {
+    "value": {
+      "fxRateDate": "2026-05-15",
+      "fxRateTiming": "transaction-date",
+      "fxTreatmentApplied": "historical",
+      "fxClosingRevalueApplied": false,
+      "fxVatMethodApplied": "space-default",
+      "fxCurrency": "USD"
+    }
+  }
+}
