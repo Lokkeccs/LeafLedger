@@ -4,4 +4,9 @@
     <ProjectReference Include="..\LeafLedger.SharedKernel\LeafLedger.SharedKernel.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
+    <PackageReference Include="Npgsql" Version="8.0.3" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,17 @@
+bin
+obj
+node_modules
+.git
+.gitignore
+.env
+docker-compose.yml
+.dockerignore
+README.md
+.vscode
+.vs
+*.user
+*.suo
+.DS_Store
+coverage
+dist
+build
