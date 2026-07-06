@@ -22,7 +22,7 @@ if (!string.IsNullOrEmpty(connectionString))
 var app = builder.Build();
 
 // GET /health → liveness (always 200 when process is up)
-app.MapHealthChecks("/health");
+app.MapHealthChecks("/health", new() { Predicate = r => !r.Tags.Contains("ready") });
 
 // GET /health/ready → readiness (200 when DB is reachable, 503 otherwise)
 app.MapHealthChecks("/health/ready", new() { Predicate = r => r.Tags.Contains("ready") });
