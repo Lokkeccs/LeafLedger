@@ -12,6 +12,8 @@ Complete architectural analysis and rebuild specification, produced 2026-07-03 f
 | 6 | [Feature Roadmap](./06-feature-roadmap.md) | MVP (M1) vs fast-follow (M2) vs post-launch (M3) feature tiers; switch-over readiness model; dropped features |
 | 7 | [Vibe-Coding Playbook](./07-vibe-coding-playbook.md) | How to execute the rebuild with agents: per-phase workflow, custom agent definitions, model selection, general instructions, status tracking |
 
+**Decision records:** foundational and per-WP decisions are logged as ADRs — see the [ADR log](../adr/README.md) (ADR-0001 online-first + PostgreSQL, ADR-0002 ID storage, ADR-0003 API contract pipeline).
+
 **Headline conclusions**
 
 1. Two emergencies in the current system regardless of any rebuild: unprotected cross-tenant `/maintenance/*` destruction endpoints, and the complete absence of CI (Phase 0 — do immediately).
