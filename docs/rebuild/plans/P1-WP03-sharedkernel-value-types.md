@@ -1,7 +1,7 @@
 # P1-WP03 — SharedKernel value types: Money, Ids, Period, Result
 
 - **Phase:** 1 (foundation)
-- **State:** done (QA PASS 2026-07-06 — F1 fixed and re-verified)
+- **State:** done — merged to main via PR #6 (`f5e9fa5`) 2026-07-06; QA PASS 2026-07-06 (F1 fixed and re-verified)
 - **Owner (implementation):** LL Backend Dev
 - **Depends on:** P1-WP01 (repo scaffold), P1-WP02 (compose) — both done/merged
 - **Estimated size:** ≤ 2 days
