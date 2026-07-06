@@ -48,11 +48,14 @@ public readonly record struct Period : IComparable<Period>
     /// <summary>True when <paramref name="date"/> falls within <c>[Start, EndExclusive)</c>.</summary>
     public bool Contains(DateOnly date) => date >= Start && date < EndExclusive;
 
-    public int CompareTo(Period other)
-    {
-        var byStart = Start.CompareTo(other.Start);
-        return byStart != 0 ? byStart : EndExclusive.CompareTo(other.EndExclusive);
-    }
+public int CompareTo(Period other)
+{
+    var byStart = Start.CompareTo(other.Start);
+    if (byStart != 0) return byStart;
+
+    var byEnd = EndExclusive.CompareTo(other.EndExclusive);
+    return byEnd != 0 ? byEnd : Status.CompareTo(other.Status);
+}
 
     public static bool operator <(Period left, Period right) => left.CompareTo(right) < 0;
 
