@@ -1,0 +1,5 @@
+# Deterministic, cross-platform diffs for generated contract artifacts (P1-WP04).
+# These are byte-compared by the CI OpenAPI contract-diff gate, so their line
+# endings must be identical on every OS. Force LF regardless of core.autocrlf.
+backend/openapi/*.json text eol=lf
+app/src/api/schema.d.ts text eol=lf
