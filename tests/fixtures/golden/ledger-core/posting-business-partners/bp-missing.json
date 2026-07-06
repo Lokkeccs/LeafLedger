@@ -1,0 +1,25 @@
+{
+  "input": {
+    "purpose": "business",
+    "businessPartners": [],
+    "references": [
+      {
+        "businessPartnerId": 5,
+        "txDate": "2026-05-15"
+      }
+    ]
+  },
+  "expected": {
+    "error": {
+      "type": "PostingValidityError",
+      "issues": [
+        {
+          "entityType": "businessPartner",
+          "entityId": 5,
+          "reason": "missing",
+          "txDate": "2026-05-15"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "input": {
+    "purpose": "business",
+    "account": {
+      "type": "asset",
+      "group": "bank accounts",
+      "fxRateTimingDefault": "valuation-date"
+    }
+  },
+  "expected": {
+    "value": {
+      "fxTreatment": "monetary",
+      "fxRateTimingDefault": "valuation-date",
+      "closingRevalue": true,
+      "vatFxMethodOverride": "space-default"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "input": {
+    "purpose": "business",
+    "account": {
+      "currency": "EUR",
+      "type": "asset",
+      "group": "real estate"
+    },
+    "txDate": "2026-05-15"
+  },
+  "expected": {
+    "value": {
+      "fxRateDate": "2026-05-15",
+      "fxRateTiming": "transaction-date",
+      "fxTreatmentApplied": "historical",
+      "fxClosingRevalueApplied": false,
+      "fxVatMethodApplied": "space-default",
+      "fxCurrency": "EUR"
+    }
+  }
+}

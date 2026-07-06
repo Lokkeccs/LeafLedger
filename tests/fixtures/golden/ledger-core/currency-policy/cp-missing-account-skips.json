@@ -1,0 +1,14 @@
+{
+  "input": {
+    "accounts": [],
+    "references": [
+      {
+        "accountId": 99,
+        "txCurrency": "USD"
+      }
+    ]
+  },
+  "expected": {
+    "ok": true
+  }
+}

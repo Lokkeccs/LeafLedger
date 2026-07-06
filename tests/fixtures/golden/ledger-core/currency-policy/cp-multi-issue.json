@@ -1,0 +1,45 @@
+{
+  "input": {
+    "accounts": [
+      {
+        "id": 1,
+        "currency": "CHF",
+        "type": "asset"
+      },
+      {
+        "id": 2,
+        "currency": "EUR",
+        "type": "liability"
+      }
+    ],
+    "references": [
+      {
+        "accountId": 1,
+        "txCurrency": "USD"
+      },
+      {
+        "accountId": 2,
+        "txCurrency": "CHF"
+      }
+    ]
+  },
+  "expected": {
+    "error": {
+      "type": "CurrencyPolicyError",
+      "issues": [
+        {
+          "accountId": 1,
+          "accountCurrency": "CHF",
+          "txCurrency": "USD",
+          "reason": "currency-not-allowed"
+        },
+        {
+          "accountId": 2,
+          "accountCurrency": "EUR",
+          "txCurrency": "CHF",
+          "reason": "currency-not-allowed"
+        }
+      ]
+    }
+  }
+}

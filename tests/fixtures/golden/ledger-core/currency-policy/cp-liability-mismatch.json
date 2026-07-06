@@ -1,0 +1,30 @@
+{
+  "input": {
+    "accounts": [
+      {
+        "id": 2,
+        "currency": "EUR",
+        "type": "liability"
+      }
+    ],
+    "references": [
+      {
+        "accountId": 2,
+        "txCurrency": "CHF"
+      }
+    ]
+  },
+  "expected": {
+    "error": {
+      "type": "CurrencyPolicyError",
+      "issues": [
+        {
+          "accountId": 2,
+          "accountCurrency": "EUR",
+          "txCurrency": "CHF",
+          "reason": "currency-not-allowed"
+        }
+      ]
+    }
+  }
+}

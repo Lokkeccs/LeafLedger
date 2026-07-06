@@ -1,0 +1,363 @@
+{
+  "source": {
+    "repo": "Lokkeccs/Accounting",
+    "sha": "085bedba467e3d46d3889db3bc80ea023e69756e"
+  },
+  "count": 59,
+  "cases": [
+    {
+      "id": "acc-missing-business",
+      "unit": "assertPostingAccountsValid",
+      "description": "unknown account id -> missing (business)",
+      "file": "posting-accounts/acc-missing-business.json"
+    },
+    {
+      "id": "acc-inactive-business",
+      "unit": "assertPostingAccountsValid",
+      "description": "inactive account rejected in business (inactive checked before purpose)",
+      "file": "posting-accounts/acc-inactive-business.json"
+    },
+    {
+      "id": "acc-inactive-personal",
+      "unit": "assertPostingAccountsValid",
+      "description": "inactive account rejected in personal too (window ignored, inactive still fails)",
+      "file": "posting-accounts/acc-inactive-personal.json"
+    },
+    {
+      "id": "acc-future-business",
+      "unit": "assertPostingAccountsValid",
+      "description": "posting date before validFrom -> future (business)",
+      "file": "posting-accounts/acc-future-business.json"
+    },
+    {
+      "id": "acc-expired-business",
+      "unit": "assertPostingAccountsValid",
+      "description": "posting date after validTo -> expired (business)",
+      "file": "posting-accounts/acc-expired-business.json"
+    },
+    {
+      "id": "acc-personal-ignores-window",
+      "unit": "assertPostingAccountsValid",
+      "description": "personal ignores validFrom/validTo window -> allowed",
+      "file": "posting-accounts/acc-personal-ignores-window.json"
+    },
+    {
+      "id": "acc-valid-in-window-business",
+      "unit": "assertPostingAccountsValid",
+      "description": "active and inside business window -> allowed",
+      "file": "posting-accounts/acc-valid-in-window-business.json"
+    },
+    {
+      "id": "acc-boundary-on-validfrom",
+      "unit": "assertPostingAccountsValid",
+      "description": "posting date exactly on validFrom -> allowed (start-of-day boundary)",
+      "file": "posting-accounts/acc-boundary-on-validfrom.json"
+    },
+    {
+      "id": "acc-boundary-on-validto",
+      "unit": "assertPostingAccountsValid",
+      "description": "posting date exactly on validTo -> allowed (end-of-day boundary)",
+      "file": "posting-accounts/acc-boundary-on-validto.json"
+    },
+    {
+      "id": "acc-multi-issue",
+      "unit": "assertPostingAccountsValid",
+      "description": "multiple invalid references collected into issues[]",
+      "file": "posting-accounts/acc-multi-issue.json"
+    },
+    {
+      "id": "bp-missing",
+      "unit": "assertPostingBusinessPartnersValid",
+      "description": "unknown business partner -> missing",
+      "file": "posting-business-partners/bp-missing.json"
+    },
+    {
+      "id": "bp-inactive-personal",
+      "unit": "assertPostingBusinessPartnersValid",
+      "description": "isActive:false rejected in personal (inactive is personal-only for timebound refs)",
+      "file": "posting-business-partners/bp-inactive-personal.json"
+    },
+    {
+      "id": "bp-inactive-business-allowed",
+      "unit": "assertPostingBusinessPartnersValid",
+      "description": "isActive:false is IGNORED in business (asymmetry vs personal) -> allowed",
+      "file": "posting-business-partners/bp-inactive-business-allowed.json"
+    },
+    {
+      "id": "bp-future-business",
+      "unit": "assertPostingBusinessPartnersValid",
+      "description": "window future -> rejected in business",
+      "file": "posting-business-partners/bp-future-business.json"
+    },
+    {
+      "id": "bp-expired-business",
+      "unit": "assertPostingBusinessPartnersValid",
+      "description": "window expired -> rejected in business",
+      "file": "posting-business-partners/bp-expired-business.json"
+    },
+    {
+      "id": "bp-personal-ignores-window",
+      "unit": "assertPostingBusinessPartnersValid",
+      "description": "personal ignores future/expired windows -> allowed",
+      "file": "posting-business-partners/bp-personal-ignores-window.json"
+    },
+    {
+      "id": "bp-valid-business",
+      "unit": "assertPostingBusinessPartnersValid",
+      "description": "active and inside window -> allowed",
+      "file": "posting-business-partners/bp-valid-business.json"
+    },
+    {
+      "id": "user-missing",
+      "unit": "assertPostingUsersValid",
+      "description": "unknown user -> missing",
+      "file": "posting-users/user-missing.json"
+    },
+    {
+      "id": "user-inactive-personal",
+      "unit": "assertPostingUsersValid",
+      "description": "isActive:false rejected in personal",
+      "file": "posting-users/user-inactive-personal.json"
+    },
+    {
+      "id": "user-inactive-business-allowed",
+      "unit": "assertPostingUsersValid",
+      "description": "isActive:false ignored in business -> allowed (asymmetry)",
+      "file": "posting-users/user-inactive-business-allowed.json"
+    },
+    {
+      "id": "user-future-business",
+      "unit": "assertPostingUsersValid",
+      "description": "window future -> rejected in business",
+      "file": "posting-users/user-future-business.json"
+    },
+    {
+      "id": "user-expired-business",
+      "unit": "assertPostingUsersValid",
+      "description": "window expired -> rejected in business",
+      "file": "posting-users/user-expired-business.json"
+    },
+    {
+      "id": "user-personal-ignores-window",
+      "unit": "assertPostingUsersValid",
+      "description": "personal ignores window -> allowed",
+      "file": "posting-users/user-personal-ignores-window.json"
+    },
+    {
+      "id": "user-valid-business",
+      "unit": "assertPostingUsersValid",
+      "description": "active and inside window -> allowed",
+      "file": "posting-users/user-valid-business.json"
+    },
+    {
+      "id": "project-missing",
+      "unit": "assertPostingProjectsValid",
+      "description": "unknown project -> missing",
+      "file": "posting-projects/project-missing.json"
+    },
+    {
+      "id": "project-future",
+      "unit": "assertPostingProjectsValid",
+      "description": "posting date before startDate -> future",
+      "file": "posting-projects/project-future.json"
+    },
+    {
+      "id": "project-expired",
+      "unit": "assertPostingProjectsValid",
+      "description": "posting date after endDate -> expired",
+      "file": "posting-projects/project-expired.json"
+    },
+    {
+      "id": "project-valid-in-window",
+      "unit": "assertPostingProjectsValid",
+      "description": "posting date inside window -> allowed",
+      "file": "posting-projects/project-valid-in-window.json"
+    },
+    {
+      "id": "project-no-window",
+      "unit": "assertPostingProjectsValid",
+      "description": "no start/end date -> allowed",
+      "file": "posting-projects/project-no-window.json"
+    },
+    {
+      "id": "cp-income-any",
+      "unit": "assertPostingCurrencyPolicyValid",
+      "description": "P&L income account accepts any tx currency -> allowed",
+      "file": "currency-policy/cp-income-any.json"
+    },
+    {
+      "id": "cp-expense-any",
+      "unit": "assertPostingCurrencyPolicyValid",
+      "description": "P&L expense account accepts any tx currency -> allowed",
+      "file": "currency-policy/cp-expense-any.json"
+    },
+    {
+      "id": "cp-asset-match",
+      "unit": "assertPostingCurrencyPolicyValid",
+      "description": "balance-sheet asset, tx currency matches account currency -> allowed",
+      "file": "currency-policy/cp-asset-match.json"
+    },
+    {
+      "id": "cp-asset-mismatch",
+      "unit": "assertPostingCurrencyPolicyValid",
+      "description": "balance-sheet asset, tx currency differs -> currency-not-allowed",
+      "file": "currency-policy/cp-asset-mismatch.json"
+    },
+    {
+      "id": "cp-liability-mismatch",
+      "unit": "assertPostingCurrencyPolicyValid",
+      "description": "balance-sheet liability mismatch -> currency-not-allowed",
+      "file": "currency-policy/cp-liability-mismatch.json"
+    },
+    {
+      "id": "cp-equity-mismatch",
+      "unit": "assertPostingCurrencyPolicyValid",
+      "description": "balance-sheet equity mismatch -> currency-not-allowed",
+      "file": "currency-policy/cp-equity-mismatch.json"
+    },
+    {
+      "id": "cp-case-insensitive",
+      "unit": "assertPostingCurrencyPolicyValid",
+      "description": "currency compare is case-insensitive/trimmed -> allowed",
+      "file": "currency-policy/cp-case-insensitive.json"
+    },
+    {
+      "id": "cp-missing-account-skips",
+      "unit": "assertPostingCurrencyPolicyValid",
+      "description": "missing account skipped here (caught by accounts check) -> allowed",
+      "file": "currency-policy/cp-missing-account-skips.json"
+    },
+    {
+      "id": "cp-empty-txcurrency-skips",
+      "unit": "assertPostingCurrencyPolicyValid",
+      "description": "empty tx currency skipped -> allowed",
+      "file": "currency-policy/cp-empty-txcurrency-skips.json"
+    },
+    {
+      "id": "cp-empty-accountcurrency-skips",
+      "unit": "assertPostingCurrencyPolicyValid",
+      "description": "empty account currency skipped -> allowed",
+      "file": "currency-policy/cp-empty-accountcurrency-skips.json"
+    },
+    {
+      "id": "cp-multi-issue",
+      "unit": "assertPostingCurrencyPolicyValid",
+      "description": "multiple violations collected into issues[]",
+      "file": "currency-policy/cp-multi-issue.json"
+    },
+    {
+      "id": "ps-state-open",
+      "unit": "getEffectivePeriodState",
+      "description": "date within an open period -> \"open\"",
+      "file": "period-state/ps-state-open.json"
+    },
+    {
+      "id": "ps-state-closed",
+      "unit": "getEffectivePeriodState",
+      "description": "date within a closed period -> \"closed\"",
+      "file": "period-state/ps-state-closed.json"
+    },
+    {
+      "id": "ps-state-locked",
+      "unit": "getEffectivePeriodState",
+      "description": "date within a locked period -> \"locked\"",
+      "file": "period-state/ps-state-locked.json"
+    },
+    {
+      "id": "ps-state-no-period",
+      "unit": "getEffectivePeriodState",
+      "description": "date with no covering period -> \"no-period-defined\"",
+      "file": "period-state/ps-state-no-period.json"
+    },
+    {
+      "id": "ps-open-allowed",
+      "unit": "assertPostingPeriodOpen",
+      "description": "open period -> posting allowed",
+      "file": "period-state/ps-open-allowed.json"
+    },
+    {
+      "id": "ps-closed-rejected",
+      "unit": "assertPostingPeriodOpen",
+      "description": "closed period -> PeriodClosedError",
+      "file": "period-state/ps-closed-rejected.json"
+    },
+    {
+      "id": "ps-locked-rejected",
+      "unit": "assertPostingPeriodOpen",
+      "description": "locked period -> PeriodClosedError",
+      "file": "period-state/ps-locked-rejected.json"
+    },
+    {
+      "id": "ps-no-period-allowed",
+      "unit": "assertPostingPeriodOpen",
+      "description": "no covering period -> posting allowed (backward compat)",
+      "file": "period-state/ps-no-period-allowed.json"
+    },
+    {
+      "id": "fx-monetary-group",
+      "unit": "buildTransactionLineFxMetadata",
+      "description": "business asset in a MONETARY group (bank accounts) -> monetary/transaction-date/revalue",
+      "file": "fx-metadata/fx-monetary-group.json"
+    },
+    {
+      "id": "fx-historical-group",
+      "unit": "buildTransactionLineFxMetadata",
+      "description": "business asset in a HISTORICAL group (real estate) -> historical/no-revalue",
+      "file": "fx-metadata/fx-historical-group.json"
+    },
+    {
+      "id": "fx-default-asset-group",
+      "unit": "buildTransactionLineFxMetadata",
+      "description": "business asset in an unknown group -> default historical/no-revalue",
+      "file": "fx-metadata/fx-default-asset-group.json"
+    },
+    {
+      "id": "fx-default-liability-group",
+      "unit": "buildTransactionLineFxMetadata",
+      "description": "business liability in an unknown group -> monetary/revalue (liability fallback)",
+      "file": "fx-metadata/fx-default-liability-group.json"
+    },
+    {
+      "id": "fx-account-override-wins",
+      "unit": "buildTransactionLineFxMetadata",
+      "description": "account-level fxTreatment override wins over group inference",
+      "file": "fx-metadata/fx-account-override-wins.json"
+    },
+    {
+      "id": "fx-personal-historical",
+      "unit": "buildTransactionLineFxMetadata",
+      "description": "personal purpose -> historical/no-revalue regardless of group",
+      "file": "fx-metadata/fx-personal-historical.json"
+    },
+    {
+      "id": "fx-rate-date-normalized",
+      "unit": "buildTransactionLineFxMetadata",
+      "description": "fxRateDate is midnight-normalized to the transaction date",
+      "file": "fx-metadata/fx-rate-date-normalized.json"
+    },
+    {
+      "id": "fx-group-policy-fallback",
+      "unit": "resolveGroupFxPolicy",
+      "description": "group inference with no group-policy override (monetary bank group)",
+      "file": "fx-metadata/fx-group-policy-fallback.json"
+    },
+    {
+      "id": "fx-group-policy-override",
+      "unit": "resolveGroupFxPolicy",
+      "description": "explicit group-policy overrides inferred fallback fields",
+      "file": "fx-metadata/fx-group-policy-override.json"
+    },
+    {
+      "id": "fx-account-policy-override",
+      "unit": "resolveAccountFxPolicy",
+      "description": "account override beats group fallback (account wins)",
+      "file": "fx-metadata/fx-account-policy-override.json"
+    },
+    {
+      "id": "fx-account-policy-fallback",
+      "unit": "resolveAccountFxPolicy",
+      "description": "no account override -> group fallback (monetary bank group)",
+      "file": "fx-metadata/fx-account-policy-fallback.json"
+    }
+  ]
+}

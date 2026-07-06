@@ -1,0 +1,26 @@
+{
+  "input": {
+    "projects": [],
+    "references": [
+      {
+        "projectId": 10,
+        "txDate": "2026-05-15",
+        "source": "transaction:projectId"
+      }
+    ]
+  },
+  "expected": {
+    "error": {
+      "type": "PostingValidityError",
+      "issues": [
+        {
+          "entityType": "project",
+          "entityId": 10,
+          "reason": "missing",
+          "txDate": "2026-05-15",
+          "source": "transaction:projectId"
+        }
+      ]
+    }
+  }
+}

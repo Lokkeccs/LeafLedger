@@ -1,0 +1,61 @@
+{
+  "input": {
+    "purpose": "business",
+    "accounts": [
+      {
+        "id": 1,
+        "isActive": true,
+        "validFrom": "2026-06-01"
+      },
+      {
+        "id": 2,
+        "isActive": false
+      }
+    ],
+    "references": [
+      {
+        "accountId": 1,
+        "txDate": "2026-05-15",
+        "source": "row-a"
+      },
+      {
+        "accountId": 2,
+        "txDate": "2026-05-15",
+        "source": "row-b"
+      },
+      {
+        "accountId": 3,
+        "txDate": "2026-05-15",
+        "source": "row-c"
+      }
+    ]
+  },
+  "expected": {
+    "error": {
+      "type": "PostingValidityError",
+      "issues": [
+        {
+          "entityType": "account",
+          "entityId": 1,
+          "reason": "future",
+          "txDate": "2026-05-15",
+          "source": "row-a"
+        },
+        {
+          "entityType": "account",
+          "entityId": 2,
+          "reason": "inactive",
+          "txDate": "2026-05-15",
+          "source": "row-b"
+        },
+        {
+          "entityType": "account",
+          "entityId": 3,
+          "reason": "missing",
+          "txDate": "2026-05-15",
+          "source": "row-c"
+        }
+      ]
+    }
+  }
+}

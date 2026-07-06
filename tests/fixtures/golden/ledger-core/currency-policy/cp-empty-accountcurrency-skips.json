@@ -1,0 +1,20 @@
+{
+  "input": {
+    "accounts": [
+      {
+        "id": 1,
+        "currency": "",
+        "type": "asset"
+      }
+    ],
+    "references": [
+      {
+        "accountId": 1,
+        "txCurrency": "USD"
+      }
+    ]
+  },
+  "expected": {
+    "ok": true
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "input": {
+    "projects": [
+      {
+        "id": 10,
+        "startDate": "2026-05-01",
+        "endDate": "2026-05-31"
+      }
+    ],
+    "references": [
+      {
+        "projectId": 10,
+        "txDate": "2026-05-15",
+        "source": "transaction:projectId"
+      }
+    ]
+  },
+  "expected": {
+    "ok": true
+  }
+}

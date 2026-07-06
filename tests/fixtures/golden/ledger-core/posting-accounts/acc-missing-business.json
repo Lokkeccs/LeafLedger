@@ -1,0 +1,27 @@
+{
+  "input": {
+    "purpose": "business",
+    "accounts": [],
+    "references": [
+      {
+        "accountId": 99,
+        "txDate": "2026-05-15",
+        "source": "row-1"
+      }
+    ]
+  },
+  "expected": {
+    "error": {
+      "type": "PostingValidityError",
+      "issues": [
+        {
+          "entityType": "account",
+          "entityId": 99,
+          "reason": "missing",
+          "txDate": "2026-05-15",
+          "source": "row-1"
+        }
+      ]
+    }
+  }
+}

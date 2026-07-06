@@ -1,0 +1,30 @@
+{
+  "input": {
+    "accounts": [
+      {
+        "id": 3,
+        "currency": "CHF",
+        "type": "equity"
+      }
+    ],
+    "references": [
+      {
+        "accountId": 3,
+        "txCurrency": "USD"
+      }
+    ]
+  },
+  "expected": {
+    "error": {
+      "type": "CurrencyPolicyError",
+      "issues": [
+        {
+          "accountId": 3,
+          "accountCurrency": "CHF",
+          "txCurrency": "USD",
+          "reason": "currency-not-allowed"
+        }
+      ]
+    }
+  }
+}

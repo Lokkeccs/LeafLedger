@@ -1,0 +1,31 @@
+{
+  "input": {
+    "purpose": "business",
+    "accounts": [
+      {
+        "id": 1,
+        "isActive": true,
+        "validTo": "2026-04-30"
+      }
+    ],
+    "references": [
+      {
+        "accountId": 1,
+        "txDate": "2026-05-15"
+      }
+    ]
+  },
+  "expected": {
+    "error": {
+      "type": "PostingValidityError",
+      "issues": [
+        {
+          "entityType": "account",
+          "entityId": 1,
+          "reason": "expired",
+          "txDate": "2026-05-15"
+        }
+      ]
+    }
+  }
+}
