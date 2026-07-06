@@ -1,7 +1,7 @@
 # P1-WP04 — OpenAPI → generated TypeScript client pipeline
 
 - **Phase:** 1 (foundation)
-- **State:** done (QA PASS 2026-07-06)
+- **State:** done — merged to main via PR #8 (`24c21df`) 2026-07-06; QA PASS 2026-07-06
 - **Owner (implementation):** LL Backend Dev (contract emission) → LL Frontend Dev (generation + client + CI gate)
 - **Depends on:** P1-WP01 (repo scaffold + CI + ESLint boundaries), P1-WP02 (Host + compose), P1-WP03 (SharedKernel) — all done/merged
 - **Estimated size:** ≤ 2 days
