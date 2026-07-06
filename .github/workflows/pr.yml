@@ -39,7 +39,9 @@ jobs:
         with:
           dotnet-version: 9.0.x
       - run: dotnet build --configuration Release
-      - run: dotnet test --configuration Release --no-build
+      # Unit + architecture tests only; Testcontainers (Category=Integration)
+      # runs on main via the dedicated integration job, never on PRs.
+      - run: dotnet test --configuration Release --no-build --filter "Category!=Integration"
 
   gitleaks:
     name: Secret scan (gitleaks)
