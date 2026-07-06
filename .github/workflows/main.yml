@@ -67,6 +67,37 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  contract:
+    name: Contract (OpenAPI diff gate)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      # Re-emit the canonical OpenAPI contract from the backend build.
+      - name: Build backend (emits OpenAPI contract)
+        working-directory: backend
+        run: dotnet build src/LeafLedger.Host/LeafLedger.Host.csproj --configuration Release
+      - name: Install frontend deps
+        working-directory: app
+        run: npm ci
+      # Regenerate the typed client from the freshly emitted contract.
+      - name: Regenerate typed client
+        working-directory: app
+        run: npm run gen:api
+      # Drift-killer: any difference between committed and regenerated fails.
+      # `git add -N` surfaces any newly-generated (untracked) files too.
+      - name: Fail on contract or client drift
+        run: |
+          git add -N backend/openapi app/src/api
+          git diff --exit-code -- backend/openapi app/src/api
+
   dependency-audit:
     name: Dependency audit
     runs-on: ubuntu-latest
@@ -98,13 +129,13 @@ jobs:
   deploy-api:
     name: Deploy API (placeholder)
     runs-on: ubuntu-latest
-    needs: [frontend, backend, integration, gitleaks, dependency-audit]
+    needs: [frontend, backend, integration, contract, gitleaks, dependency-audit]
     steps:
       - run: echo "No-op — real API deploy wired in P2/P3."
 
   deploy-frontend:
     name: Deploy frontend (placeholder)
     runs-on: ubuntu-latest
-    needs: [frontend, backend, integration, gitleaks, dependency-audit]
+    needs: [frontend, backend, integration, contract, gitleaks, dependency-audit]
     steps:
       - run: echo "No-op — real Vercel deploy wired in P3."

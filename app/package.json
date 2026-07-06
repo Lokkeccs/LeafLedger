@@ -9,10 +9,12 @@
     "lint": "eslint .",
     "typecheck": "tsc -b",
     "test": "vitest run",
+    "gen:api": "openapi-typescript ../backend/openapi/leafledger-v1.json -o ./src/api/schema.d.ts",
     "check:page-budget": "node ../tools/check-page-budget.cjs --strict",
     "preview": "vite preview"
   },
   "dependencies": {
+    "openapi-fetch": "^0.13.8",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
@@ -26,6 +28,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
     "globals": "^17.7.0",
+    "openapi-typescript": "^7.13.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.62.1",
     "vite": "^8.1.1",
