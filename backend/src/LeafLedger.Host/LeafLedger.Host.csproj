@@ -1,11 +1,33 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
+  <!-- P1-WP04: emit the canonical OpenAPI contract at build time (no running
+       server / Postgres required) into backend/openapi/. The committed
+       artifact is the single contract the frontend generates from. -->
+  <PropertyGroup>
+    <OpenApiGenerateDocumentsOnBuild>true</OpenApiGenerateDocumentsOnBuild>
+    <OpenApiDocumentsDirectory>$(MSBuildProjectDirectory)\..\..\openapi</OpenApiDocumentsDirectory>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\LeafLedger.SharedKernel\LeafLedger.SharedKernel.csproj" />
   </ItemGroup>
 
+  <!-- Normalize the build-time OpenAPI output (tool names it <ProjectName>.json)
+       to the canonical, versioned contract path the frontend generates from. -->
+  <Target Name="RenameOpenApiDocument" AfterTargets="GenerateOpenApiDocuments">
+    <Move SourceFiles="$(OpenApiDocumentsDirectory)\LeafLedger.Host.json"
+          DestinationFiles="$(OpenApiDocumentsDirectory)\leafledger-v1.json"
+          Condition="Exists('$(OpenApiDocumentsDirectory)\LeafLedger.Host.json')"
+          OverwriteReadOnlyFiles="true" />
+  </Target>
+
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Npgsql" Version="8.0.3" />
   </ItemGroup>
 
