@@ -1,0 +1,4 @@
+# EF Core-generated migrations. Treat as generated code so analyzers (e.g. CA1861)
+# do not fail the TreatWarningsAsErrors build on scaffolded output.
+[*.cs]
+generated_code = true

@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LeafLedger.SharedKernel\LeafLedger.SharedKernel.csproj" />
+    <ProjectReference Include="..\LeafLedger.Modules.Ledger\LeafLedger.Modules.Ledger.csproj" />
   </ItemGroup>
 
   <!-- Normalize the build-time OpenAPI output (tool names it <ProjectName>.json)
@@ -23,12 +24,15 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
+    <!-- Unify EF Core with the Ledger module: the NpgSql health check pulls 9.0.1
+         transitively. Package-level pin only; the Host takes no EF IL dependency. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Npgsql" Version="8.0.3" />
+    <PackageReference Include="Npgsql" Version="9.0.3" />
   </ItemGroup>
 
 </Project>

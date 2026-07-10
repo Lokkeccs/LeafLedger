@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- P2-WP02: persistence + schema baseline for the Phase-2 ledger core.
+       EF Core is confined to this module's Infrastructure namespace (arch rule,
+       Part 3 §5). No domain layer yet: entities are anemic persistence POCOs;
+       the rich Ledger/ChartOfAccounts domains arrive in P2-WP03/WP04. -->
+  <ItemGroup>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

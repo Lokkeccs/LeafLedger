@@ -17,6 +17,7 @@ public class ModuleBoundaryTests
     [
         Assembly.Load("LeafLedger.SharedKernel"),
         Assembly.Load("LeafLedger.Host"),
+        Assembly.Load("LeafLedger.Modules.Ledger"),
     ];
 
     [Fact]
