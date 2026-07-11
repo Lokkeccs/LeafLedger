@@ -1,0 +1,12 @@
+{
+  "input": {
+    "spaceBaseCurrency": "CHF",
+    "lines": [
+      { "amountMinor": 1234, "currency": "CHF", "baseAmountMinor": 1234 }
+    ]
+  },
+  "expected": {
+    "status": "UNVERIFIED",
+    "reason": "No executable OLD posting-time base-amount validator exists."
+  }
+}

@@ -67,9 +67,13 @@ app.MapGet("/api/v1/meta", () => new MetaResponse("LeafLedger", "v1"))
     .WithName("GetMeta")
     .WithTags("Meta");
 
+app.MapLedgerEndpoints();
+
 app.Run();
 
 /// <summary>API metadata returned by <c>GET /api/v1/meta</c>.</summary>
 /// <param name="Name">Human-readable API name.</param>
 /// <param name="Version">API contract version (e.g. <c>v1</c>).</param>
 internal sealed record MetaResponse(string Name, string Version);
+
+public partial class Program;

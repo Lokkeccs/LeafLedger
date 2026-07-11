@@ -1,0 +1,21 @@
+{
+  "source": {
+    "repo": "Lokkeccs/Accounting",
+    "sha": "085bedba467e3d46d3889db3bc80ea023e69756e",
+    "captureStatus": "UNVERIFIED",
+    "reason": "The OLD implementation has FX-policy metadata helpers but no posting-time base_amount_minor conversion or validation function to execute."
+  },
+  "unit": "P2-WP05-B1-base-amount-validation",
+  "count": 9,
+  "cases": [
+    { "id": "same-currency-equals-amount", "file": "same-currency-equals-amount.json", "status": "UNVERIFIED" },
+    { "id": "same-currency-explicit-one-rate", "file": "same-currency-explicit-one-rate.json", "status": "UNVERIFIED" },
+    { "id": "foreign-exact-conversion", "file": "foreign-exact-conversion.json", "status": "UNVERIFIED" },
+    { "id": "foreign-positive-half-away-from-zero", "file": "foreign-positive-half-away-from-zero.json", "status": "UNVERIFIED" },
+    { "id": "foreign-negative-half-away-from-zero", "file": "foreign-negative-half-away-from-zero.json", "status": "UNVERIFIED" },
+    { "id": "foreign-one-minor-unit-tolerance", "file": "foreign-one-minor-unit-tolerance.json", "status": "UNVERIFIED" },
+    { "id": "foreign-non-positive-rate", "file": "foreign-non-positive-rate.json", "status": "UNVERIFIED" },
+    { "id": "foreign-sign-mismatch", "file": "foreign-sign-mismatch.json", "status": "UNVERIFIED" },
+    { "id": "balanced-multi-currency-posting", "file": "balanced-multi-currency-posting.json", "status": "UNVERIFIED" }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "input": {
+    "spaceBaseCurrency": "CHF",
+    "lines": [
+      { "amountMinor": 100, "currency": "CHF", "baseAmountMinor": 100 },
+      { "amountMinor": -100, "currency": "EUR", "baseAmountMinor": -110, "fxRate": "1.1" },
+      { "amountMinor": 10, "currency": "CHF", "baseAmountMinor": 10 }
+    ]
+  },
+  "expected": {
+    "status": "UNVERIFIED",
+    "reason": "No executable OLD posting-time base-amount validator exists."
+  }
+}
