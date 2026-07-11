@@ -17,6 +17,7 @@ public class ModuleBoundaryTests
     [
         Assembly.Load("LeafLedger.SharedKernel"),
         Assembly.Load("LeafLedger.Host"),
+        Assembly.Load("LeafLedger.Modules.ChartOfAccounts"),
         Assembly.Load("LeafLedger.Modules.Ledger"),
     ];
 
@@ -42,6 +43,7 @@ public class ModuleBoundaryTests
             .ShouldNot()
             .HaveDependencyOnAny(
                 "LeafLedger.Host",
+                "LeafLedger.Modules.Ledger",
                 "Microsoft.EntityFrameworkCore",
                 "Microsoft.AspNetCore")
             .GetResult();
