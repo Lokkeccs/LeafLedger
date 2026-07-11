@@ -1,4 +1,5 @@
 using LeafLedger.Modules.Ledger.Application.Posting;
+using LeafLedger.Modules.Ledger.Application.Reporting;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -35,8 +36,36 @@ public static class LedgerEndpoints
             .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
         configureAuthorization?.Invoke(reverseEndpoint, "ledger.reverse");
 
+        var reportGroup = endpoints.MapGroup("/api/v1/spaces/{spaceId:guid}")
+            .WithTags("Ledger");
+        MapReportEndpoint<TrialBalanceReport>(reportGroup.MapGet("/reports/trial-balance", GetTrialBalanceAsync), "GetTrialBalance");
+        MapReportEndpoint<BalanceSheetReport>(reportGroup.MapGet("/reports/balance-sheet", GetBalanceSheetAsync), "GetBalanceSheet");
+        MapReportEndpoint<IncomeStatementReport>(reportGroup.MapGet("/reports/income-statement", GetIncomeStatementAsync), "GetIncomeStatement");
+        MapReportEndpoint<IntegrityReport>(reportGroup.MapGet("/integrity", GetIntegrityAsync), "GetIntegrity");
+
+        void MapReportEndpoint<TResponse>(RouteHandlerBuilder endpoint, string name)
+        {
+            endpoint.WithName(name)
+            .Produces<TResponse>(StatusCodes.Status200OK)
+                .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+                .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+            configureAuthorization?.Invoke(endpoint, "ledger.read");
+        }
+
         return endpoints;
     }
+
+    private static Task<TrialBalanceReport> GetTrialBalanceAsync(Guid spaceId, [FromServices] ILedgerReportService service, CancellationToken cancellationToken) =>
+        service.GetTrialBalanceAsync(spaceId, cancellationToken);
+
+    private static Task<BalanceSheetReport> GetBalanceSheetAsync(Guid spaceId, [FromServices] ILedgerReportService service, CancellationToken cancellationToken) =>
+        service.GetBalanceSheetAsync(spaceId, cancellationToken);
+
+    private static Task<IncomeStatementReport> GetIncomeStatementAsync(Guid spaceId, [FromServices] ILedgerReportService service, CancellationToken cancellationToken) =>
+        service.GetIncomeStatementAsync(spaceId, cancellationToken);
+
+    private static Task<IntegrityReport> GetIntegrityAsync(Guid spaceId, [FromServices] ILedgerReportService service, CancellationToken cancellationToken) =>
+        service.GetIntegrityAsync(spaceId, cancellationToken);
 
     private static async Task<IResult> PostJournalEntryAsync(
         Guid spaceId,

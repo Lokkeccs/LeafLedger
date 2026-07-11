@@ -35,8 +35,7 @@ builder.Services.AddOpenApi("v1", options =>
         };
 
         foreach (var path in document.Paths.Where(item =>
-                     item.Key.StartsWith("/api/v1/spaces/", StringComparison.Ordinal) &&
-                     item.Key.Contains("journal-entries", StringComparison.Ordinal)))
+                     item.Key.StartsWith("/api/v1/spaces/", StringComparison.Ordinal)))
         {
             foreach (var operation in path.Value.Operations.Values)
             {

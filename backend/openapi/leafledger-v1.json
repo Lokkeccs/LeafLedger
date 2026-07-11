@@ -215,10 +215,315 @@
           }
         ]
       }
+    },
+    "/api/v1/spaces/{spaceId}/reports/trial-balance": {
+      "get": {
+        "tags": [
+          "Ledger"
+        ],
+        "operationId": "GetTrialBalance",
+        "parameters": [
+          {
+            "name": "spaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrialBalanceReport"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [ ]
+          }
+        ]
+      }
+    },
+    "/api/v1/spaces/{spaceId}/reports/balance-sheet": {
+      "get": {
+        "tags": [
+          "Ledger"
+        ],
+        "operationId": "GetBalanceSheet",
+        "parameters": [
+          {
+            "name": "spaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BalanceSheetReport"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [ ]
+          }
+        ]
+      }
+    },
+    "/api/v1/spaces/{spaceId}/reports/income-statement": {
+      "get": {
+        "tags": [
+          "Ledger"
+        ],
+        "operationId": "GetIncomeStatement",
+        "parameters": [
+          {
+            "name": "spaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncomeStatementReport"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [ ]
+          }
+        ]
+      }
+    },
+    "/api/v1/spaces/{spaceId}/integrity": {
+      "get": {
+        "tags": [
+          "Ledger"
+        ],
+        "operationId": "GetIntegrity",
+        "parameters": [
+          {
+            "name": "spaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrityReport"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [ ]
+          }
+        ]
+      }
     }
   },
   "components": {
     "schemas": {
+      "BalanceSheetReport": {
+        "required": [
+          "spaceId",
+          "lines",
+          "currentResultMinor"
+        ],
+        "type": "object",
+        "properties": {
+          "spaceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportLine"
+            }
+          },
+          "currentResultMinor": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "IncomeStatementReport": {
+        "required": [
+          "spaceId",
+          "lines",
+          "netResultMinor"
+        ],
+        "type": "object",
+        "properties": {
+          "spaceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportLine"
+            }
+          },
+          "netResultMinor": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "IntegrityReport": {
+        "required": [
+          "spaceId",
+          "algorithm",
+          "version",
+          "lineCount",
+          "trialBalanceHash",
+          "balanced"
+        ],
+        "type": "object",
+        "properties": {
+          "spaceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "algorithm": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "lineCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "trialBalanceHash": {
+            "type": "string"
+          },
+          "balanced": {
+            "type": "boolean"
+          }
+        }
+      },
       "LedgerProblemDetails": {
         "type": "object",
         "properties": {
@@ -473,6 +778,42 @@
           }
         }
       },
+      "ReportLine": {
+        "required": [
+          "accountId",
+          "accountCode",
+          "name",
+          "accountKind",
+          "amountMinor",
+          "isDerived"
+        ],
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "accountCode": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "accountKind": {
+            "type": "string"
+          },
+          "amountMinor": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "isDerived": {
+            "type": "boolean"
+          }
+        }
+      },
       "ReverseJournalEntryRequest": {
         "required": [
           "date"
@@ -482,6 +823,60 @@
           "date": {
             "type": "string",
             "format": "date"
+          }
+        }
+      },
+      "TrialBalanceReport": {
+        "required": [
+          "spaceId",
+          "lines",
+          "totalBaseBalanceMinor"
+        ],
+        "type": "object",
+        "properties": {
+          "spaceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrialBalanceRow"
+            }
+          },
+          "totalBaseBalanceMinor": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "TrialBalanceRow": {
+        "required": [
+          "accountId",
+          "accountCode",
+          "accountName",
+          "accountKind",
+          "baseBalanceMinor"
+        ],
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "accountCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "accountName": {
+            "type": "string"
+          },
+          "accountKind": {
+            "type": "string"
+          },
+          "baseBalanceMinor": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       }
