@@ -1,3 +1,5 @@
+using LeafLedger.Modules.Ledger.Infrastructure;
+
 #pragma warning disable CA1861
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,9 +30,23 @@ if (!string.IsNullOrEmpty(connectionString))
         );
 }
 
+// Ledger persistence (P2-WP02). EF usage stays inside the module's Infrastructure via
+// these extension methods, so the Host takes no direct EF Core dependency.
+if (!string.IsNullOrEmpty(connectionString))
+{
+    builder.Services.AddLedgerModule(connectionString);
+}
+
 #pragma warning restore CA1861
 
 var app = builder.Build();
+
+// Apply Ledger migrations on startup for local dev / compose. Production migrations run
+// through the deploy pipeline, not here.
+if (app.Environment.IsDevelopment() && !string.IsNullOrEmpty(connectionString))
+{
+    await app.Services.MigrateLedgerAsync();
+}
 
 // Serve the OpenAPI document (GET /openapi/v1.json) in development; the
 // canonical contract is emitted at build time regardless (see csproj).

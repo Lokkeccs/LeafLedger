@@ -9,11 +9,14 @@
     <PackageReference Include="NetArchTest.Rules" Version="1.3.2" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <!-- Align EF Core with the Ledger module (NetArchTest pulls 9.0.1 transitively). -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\LeafLedger.Host\LeafLedger.Host.csproj" />
     <ProjectReference Include="..\..\src\LeafLedger.SharedKernel\LeafLedger.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\src\LeafLedger.Modules.Ledger\LeafLedger.Modules.Ledger.csproj" />
   </ItemGroup>
 
 </Project>
