@@ -1,4 +1,5 @@
 using LeafLedger.Modules.Ledger.Application.Posting;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,23 +9,31 @@ namespace LeafLedger.Modules.Ledger.Infrastructure;
 
 public static class LedgerEndpoints
 {
-    public static IEndpointRouteBuilder MapLedgerEndpoints(this IEndpointRouteBuilder endpoints)
+    public static IEndpointRouteBuilder MapLedgerEndpoints(
+        this IEndpointRouteBuilder endpoints,
+        Action<RouteHandlerBuilder, string>? configureAuthorization = null)
     {
         var group = endpoints.MapGroup("/api/v1/spaces/{spaceId:guid}/journal-entries")
             .WithTags("Ledger");
 
-        group.MapPost("/", PostJournalEntryAsync)
+        var postEndpoint = group.MapPost("/", PostJournalEntryAsync)
             .WithName("PostJournalEntry")
             .Produces<PostingResponse>(StatusCodes.Status201Created)
             .Produces<LedgerProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
-            .Produces<LedgerProblemDetails>(StatusCodes.Status422UnprocessableEntity, "application/problem+json");
+            .Produces<LedgerProblemDetails>(StatusCodes.Status422UnprocessableEntity, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(postEndpoint, "ledger.post");
 
-        group.MapPost("/{entryId:guid}/reverse", ReverseJournalEntryAsync)
+        var reverseEndpoint = group.MapPost("/{entryId:guid}/reverse", ReverseJournalEntryAsync)
             .WithName("ReverseJournalEntry")
             .Produces<PostingResponse>(StatusCodes.Status201Created)
             .Produces<LedgerProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
             .Produces<LedgerProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")
-            .Produces<LedgerProblemDetails>(StatusCodes.Status422UnprocessableEntity, "application/problem+json");
+            .Produces<LedgerProblemDetails>(StatusCodes.Status422UnprocessableEntity, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(reverseEndpoint, "ledger.reverse");
 
         return endpoints;
     }
@@ -36,9 +45,9 @@ public static class LedgerEndpoints
         HttpRequest httpRequest,
         CancellationToken cancellationToken)
     {
-        if (!TryGetActor(httpRequest, out var actorId, out var actorError))
+        if (!TryGetActor(httpRequest.HttpContext.User, out var actorId))
         {
-            return actorError!;
+            return AuthorizationFailure();
         }
 
         var outcome = await service.PostAsync(
@@ -55,9 +64,9 @@ public static class LedgerEndpoints
         HttpRequest httpRequest,
         CancellationToken cancellationToken)
     {
-        if (!TryGetActor(httpRequest, out var actorId, out var actorError))
+        if (!TryGetActor(httpRequest.HttpContext.User, out var actorId))
         {
-            return actorError!;
+            return AuthorizationFailure();
         }
 
         var outcome = await service.ReverseAsync(
@@ -88,21 +97,18 @@ public static class LedgerEndpoints
     private static string? GetIdempotencyKey(HttpRequest request) =>
         request.Headers.TryGetValue("Idempotency-Key", out var value) ? value.ToString() : null;
 
-    private static bool TryGetActor(HttpRequest request, out Guid actorId, out IResult? error)
+    private static bool TryGetActor(ClaimsPrincipal principal, out Guid actorId)
     {
-        if (request.Headers.TryGetValue("X-Actor-Id", out var value) && Guid.TryParse(value, out actorId))
-        {
-            error = null;
-            return true;
-        }
-
-        actorId = Guid.Empty;
-        error = Results.Problem(
-            statusCode: StatusCodes.Status400BadRequest,
-            title: "The X-Actor-Id header must contain a GUID.",
-            type: "https://leafledger.dev/problems/request-invalid");
-        return false;
+        var subject = principal.FindFirst("oid")?.Value ?? principal.FindFirst("sub")?.Value;
+        return Guid.TryParse(subject, out actorId);
     }
+
+    private static IResult AuthorizationFailure() =>
+        Results.Problem(
+            statusCode: StatusCodes.Status401Unauthorized,
+            title: "Authentication is required.",
+            type: "https://leafledger.dev/problems/authorization",
+            extensions: new Dictionary<string, object?> { ["code"] = "auth.unauthenticated" });
 }
 
 public sealed class LedgerProblemDetails

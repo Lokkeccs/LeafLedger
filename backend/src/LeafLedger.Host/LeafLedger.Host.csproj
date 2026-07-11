@@ -28,6 +28,7 @@
          transitively. Package-level pin only; the Host takes no EF IL dependency. -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
     <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

@@ -1,9 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using LeafLedger.IntegrationTests.Authorization;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Xunit;
 
@@ -27,6 +30,14 @@ public sealed class LedgerHttpEndpointTests : IAsyncLifetime
                 builder.UseTestServer();
                 builder.UseEnvironment("Production");
                 builder.UseSetting("ConnectionStrings:Postgres", _fixture.ConnectionString);
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddAuthentication(options =>
+                    {
+                        options.DefaultAuthenticateScheme = TestAuthHandler.AuthenticationScheme;
+                        options.DefaultChallengeScheme = TestAuthHandler.AuthenticationScheme;
+                    }).AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(TestAuthHandler.AuthenticationScheme, _ => { });
+                });
             });
         _client = _factory.CreateClient();
         return Task.CompletedTask;
@@ -44,8 +55,8 @@ public sealed class LedgerHttpEndpointTests : IAsyncLifetime
     [Fact]
     public async Task Post_returns_201_location_and_contract_body()
     {
-        var space = await SeedSpaceWithOpenPeriodAsync();
         var actor = Guid.NewGuid();
+        var space = await SeedSpaceWithOpenPeriodAsync(actor);
 
         using var response = await SendJsonAsync(
             HttpMethod.Post, Route(space.SpaceId), new
@@ -66,7 +77,8 @@ public sealed class LedgerHttpEndpointTests : IAsyncLifetime
     [Fact]
     public async Task Unbalanced_post_returns_422_problem_details_with_stable_code_and_issues()
     {
-        var space = await SeedSpaceWithOpenPeriodAsync();
+        var actor = Guid.NewGuid();
+        var space = await SeedSpaceWithOpenPeriodAsync(actor);
 
         using var response = await SendJsonAsync(
             HttpMethod.Post, Route(space.SpaceId), new
@@ -74,7 +86,7 @@ public sealed class LedgerHttpEndpointTests : IAsyncLifetime
                 date = "2026-06-30",
                 description = "HTTP imbalance",
                 lines = Lines(space.AccountId, 100, -90),
-            }, Guid.NewGuid());
+            }, actor);
 
         var problem = await ReadProblemAsync(response, HttpStatusCode.UnprocessableEntity);
         Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
@@ -85,8 +97,8 @@ public sealed class LedgerHttpEndpointTests : IAsyncLifetime
     [Fact]
     public async Task Reversal_returns_201_with_link_and_missing_target_returns_404_problem_details()
     {
-        var space = await SeedSpaceWithOpenPeriodAsync();
         var actor = Guid.NewGuid();
+        var space = await SeedSpaceWithOpenPeriodAsync(actor);
         using var post = await SendJsonAsync(
             HttpMethod.Post, Route(space.SpaceId), new
             {
@@ -114,9 +126,10 @@ public sealed class LedgerHttpEndpointTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Missing_or_malformed_actor_returns_400_and_wrong_route_is_not_found()
+    public async Task Missing_actor_returns_401_and_spoofed_header_is_ignored()
     {
-        var space = await SeedSpaceWithOpenPeriodAsync();
+        var actor = Guid.NewGuid();
+        var space = await SeedSpaceWithOpenPeriodAsync(actor);
         var payload = new
         {
             date = "2026-06-30",
@@ -125,11 +138,11 @@ public sealed class LedgerHttpEndpointTests : IAsyncLifetime
         };
 
         using var missing = await SendJsonAsync(HttpMethod.Post, Route(space.SpaceId), payload);
-        Assert.Equal(HttpStatusCode.BadRequest, missing.StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, missing.StatusCode);
         Assert.Equal("application/problem+json", missing.Content.Headers.ContentType?.MediaType);
 
-        using var malformed = await SendJsonAsync(HttpMethod.Post, Route(space.SpaceId), payload, "not-a-guid");
-        Assert.Equal(HttpStatusCode.BadRequest, malformed.StatusCode);
+        using var spoofed = await SendJsonAsync(HttpMethod.Post, Route(space.SpaceId), payload, actor, "not-a-guid");
+        Assert.Equal(HttpStatusCode.Created, spoofed.StatusCode);
 
         using var wrongRoute = await _client!.GetAsync(Route(space.SpaceId));
         Assert.Equal(HttpStatusCode.MethodNotAllowed, wrongRoute.StatusCode);
@@ -138,7 +151,8 @@ public sealed class LedgerHttpEndpointTests : IAsyncLifetime
     [Fact]
     public async Task Reversal_of_extreme_amount_returns_structured_422_instead_of_overflow()
     {
-        var space = await SeedSpaceWithOpenPeriodAsync();
+        var actor = Guid.NewGuid();
+        var space = await SeedSpaceWithOpenPeriodAsync(actor);
         var entryId = Guid.NewGuid();
         var firstLineId = Guid.NewGuid();
         var secondLineId = Guid.NewGuid();
@@ -169,7 +183,7 @@ public sealed class LedgerHttpEndpointTests : IAsyncLifetime
             HttpMethod.Post,
             Route(space.SpaceId, $"/{entryId}/reverse"),
             new { date = "2026-07-01" },
-            Guid.NewGuid());
+            actor);
 
         var problem = await ReadProblemAsync(response, HttpStatusCode.UnprocessableEntity);
         Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
@@ -177,22 +191,37 @@ public sealed class LedgerHttpEndpointTests : IAsyncLifetime
         Assert.Equal("journal_entry.amount_out_of_range", problem.GetProperty("issues")[0].GetProperty("code").GetString());
     }
 
-    private async Task<SeededSpace> SeedSpaceWithOpenPeriodAsync()
+    private async Task<SeededSpace> SeedSpaceWithOpenPeriodAsync(Guid userId)
     {
         var space = await _fixture.SeedSpaceAsync();
         await _fixture.SeedPeriodAsync(space.SpaceId, new DateOnly(2026, 1, 1), new DateOnly(2027, 1, 1));
+        await _fixture.SeedMembershipAsync(space.SpaceId, userId);
         return space;
     }
 
-    private async Task<HttpResponseMessage> SendJsonAsync(HttpMethod method, string route, object payload, object? actor = null)
+    private async Task<HttpResponseMessage> SendJsonAsync(
+        HttpMethod method,
+        string route,
+        object payload,
+        Guid? subject = null,
+        string? spoofedActor = null,
+        string? scope = "ledger.write")
     {
         using var request = new HttpRequestMessage(method, route)
         {
             Content = JsonContent.Create(payload),
         };
-        if (actor is not null)
+        if (subject is not null)
         {
-            request.Headers.Add("X-Actor-Id", actor.ToString());
+            request.Headers.Add("X-Test-Subject", subject.ToString());
+        }
+        if (scope is not null)
+        {
+            request.Headers.Add("X-Test-Scope", scope);
+        }
+        if (spoofedActor is not null)
+        {
+            request.Headers.Add("X-Actor-Id", spoofedActor);
         }
 
         return await _client!.SendAsync(request);
