@@ -24,3 +24,9 @@ itself, its consequences, and the alternatives rejected.
 | [ADR-0001](./ADR-0001-online-first-postgres.md) | Online-first architecture + PostgreSQL as system of record (fresh-start launch) | accepted | 2026-07-03 | P1-WP05 |
 | [ADR-0002](./ADR-0002-id-storage.md) | Identifier storage — ULID values in `uuid` columns, prefix at the boundary | accepted | 2026-07-06 | P1-WP03 |
 | [ADR-0003](./ADR-0003-api-contract-pipeline.md) | API contract pipeline — build-time OpenAPI → generated TypeScript client | accepted | 2026-07-06 | P1-WP04 |
+| ADR-0004 | *(reserved)* Single migration `DbContext` for the Phase-2 baseline; per-module split deferred | reserved | — | P2-WP02 (N-D1) |
+| [ADR-0005](./ADR-0005-posting-requires-open-period.md) | Posting requires a defined, open period — deliberate divergence from old "no period ⇒ allowed" | accepted | 2026-07-11 | P2-WP04 (A1) |
+
+> **ADR-0004 is reserved, not skipped:** the single-context-baseline decision (P2-WP02 N-D1) was
+> earmarked as ADR-0004 before ADR-0005 was written. It stays reserved until LL Docs Editor drafts it;
+> the number is not reused.
