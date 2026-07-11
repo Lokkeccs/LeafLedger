@@ -1,8 +1,23 @@
+using LeafLedger.Host.Authorization;
 using LeafLedger.Modules.Ledger.Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
 
 #pragma warning disable CA1861
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUser, HttpContextCurrentUser>();
+builder.Services.AddScoped<ILicenseEntitlement, AllowAllLicenseEntitlement>();
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options => AuthenticationConfiguration.ConfigureJwtBearer(options, builder.Configuration));
+builder.Services.AddAuthorization();
 
 // OpenAPI: the "v1" document is the single client contract (P1-WP04).
 builder.Services.AddOpenApi("v1", options =>
@@ -11,6 +26,34 @@ builder.Services.AddOpenApi("v1", options =>
     {
         document.Info.Title = "LeafLedger API";
         document.Info.Version = "v1";
+        document.Components ??= new OpenApiComponents();
+        document.Components.SecuritySchemes["bearerAuth"] = new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+        };
+
+        foreach (var path in document.Paths.Where(item =>
+                     item.Key.StartsWith("/api/v1/spaces/", StringComparison.Ordinal) &&
+                     item.Key.Contains("journal-entries", StringComparison.Ordinal)))
+        {
+            foreach (var operation in path.Value.Operations.Values)
+            {
+                operation.Security.Add(new OpenApiSecurityRequirement
+                {
+                    [new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "bearerAuth",
+                        },
+                    }] = Array.Empty<string>(),
+                });
+            }
+        }
+
         return Task.CompletedTask;
     });
 });
@@ -67,7 +110,11 @@ app.MapGet("/api/v1/meta", () => new MetaResponse("LeafLedger", "v1"))
     .WithName("GetMeta")
     .WithTags("Meta");
 
-app.MapLedgerEndpoints();
+app.UseAuthentication();
+app.UseAuthorization();
+
+var requiredScope = AuthenticationConfiguration.GetRequiredScope(builder.Configuration);
+app.MapLedgerEndpoints((endpoint, permission) => endpoint.RequireSpacePermission(permission, requiredScope));
 
 app.Run();
 

@@ -18,6 +18,7 @@ public static class LedgerModule
         ArgumentNullException.ThrowIfNull(services);
         services.AddDbContext<LedgerDbContext>(options => options.UseNpgsql(connectionString));
         services.AddScoped<IJournalPostingService, JournalPostingService>();
+        services.AddScoped<ISpaceMembershipQuery, SpaceMembershipQuery>();
         return services;
     }
 
