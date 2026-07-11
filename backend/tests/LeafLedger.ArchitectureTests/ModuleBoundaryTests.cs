@@ -36,8 +36,8 @@ public class ModuleBoundaryTests
     [Fact]
     public void DomainNamespacesDependOnlyOnSharedKernel()
     {
-        var result = Types
-            .InAssemblies(AllLeafLedgerAssemblies())
+        var chartOfAccountsResult = Types
+            .InAssembly(Assembly.Load("LeafLedger.Modules.ChartOfAccounts"))
             .That()
             .ResideInNamespaceMatching(@"\.Domain($|\.)")
             .ShouldNot()
@@ -48,7 +48,20 @@ public class ModuleBoundaryTests
                 "Microsoft.AspNetCore")
             .GetResult();
 
-        Assert.True(result.IsSuccessful, FailingTypes(result));
+        var ledgerResult = Types
+            .InAssembly(Assembly.Load("LeafLedger.Modules.Ledger"))
+            .That()
+            .ResideInNamespaceMatching(@"\.Domain($|\.)")
+            .ShouldNot()
+            .HaveDependencyOnAny(
+                "LeafLedger.Host",
+                "LeafLedger.Modules.ChartOfAccounts",
+                "Microsoft.EntityFrameworkCore",
+                "Microsoft.AspNetCore")
+            .GetResult();
+
+        Assert.True(chartOfAccountsResult.IsSuccessful, FailingTypes(chartOfAccountsResult));
+        Assert.True(ledgerResult.IsSuccessful, FailingTypes(ledgerResult));
     }
 
     [Fact]
