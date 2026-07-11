@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\LeafLedger.SharedKernel\LeafLedger.SharedKernel.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\LeafLedger.Host\LeafLedger.Host.csproj" />
     <ProjectReference Include="..\..\src\LeafLedger.SharedKernel\LeafLedger.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\src\LeafLedger.Modules.ChartOfAccounts\LeafLedger.Modules.ChartOfAccounts.csproj" />
     <ProjectReference Include="..\..\src\LeafLedger.Modules.Ledger\LeafLedger.Modules.Ledger.csproj" />
   </ItemGroup>
 
