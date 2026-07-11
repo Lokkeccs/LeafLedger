@@ -120,6 +120,21 @@ public sealed class LedgerDbFixture : IAsyncLifetime
         await cmd.ExecuteNonQueryAsync();
         return spaceId;
     }
+
+    public async Task SeedPeriodAsync(Guid spaceId, DateOnly startDate, DateOnly endExclusive, string state = "open")
+    {
+        await using var connection = await OpenSuperuserAsync();
+        await using var cmd = new NpgsqlCommand(
+            "INSERT INTO periods (id, space_id, name, start_date, end_exclusive, state, created_at) " +
+            "VALUES (@id, @space, 'FY 2026', @start, @end, @state, now());",
+            connection);
+        cmd.Parameters.AddWithValue("id", Guid.NewGuid());
+        cmd.Parameters.AddWithValue("space", spaceId);
+        cmd.Parameters.AddWithValue("start", startDate);
+        cmd.Parameters.AddWithValue("end", endExclusive);
+        cmd.Parameters.AddWithValue("state", state);
+        await cmd.ExecuteNonQueryAsync();
+    }
 }
 
 public readonly record struct SeededSpace(Guid SpaceId, Guid GroupId, Guid AccountId);

@@ -2,6 +2,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LeafLedger.SharedKernel\LeafLedger.SharedKernel.csproj" />
+    <ProjectReference Include="..\LeafLedger.Modules.ChartOfAccounts\LeafLedger.Modules.ChartOfAccounts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>

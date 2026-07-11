@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using LeafLedger.Modules.Ledger.Application.Posting;
 
 namespace LeafLedger.Modules.Ledger.Infrastructure;
 
@@ -16,6 +17,7 @@ public static class LedgerModule
     {
         ArgumentNullException.ThrowIfNull(services);
         services.AddDbContext<LedgerDbContext>(options => options.UseNpgsql(connectionString));
+        services.AddScoped<IJournalPostingService, JournalPostingService>();
         return services;
     }
 

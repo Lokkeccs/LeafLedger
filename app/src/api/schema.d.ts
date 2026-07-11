@@ -20,13 +20,123 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/spaces/{spaceId}/journal-entries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PostJournalEntry"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/spaces/{spaceId}/journal-entries/{entryId}/reverse": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ReverseJournalEntry"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        LedgerProblemDetails: {
+            type?: string | null;
+            title?: string | null;
+            /** Format: int32 */
+            status?: number | null;
+            detail?: string | null;
+            instance?: string | null;
+            errors?: components["schemas"]["LedgerProblemError"][] | null;
+            issues?: components["schemas"]["LedgerProblemIssue"][] | null;
+        };
+        LedgerProblemError: {
+            code: string;
+            message: string;
+            /** Format: int32 */
+            line: number | null;
+        };
+        LedgerProblemIssue: {
+            code: string;
+            message: string;
+            /** Format: int32 */
+            line: number | null;
+        };
+        LineAttributionRequest: {
+            /** Format: uuid */
+            userId: string;
+            /** Format: int32 */
+            sharePermille: number;
+        };
         MetaResponse: {
             name: string;
             version: string;
+        };
+        PostingResponse: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            entryNo: number;
+            /** Format: date */
+            date: string;
+            /** Format: uuid */
+            reversesEntryId: string | null;
+        };
+        PostJournalEntryRequest: {
+            /** Format: date */
+            date: string;
+            description: string;
+            lines: components["schemas"]["PostJournalLineRequest"][];
+            /** @default null */
+            reference: string | null;
+        };
+        PostJournalLineRequest: {
+            /** Format: uuid */
+            accountId: string;
+            /** Format: int64 */
+            amountMinor: number;
+            currency: string | null;
+            /** Format: int64 */
+            baseAmountMinor: number;
+            /** @default null */
+            fxRate: string | null;
+            /**
+             * Format: uuid
+             * @default null
+             */
+            vatCodeId: string | null;
+            /**
+             * Format: uuid
+             * @default null
+             */
+            businessPartnerId: string | null;
+            /**
+             * Format: uuid
+             * @default null
+             */
+            projectId: string | null;
+            /** @default null */
+            attributions: components["schemas"]["LineAttributionRequest"][] | null;
+        };
+        ReverseJournalEntryRequest: {
+            /** Format: date */
+            date: string;
         };
     };
     responses: never;
@@ -53,6 +163,104 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MetaResponse"];
+                };
+            };
+        };
+    };
+    PostJournalEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                spaceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PostJournalEntryRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PostingResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["LedgerProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["LedgerProblemDetails"];
+                };
+            };
+        };
+    };
+    ReverseJournalEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                spaceId: string;
+                entryId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReverseJournalEntryRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PostingResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["LedgerProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["LedgerProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["LedgerProblemDetails"];
                 };
             };
         };

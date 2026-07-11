@@ -16,10 +16,13 @@
     <PackageReference Include="Npgsql" Version="9.0.3" />
     <!-- Align EF Core with the Ledger module (transitive 9.0.1 otherwise conflicts). -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\LeafLedger.Modules.Ledger\LeafLedger.Modules.Ledger.csproj" />
+    <ProjectReference Include="..\..\src\LeafLedger.Host\LeafLedger.Host.csproj" />
   </ItemGroup>
 
 </Project>
