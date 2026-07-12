@@ -75,6 +75,49 @@ public sealed class LedgerAuthorizationTests : IAsyncLifetime
         Assert.Equal("auth.not_a_member", problem.GetProperty("code").GetString());
     }
 
+    [Fact]
+    public async Task Missing_tenant_returns_identity_unresolved_without_provisioning()
+    {
+        var subject = Guid.NewGuid();
+        var space = await SeedSpaceAsync();
+        using var request = CreateRequest(HttpMethod.Post, Route(space.SpaceId), space.AccountId, subject);
+        request.Headers.Add("X-Test-Omit-Tenant", "true");
+
+        using var response = await _client!.SendAsync(request);
+
+        var problem = await ReadProblemAsync(response, HttpStatusCode.Forbidden);
+        Assert.Equal("auth.identity_unresolved", problem.GetProperty("code").GetString());
+        await using var connection = await _fixture.OpenSuperuserAsync();
+        await using var command = new NpgsqlCommand(
+            "SELECT COUNT(*) FROM identity_links WHERE subject = @subject;",
+            connection);
+        command.Parameters.AddWithValue("subject", subject);
+        Assert.Equal(0L, (long)(await command.ExecuteScalarAsync())!);
+    }
+
+    [Fact]
+    public async Task Membership_under_raw_subject_does_not_bypass_identity_link_resolution()
+    {
+        var subject = Guid.NewGuid();
+        var space = await SeedSpaceAsync();
+        await using (var connection = await _fixture.OpenSuperuserAsync())
+        await using (var command = new NpgsqlCommand(
+            "INSERT INTO memberships (id, space_id, user_id, role, created_at) " +
+            "VALUES (@id, @space, @user, 'Member', now());",
+            connection))
+        {
+            command.Parameters.AddWithValue("id", Guid.NewGuid());
+            command.Parameters.AddWithValue("space", space.SpaceId);
+            command.Parameters.AddWithValue("user", subject);
+            await command.ExecuteNonQueryAsync();
+        }
+
+        using var response = await SendPostAsync(space, subject);
+
+        var problem = await ReadProblemAsync(response, HttpStatusCode.Forbidden);
+        Assert.Equal("auth.not_a_member", problem.GetProperty("code").GetString());
+    }
+
     [Theory]
     [InlineData("Member")]
     [InlineData("Admin")]
@@ -173,9 +216,10 @@ public sealed class LedgerAuthorizationTests : IAsyncLifetime
             connection);
         command.Parameters.AddWithValue("id", entryId);
         var createdBy = (Guid)(await command.ExecuteScalarAsync())!;
+        var internalUserId = await _fixture.ResolveIdentityLinkAsync(subject, Guid.Parse(TestAuthHandler.DefaultTenantId));
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        Assert.Equal(subject, createdBy);
+        Assert.Equal(internalUserId, createdBy);
         Assert.NotEqual(spoofedActor, createdBy);
     }
 

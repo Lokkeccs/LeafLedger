@@ -83,6 +83,7 @@ public sealed class AuthorizationFilterTests
         context.RequestServices = new ServiceCollection()
             .AddLogging()
             .AddSingleton(currentUser)
+            .AddSingleton<IIdentityResolver>(new RecordingIdentityResolver())
             .AddSingleton(license)
             .AddSingleton(membership)
             .BuildServiceProvider();
@@ -118,7 +119,7 @@ public sealed class AuthorizationFilterTests
 
         public Guid? SubjectId { get; } = subjectId;
 
-        public string? TenantId => null;
+        public string? TenantId => "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb";
 
         public IReadOnlySet<string> Scopes { get; } = scopes.ToHashSet(StringComparer.Ordinal);
 
@@ -145,5 +146,11 @@ public sealed class AuthorizationFilterTests
             Called = true;
             return Task.FromResult(role);
         }
+    }
+
+    private sealed class RecordingIdentityResolver : IIdentityResolver
+    {
+        public Task<Guid> ResolveUserIdAsync(Guid subject, Guid tenantId, CancellationToken cancellationToken = default) =>
+            Task.FromResult(subject);
     }
 }

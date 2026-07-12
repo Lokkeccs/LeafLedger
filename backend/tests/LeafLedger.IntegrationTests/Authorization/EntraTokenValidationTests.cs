@@ -192,7 +192,7 @@ public sealed class EntraTokenValidationTests : IAsyncLifetime
     {
         var space = await _fixture.SeedSpaceAsync();
         await _fixture.SeedPeriodAsync(space.SpaceId, new DateOnly(2026, 1, 1), new DateOnly(2027, 1, 1));
-        await _fixture.SeedMembershipAsync(space.SpaceId, actor, "Member");
+        await _fixture.SeedMembershipAsync(space.SpaceId, actor, "Member", Guid.Parse(TenantId));
         return space;
     }
 

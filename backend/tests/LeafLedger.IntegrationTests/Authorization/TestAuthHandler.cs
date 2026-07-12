@@ -9,6 +9,7 @@ namespace LeafLedger.IntegrationTests.Authorization;
 public sealed class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
     public const string AuthenticationScheme = "Test";
+    public const string DefaultTenantId = "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb";
 
     public TestAuthHandler(
         IOptionsMonitor<AuthenticationSchemeOptions> options,
@@ -31,6 +32,13 @@ public sealed class TestAuthHandler : AuthenticationHandler<AuthenticationScheme
             new("oid", subjectId.ToString()),
             new("sub", subjectId.ToString()),
         };
+        if (!Request.Headers.ContainsKey("X-Test-Omit-Tenant"))
+        {
+            var tenant = Request.Headers.TryGetValue("X-Test-Tenant", out var tenantValue)
+                ? tenantValue.ToString()
+                : DefaultTenantId;
+            claims.Add(new Claim("tid", tenant));
+        }
         if (Request.Headers.TryGetValue("X-Test-Scope", out var scopeValue) &&
             !string.IsNullOrWhiteSpace(scopeValue.ToString()))
         {
