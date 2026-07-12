@@ -39,9 +39,22 @@ jobs:
         with:
           dotnet-version: 9.0.x
       - run: dotnet build --configuration Release
-      # Unit + architecture tests only; Testcontainers (Category=Integration)
-      # runs on main via the dedicated integration job, never on PRs.
-      - run: dotnet test --configuration Release --no-build --filter "Category!=Integration"
+      # Unit + architecture tests only; integration and property tests run in their
+      # dedicated Docker-backed jobs below.
+      - run: dotnet test --configuration Release --no-build --filter "Category!=Integration&Category!=Property"
+
+  property:
+    name: Financial invariant properties (Testcontainers Postgres)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      - run: dotnet test tests/LeafLedger.IntegrationTests --configuration Release --filter "Category=Property"
 
   gitleaks:
     name: Secret scan (gitleaks)
