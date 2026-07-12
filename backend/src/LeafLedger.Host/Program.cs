@@ -52,7 +52,7 @@ builder.Services.AddOpenApi("v1", options =>
                     }] = Array.Empty<string>(),
                 });
 
-                if (operation.OperationId is "PostJournalEntry" or "ReverseJournalEntry")
+                if (operation.OperationId is "PostJournalEntry" or "ReverseJournalEntry" or "CreatePeriod" or "ClosePeriod" or "ReopenPeriod" or "LockPeriod")
                 {
                     operation.Parameters ??= new List<OpenApiParameter>();
                     operation.Parameters.Add(new OpenApiParameter

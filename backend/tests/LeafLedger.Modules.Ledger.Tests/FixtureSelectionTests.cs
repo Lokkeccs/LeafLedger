@@ -6,11 +6,11 @@ namespace LeafLedger.Modules.Ledger.Tests;
 public class FixtureSelectionTests
 {
     [Fact]
-    public void Selects_exactly_the_37_ledger_posting_fixtures()
+    public void Selects_exactly_the_49_ledger_fixtures()
     {
         var fixtures = LedgerCorePostingFixtureLoader.LoadSelected();
 
-        Assert.Equal(37, fixtures.Count);
+        Assert.Equal(49, fixtures.Count);
         Assert.Equal(10, CountFolder(fixtures, "posting-accounts/"));
         Assert.Equal(7, CountFolder(fixtures, "posting-business-partners/"));
         Assert.Equal(7, CountFolder(fixtures, "posting-users/"));

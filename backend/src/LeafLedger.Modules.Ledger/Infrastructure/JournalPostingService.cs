@@ -406,7 +406,7 @@ internal sealed class JournalPostingService : IJournalPostingService
     }
 
     private static PeriodSnapshot ToPeriodSnapshot(Entities.Period period) =>
-        new(period.Name, period.StartDate, period.EndExclusive.AddDays(-1), Enum.Parse<PeriodState>(period.State, true));
+        new(period.Name, period.StartDate, period.EndExclusive, Enum.Parse<PeriodState>(period.State, true));
 
     private static CurrencyPolicyAccount ToCurrencyAccount(Entities.Account account) =>
         new(Id<AccountTag>.FromStorage(account.Id), account.Currency, Enum.Parse<AccountKind>(account.Kind, true));

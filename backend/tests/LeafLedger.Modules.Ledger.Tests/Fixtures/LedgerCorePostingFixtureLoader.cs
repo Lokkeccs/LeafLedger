@@ -20,6 +20,8 @@ public static class LedgerCorePostingFixtureLoader
         "assertPostingProjectsValid",
         "getEffectivePeriodState",
         "assertPostingPeriodOpen",
+        "updatePeriodState",
+        "getPeriodForDate",
     ];
 
     public static IReadOnlyList<LedgerCorePostingFixture> LoadSelected()
@@ -50,7 +52,8 @@ public static class LedgerCorePostingFixtureLoader
         file.StartsWith("posting-business-partners/", StringComparison.Ordinal) ||
         file.StartsWith("posting-users/", StringComparison.Ordinal) ||
         file.StartsWith("posting-projects/", StringComparison.Ordinal) ||
-        file.StartsWith("period-state/", StringComparison.Ordinal);
+        file.StartsWith("period-state/", StringComparison.Ordinal) ||
+        file.StartsWith("period-lifecycle/", StringComparison.Ordinal);
 
     private static LedgerCorePostingFixture Load(JsonElement item)
     {

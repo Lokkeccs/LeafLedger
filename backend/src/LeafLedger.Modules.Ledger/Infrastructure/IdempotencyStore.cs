@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 using LeafLedger.Modules.Ledger.Application.Posting;
+using LeafLedger.Modules.Ledger.Application.Periods;
 using LeafLedger.SharedKernel;
 using Npgsql;
 
@@ -17,7 +18,7 @@ public static class IdempotencyStore
         CancellationToken cancellationToken)
     {
         await using var command = new NpgsqlCommand(
-            "SELECT request_hash, response_status, response_body::text " +
+            "SELECT target, request_hash, response_status, response_body::text " +
             "FROM idempotency_keys " +
             "WHERE space_id = @space AND idempotency_key = @key " +
             "AND created_at >= now() - interval '24 hours';",
@@ -32,9 +33,12 @@ public static class IdempotencyStore
         }
 
         return new IdempotencyRecord(
-            (byte[])reader[0],
-            reader.GetInt32(1),
-            SerializeResponse(JsonSerializer.Deserialize<PostingResponse>(reader.GetString(2), JsonOptions)!));
+            reader.GetString(0),
+            (byte[])reader[1],
+            reader.GetInt32(2),
+            reader.GetString(0).StartsWith("period.", StringComparison.Ordinal)
+                ? SerializeResponse(JsonSerializer.Deserialize<PeriodResponse>(reader.GetString(3), JsonOptions)!)
+                : SerializeResponse(JsonSerializer.Deserialize<PostingResponse>(reader.GetString(3), JsonOptions)!));
     }
 
     public static async Task InsertAsync(
@@ -107,6 +111,8 @@ public static class IdempotencyStore
             date = command.Date.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture),
         });
 
+    public static byte[] HashPeriod(string target, object payload) => HashCanonical(target, payload);
+
     public static string SerializeResponse(object response) => JsonSerializer.Serialize(response, JsonOptions);
 
     private static string CanonicalLine(PostJournalLineRequest line) =>
@@ -131,7 +137,7 @@ public static class IdempotencyStore
     }
 }
 
-public sealed record IdempotencyRecord(byte[] RequestHash, int ResponseStatus, string ResponseBody);
+public sealed record IdempotencyRecord(string Target, byte[] RequestHash, int ResponseStatus, string ResponseBody);
 
 internal readonly struct IdempotencyKeyTag : IEntityTag
 {

@@ -27,9 +27,12 @@ public static class PeriodStateResolver
             : PeriodOpenResult.NotOpen(period, transactionDate);
     }
 
+    public static bool IsDateInPeriod(DateOnly transactionDate, PeriodSnapshot period) =>
+        transactionDate >= period.StartDate && transactionDate < period.EndExclusive;
+
     private static PeriodSnapshot? FindPeriod(
         DateOnly transactionDate,
         IEnumerable<PeriodSnapshot> periods) =>
         periods.FirstOrDefault(period =>
-            transactionDate >= period.StartDate && transactionDate <= period.EndDate);
+            IsDateInPeriod(transactionDate, period));
 }

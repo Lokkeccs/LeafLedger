@@ -45,6 +45,7 @@ public static class LedgerEndpoints
         MapReportEndpoint<BalanceSheetReport>(reportGroup.MapGet("/reports/balance-sheet", GetBalanceSheetAsync), "GetBalanceSheet");
         MapReportEndpoint<IncomeStatementReport>(reportGroup.MapGet("/reports/income-statement", GetIncomeStatementAsync), "GetIncomeStatement");
         MapReportEndpoint<IntegrityReport>(reportGroup.MapGet("/integrity", GetIntegrityAsync), "GetIntegrity");
+        endpoints.MapPeriodEndpoints(configureAuthorization);
 
         void MapReportEndpoint<TResponse>(RouteHandlerBuilder endpoint, string name)
         {

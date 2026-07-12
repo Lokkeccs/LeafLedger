@@ -1,0 +1,15 @@
+{
+  "input": {
+    "periodId": 1,
+    "initialState": "closed",
+    "newState": "open",
+    "closedBy": 42
+  },
+  "expected": {
+    "value": {
+      "result": true,
+      "state": "open",
+      "closedAtPresent": false
+    }
+  }
+}
