@@ -49,7 +49,7 @@ public static class PeriodEndpoints
     private static async Task<IResult> CreateAsync(Guid spaceId, CreatePeriodRequest request, [FromServices] IPeriodLifecycleService service, HttpRequest httpRequest, CancellationToken cancellationToken)
     {
         IResult? keyError = null;
-        if (!TryGetActor(httpRequest.HttpContext.User, out var actorId) || !TryGetKey(httpRequest, out var key, out keyError))
+        if (!TryGetActor(httpRequest.HttpContext, out var actorId) || !TryGetKey(httpRequest, out var key, out keyError))
         {
             return keyError ?? AuthorizationFailure();
         }
@@ -60,7 +60,7 @@ public static class PeriodEndpoints
     private static async Task<IResult> TransitionAsync(Guid spaceId, Guid periodId, PeriodState target, IPeriodLifecycleService service, HttpRequest httpRequest, CancellationToken cancellationToken)
     {
         IResult? keyError = null;
-        if (!TryGetActor(httpRequest.HttpContext.User, out var actorId) || !TryGetKey(httpRequest, out var key, out keyError))
+        if (!TryGetActor(httpRequest.HttpContext, out var actorId) || !TryGetKey(httpRequest, out var key, out keyError))
         {
             return keyError ?? AuthorizationFailure();
         }
@@ -70,7 +70,7 @@ public static class PeriodEndpoints
 
     private static async Task<IReadOnlyList<PeriodResponse>> ListAsync(Guid spaceId, [FromServices] IPeriodLifecycleService service, HttpRequest httpRequest, CancellationToken cancellationToken)
     {
-        if (!TryGetActor(httpRequest.HttpContext.User, out var actorId))
+        if (!TryGetActor(httpRequest.HttpContext, out var actorId))
         {
             return [];
         }
@@ -124,10 +124,16 @@ public static class PeriodEndpoints
         return true;
     }
 
-    private static bool TryGetActor(ClaimsPrincipal principal, out Guid actorId)
+    private static bool TryGetActor(HttpContext context, out Guid actorId)
     {
-        var subject = principal.FindFirst("oid")?.Value ?? principal.FindFirst("sub")?.Value;
-        return Guid.TryParse(subject, out actorId);
+        if (context.Items.TryGetValue(LedgerRequestContext.ActorIdItemKey, out var value) && value is Guid resolvedActor)
+        {
+            actorId = resolvedActor;
+            return true;
+        }
+
+        actorId = Guid.Empty;
+        return false;
     }
 
     private static IResult AuthorizationFailure() => Results.Problem(statusCode: 401, detail: "Authentication is required.", extensions: new Dictionary<string, object?> { ["code"] = "auth.unauthenticated" });

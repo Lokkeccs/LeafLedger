@@ -1,0 +1,157 @@
+## Implementation notes
+
+- 2026-07-12 — Implemented the raw-SQL `identity_links` migration and security-definer `resolve_identity_link` function with app-role EXECUTE-only access; no EF entity or model snapshot change.
+- 2026-07-12 — Added the EF-free `IIdentityResolver` seam, deterministic consumers-tenant subject canonicalization, internal-user membership/RLS actor wiring, and link-only first-contact behavior. Updated integration seeds to resolve `(subject, tid)` before membership creation.
+- 2026-07-12 — Validation: Release backend `332/332` (including architecture `3/3` and integration `165/165`), focused identity/authorization coverage green, frontend lint/typecheck/tests/page-budget green, and OpenAPI/TS regeneration produced no diff. State -> `verify`; next LL QA Reviewer.
+# P2-WP13 — Identity-links indirection: `(sub/oid, tid) → internal user_id` resolver replacing the WP06 `subject == user_id` simplification
+
+- **Phase:** 2 (ledger core — deferred follow-up; Phase-2 exit gate already met at WP08).
+- **State:** verify — implementation complete; awaiting LL QA Reviewer. No accounting decision required (identity resolution is access control, not accounting behavior → no golden fixtures, no LL Accounting Expert consult).
+- **Owner (implementation):** LL Backend Dev
+- **Depends on:** **P2-WP11** (a *trusted* `sub`/`oid` + `tid` from validated Entra `common` tokens — `ICurrentUser.SubjectId` and `ICurrentUser.TenantId`) and **P2-WP06** (the authorization pipeline this WP re-wires: `RequireSpacePermissionFilter`, `ISpaceMembershipQuery`, the principal-bound txn-local RLS actor binding, and the `AuthorizationContext` the posting/period services consume).
+- **Blocks:** the honest server-side elimination of the OLD candidate-guessing / stale-space auto-join class (weakness §2.5). Production multi-user membership correctness (a member's identity is now a deterministic key, not a fuzzy match).
+- **Estimated size:** ≤ 2 days (one raw-SQL migration + a security-definer resolver function + an `IIdentityResolver` seam + filter/actor re-wiring + subject canonicalization + integration-test seed updates + unit/integration tests; **no OpenAPI/contract change, no `*.Domain` change, no new EF entity**).
+
+## Carve-out note (LL Architect, 2026-07-12)
+
+WP13 was carved out of the original WP11 bundle (`Entra common token validation + identity-links table + sign-out`), which exceeded the ≤ 2-day / independently-verifiable rule — the same reason WP05 split into WP05/WP09/WP10 and WP06 carved WP11. WP11 delivered the **token-validation core** and *exposed* `tid` on `ICurrentUser` specifically so WP13 can key identity by `(subject, tid)`. WP13 delivers the **identity-links half**: the `identity_links` table, a deterministic resolver, and the re-wiring of the WP06 authorization + RLS actor path from the Phase-2 `subject GUID == memberships.user_id` simplification to a proper `(sub/oid, tid) → internal user_id` indirection. The frontend MSAL / `sessionStorage` / sign-out glue remains **Phase 3** (roadmap M0 "Entra auth (MSAL, sessionStorage), identity links"); the backend is stateless bearer auth with no server session to clear, and the auto-join class is eliminated **structurally** here (no fuzzy candidate path exists in the new code), not by a sign-out endpoint.
+
+- **Spec sources:** `docs/architecture/rebuild/03-target-architecture.md` §2 verdict line 51 (*"MSAL / Entra `common` — **Keep**; … identity links table replaces runtime candidate guessing"*), §3 (*Spaces & Identity owns "… memberships, roles, invitations, **identity links**" — server-authoritative*), §8.1 (*"sign-out clears all app state (**kills the stale-space auto-join class**)"*); `docs/architecture/rebuild/02-weaknesses.md` §2.5 (*"Stale-identity auto-join (documented): a different IDP account logging in on a shared device gets a local user record in the previous space"*); `docs/architecture/rebuild/01-current-architecture.md` L106 (*memberships `ARRAY_CONTAINS` candidate matching (email-alias invites)*) + L135 (*"identity-candidate tolerance for stale oids/emails … unconditional `upsertMicrosoftUser()` creates local user records in a prior space"*); `docs/architecture/rebuild/06-feature-roadmap.md` M0 (*"Entra auth (MSAL, sessionStorage), identity links"*); ADR-0001 (server/DB are the source of truth); ADR-0002 (uuid id storage). WP06 plan §"Phase-2 simplification (documented): the subject GUID *is* the internal `memberships.user_id`; the identity-links indirection is WP11" (now WP13).
+
+## Goal
+
+Make the internal `user_id` — the key that memberships, RLS actor binding, and audit rows are written against — a **deterministic function of the validated identity claims** rather than the raw Entra subject GUID. On every authorized request, resolve `(subject, tid)` → a stable internal `user_id` via an `identity_links` table; **provision the link on first contact** (create the mapping, and only the mapping); then read membership and bind `app.current_actor` by that internal `user_id`. This eliminates, by construction, the OLD "candidate-guessing" (fuzzy match a membership across many possible oids/subs/emails) and the stale-space auto-join class (a different IDP account on a shared device inheriting a prior space): there is exactly one deterministic mapping, and provisioning a *new* identity creates **no membership**, so a first-seen principal with no explicit membership is still **403 `auth.not_a_member`**.
+
+WP13 changes **who** the internal actor is (raw subject → resolved `user_id`); it does not change the authorization decision surface, the endpoints, the contract, or any posting/period/reporting behavior.
+
+## Scope
+
+1. **`identity_links` table + resolver (new migration, Ledger Infrastructure).**
+   - Raw-SQL EF migration (the WP09 idempotency-migration precedent) — **no EF entity, no `DbSet`** so `LedgerDbContextModelSnapshot` is unchanged and `HasPendingModelChanges()` stays green.
+   - Table `identity_links(user_id uuid DEFAULT gen_random_uuid(), subject uuid NOT NULL, tenant_id uuid NOT NULL, created_at timestamptz DEFAULT now(), PRIMARY KEY (subject, tenant_id))`. `user_id` is the canonical internal id (a bare uuid, matching `memberships.user_id`'s bare-uuid shape — **no separate `users`/profile table** in this WP; that is a Spaces & Identity carry-forward). The PK on `(subject, tenant_id)` makes resolution both **deterministic** and **concurrency-safe** (via `ON CONFLICT`).
+   - A `SECURITY DEFINER` function `resolve_identity_link(p_subject uuid, p_tenant_id uuid) RETURNS uuid` that atomically upserts-and-returns: `INSERT … ON CONFLICT (subject, tenant_id) DO NOTHING; SELECT user_id …`. `REVOKE ALL … FROM PUBLIC; GRANT EXECUTE … TO leafledger_app`. **The table itself is *not* granted to `leafledger_app`** — the app role can only resolve a *specific* (validated) `(subject, tid)` to its own `user_id`; it can never `SELECT`/enumerate the identity map. This mirrors WP09's `delete_expired_idempotency_keys` security-definer pattern exactly and is the tenancy answer for a deliberately cross-space table (see D-WP13-RESOLVER).
+2. **`IIdentityResolver` seam (Ledger public contract + Infrastructure).**
+   - `IIdentityResolver.ResolveUserIdAsync(Guid subject, Guid tenantId, CancellationToken)` → internal `user_id`, implemented in Ledger `Infrastructure` by calling `resolve_identity_link` under a txn-local `SET LOCAL ROLE leafledger_app` (proving the app role reaches the function, not the table). Registered in `LedgerModule.AddLedgerModule` and consumed by the Host EF-free (same boundary shape as `ISpaceMembershipQuery`).
+3. **Authorization filter re-wiring (Host).**
+   - `RequireSpacePermissionFilter`: after authentication, read `subject` + `tid`; if `tid` is absent → deterministic reject (D-WP13-TID); else `userId = IIdentityResolver.ResolveUserIdAsync(subject, tid)`; run the license seam, then `ISpaceMembershipQuery.GetRoleAsync(spaceId, userId)` **keyed by the resolved internal `user_id`**; stash `AuthorizationContext` with the internal `user_id` as the actor. Provisioning happens as a side-effect of resolution and **never** creates a membership.
+4. **Principal-bound RLS actor = internal `user_id` (Ledger).**
+   - The posting (`JournalPostingService`) and period-lifecycle (`PeriodLifecycleService`) transactions bind `app.current_actor` from the `AuthorizationContext` actor, which is now the **resolved internal `user_id`**, not the raw subject GUID. The value source changes; the txn-local binding mechanism (`SET LOCAL ROLE` + `set_config(..., true)`) is unchanged. `ISpaceMembershipQuery` likewise binds `app.current_actor` = the resolved `user_id`.
+5. **Subject canonicalization (Host — port the OLD *idea*, not the code).**
+   - `HttpContextCurrentUser.SubjectId` canonicalizes to a stable subject: **prefer `sub` when `tid` equals the Entra consumers tenant `9188040d-6c67-4c5b-b112-36a304b66dad`** (personal-account synthetic-OID safety, the deterministic distillation of OLD `TryGetOid`/`LooksSyntheticOid`), otherwise prefer `oid` then `sub`. This is a total, deterministic rule (no candidate list, no email aliases) so the same principal always resolves to the same `(subject, tid)` key. Unit-pinned.
+6. **Tests + docs.** Migration/resolver integration tests, subject-canonicalization unit tests, authorization re-wiring integration tests, and updates to the existing integration-test seed helpers (which currently seed `memberships.user_id = subject`) to seed by the resolved internal `user_id`.
+
+### Pipeline ordering (unchanged surface, new actor)
+
+`authenticated? (401)` → `has tid? (else D-WP13-TID reject)` → `resolve (subject,tid) → user_id (provision link if first contact)` → `valid scope? (403)` → `license entitled? (403)` → `member of space by internal user_id? (403 auth.not_a_member)` → `role grants permission? (403)` → endpoint body (WP05 422/404 unchanged). Resolution slots in **before** the membership read and produces the key that read uses; it adds no new 401/403 code except the D-WP13-TID rejection.
+
+## Non-goals (explicitly deferred)
+
+- **No `users`/profile table, no Spaces & Identity module extraction.** `identity_links.user_id` is a bare canonical uuid; a full user profile (display name, email, last-login) and the dedicated `LeafLedger.Modules.Spaces` context (§3) are a carry-forward, not this WP.
+- **No member-management / invitation endpoints or UI — M2.** No invite-by-email, no email-alias pre-provisioning (the OLD `GetAccessCandidates` email path is **not** reproduced), no role CRUD. Memberships are still seeded directly in tests; onboarding membership creation is Phase 3's space-creation wizard.
+- **No frontend MSAL / `sessionStorage` / sign-out — Phase 3.** The auto-join class is eliminated server-side by deterministic linking; there is no server session to clear.
+- **No candidate-guessing / owner-migration fallback.** The OLD `GetWithOwnerMigrationAsync` "try each stale identity candidate" and `FindByCandidatesAsync` fuzzy paths are deliberately **absent**; a mismatch is a deny, never a fuzzy retry.
+- **No change to authorization rules, permissions, roles, or the two protected endpoints.** `SpaceRole`, `ModulePermissions`, filter ordering, and the WP05/WP06/WP07 endpoint set are unchanged except the actor *value*.
+- **No new endpoint / no OpenAPI or TS contract change.** WP13 adds no route/response; the `contract` gate must stay green with **no** regen. A genuine drift is a plan amendment, not a silent regen.
+- **No identity caching / no token-revocation.** Resolution is one indexed lookup per authorized request; a per-request cache is a later performance WP if measured.
+
+## Source material — salvage vs rewrite
+
+Pinned OLD repo: `Lokkeccs/Accounting` @ `085bedba467e3d46d3889db3bc80ea023e69756e`.
+
+### Reference only (not salvaged as code) — the OLD identity path is "Replace" (§2 line 51, weakness §2.5)
+- `backend/LeafLedger.Auth/ClaimsPrincipalExtensions.cs` — `TryGetOid` (L17; `ConsumersTenantId = "9188040d-6c67-4c5b-b112-36a304b66dad"` at L9, `LooksSyntheticOid` synthetic-zero-OID handling), `GetTid` (L64), `GetIdentityCandidates` (L89 — *"Used for one-time migration when a space's ownerId was stored with a different identity … The preferred identity is always first"*), `GetAccessCandidates` (L108 — oid/sub **plus lowercased email aliases** `preferred_username`/`email`/`upn`). WP13 reuses only the **deterministic idea** of `oid`→`sub` precedence with the consumers-tenant `sub` preference (§Scope 5); the fuzzy multi-candidate + email-alias matching is the exact mechanism §2 line 51 replaces with identity-links and is **not** ported.
+- `backend/LeafLedger.Data/SpaceAccessService.cs` `EvaluateAccessAsync` (L62) → `GetWithOwnerMigrationAsync` then `FindByCandidatesAsync`; `backend/LeafLedger.Data/SpaceRepository.cs` `GetWithOwnerMigrationAsync` (L121 — *"Fallback — try each stale identity candidate"*); `backend/LeafLedger.Data/MembershipRepository.cs` `FindByCandidatesAsync` (L54), `ListByUserIdsAsync` (`ARRAY_CONTAINS` candidate query). These are the candidate-guessing access path — **replaced** by the single deterministic `resolve_identity_link` + membership-by-internal-`user_id`.
+- `src/data/db.ts` `upsertMicrosoftUser` (L2710 — *"Upsert the signed-in Microsoft user into the local users table … a new User record is created"* in the **active** space) and `src/data/sync/CosmosApiSync.ts` `upsertCosmosSpaceMember` (email-keyed membership provisioning). `upsertMicrosoftUser` is the concrete stale-space auto-join weakness (§2.5). WP13's provisioning creates **only** an identity link and **never** a membership, so first contact grants **no** space access.
+
+### Rewrite (spec-derived; no OLD oracle)
+- The `identity_links` table, the `resolve_identity_link` security-definer function, the `IIdentityResolver` seam, the filter/actor re-wiring, and the deterministic subject canonicalization are greenfield per §2 line 51 / §3 / §8.1. They are pinned by **unit + integration tests** (deterministic resolution, provisioning-is-link-only, actor-is-internal-id, no-auto-join), the correct instrument for access-control behavior — not golden fixtures.
+
+## Accounting decisions
+
+**None.** Identity resolution is access control, not accounting behavior. No golden fixtures, no LL Accounting Expert consult. (Recorded explicitly so QA does not expect an accounting artifact.)
+
+## Golden fixtures
+
+**None required.** WP13 changes no accounting rule and produces no financial output. Identity-resolution behavior is pinned by unit tests (subject canonicalization) and integration tests (deterministic/concurrency-safe resolution, provisioning-is-link-only, internal-id actor binding, no-auto-join, WP06/WP11 preservation).
+
+## Decisions (front-loaded for user sign-off — all non-accounting)
+
+- **D-WP13-RESOLVER (tenancy of a cross-space identity table) — RECOMMENDED: security-definer resolver, table ungranted.** `identity_links` is inherently **not** per-space (it maps identity → the internal id that then scopes tenancy), so the WP02/WP07 `space_id`-RLS second wall does not apply to it. Rather than grant the app role raw `SELECT` on a global identity map (enumeration risk) or invent an `app.current_subject` GUC + subject-scoped RLS policy, the app role gets **only `EXECUTE` on `resolve_identity_link`** and **no grant on the table** — it can resolve exactly its own validated `(subject, tid)` and nothing else. This reuses the exact WP09 idempotency precedent (`SECURITY DEFINER` purge function, table not directly granted). **Alternative (documented, not chosen):** a `subject`-scoped RLS policy bound to a new `app.current_subject` GUC — more moving parts for the same guarantee. Adopt only if the security-definer route proves insufficient; record here before use.
+- **D-WP13-PROVISION (first-contact semantics) — link-only, never membership.** Resolving an unseen `(subject, tid)` creates the identity link (new `user_id`) and **nothing else**. It never creates or joins a membership. This is the structural elimination of the auto-join class: a first-seen principal is authenticated but **403 `auth.not_a_member`** until an explicit membership exists.
+- **D-WP13-ACTOR (what `app.current_actor` / `memberships.user_id` mean) — the internal `user_id`.** After WP13 the membership read and the RLS actor binding are keyed by the resolved internal `user_id`, not the raw Entra subject. The raw subject appears only inside `identity_links`. (Consequence: integration-test seeds move from `user_id = subject` to `user_id = resolve(subject,tid)`.)
+- **D-WP13-SUBJECT (subject canonicalization) — prefer `sub` for the consumers tenant.** `SubjectId` = `sub` when `tid == 9188040d-6c67-4c5b-b112-36a304b66dad`, else `oid ?? sub`. Total and deterministic; distills the OLD synthetic-OID safety without the candidate list. (This refines the WP06/WP11 `oid ?? sub` read for personal accounts; org tokens are unaffected.)
+- **D-WP13-TID (`tid` required) — reject when absent.** Identity is keyed by `(subject, tid)`; a validated token without `tid` cannot be linked. WP11 binds the issuer tenant to `tid`, so a genuinely valid Entra token always carries `tid`; an absent `tid` is a deterministic **403** (`auth.identity_unresolved`) and **never** provisions. Alternative (a `tid`-less sentinel) is rejected as it re-introduces cross-account collision.
+- **D-WP13-KEY (uuid storage) — `subject`/`tenant_id` stored as `uuid`.** Entra `oid`/`sub`/`tid` are GUIDs; store as `uuid` (parse-and-reject non-GUID, consistent with ADR-0002 and the existing `Guid?` claim reads). `gen_random_uuid()` (core since PG13; PG17 in use) mints the internal `user_id`.
+
+## Dependencies
+
+- **No new production NuGet.** Npgsql is already referenced by Ledger `Infrastructure`; `gen_random_uuid()` is a core PG17 function; the resolver is a raw SQL function call (the `ISpaceMembershipQuery`/idempotency pattern).
+- Test project (`LeafLedger.IntegrationTests`) already has the WP05/06/11 `WebApplicationFactory` / `LedgerDbFixture` / `TestAuthHandler` / seed helpers to reuse.
+
+## File list (implementation target)
+
+**New — `backend/src/LeafLedger.Modules.Ledger/Infrastructure/Migrations/`**
+- `20260712170000_IdentityLinks.cs` (+ `.Designer.cs`) — raw-SQL `identity_links` table + `resolve_identity_link` security-definer function + grants (EXECUTE to `leafledger_app`, table ungranted, PUBLIC revoked); `Down` drops function + table. **No model-snapshot change.**
+
+**New — `backend/src/LeafLedger.Modules.Ledger/Infrastructure/`**
+- `IIdentityResolver.cs` (public contract) + `IdentityResolver.cs` (calls `resolve_identity_link` under txn-local `SET LOCAL ROLE leafledger_app`); registered in `LedgerModule`.
+
+**Modified**
+- `backend/src/LeafLedger.Modules.Ledger/Infrastructure/LedgerModule.cs` — register `IIdentityResolver`.
+- `backend/src/LeafLedger.Host/Authorization/RequireSpacePermissionFilter.cs` — resolve `(subject, tid)` → internal `user_id`; key the membership read and `AuthorizationContext` actor by it; add the D-WP13-TID `auth.identity_unresolved` reject.
+- `backend/src/LeafLedger.Host/Authorization/ICurrentUser.cs` (+ `HttpContextCurrentUser`) — subject canonicalization (D-WP13-SUBJECT). `AuthorizationContext` field semantics become the internal `user_id`.
+- `backend/src/LeafLedger.Modules.Ledger/Infrastructure/JournalPostingService.cs` and `PeriodLifecycleService.cs` — `app.current_actor` bound from the internal `user_id` in the command/context (value source only; binding mechanism unchanged).
+- `backend/src/LeafLedger.Modules.Ledger/Application/Posting/PostingContracts.cs` (and the period command if applicable) — `ActorId` documented as the resolved internal `user_id`.
+- `backend/src/LeafLedger.Modules.Ledger/Infrastructure/SpaceMembershipQuery.cs` — no signature change; the `userId` argument and the `app.current_actor` it binds are now the internal `user_id` (documented).
+- `backend/openapi/leafledger-v1.json` and `app/src/api/schema.d.ts` — **expected unchanged** (no route/response change); the `contract` gate stays green with no regen.
+- `docs/rebuild/plans/P2-WP13-identity-links.md` + `docs/rebuild/status.md` — notes/state.
+
+**Modified — tests (seed re-key + new coverage)**
+- Integration seed helpers that currently seed `memberships.user_id = subject` — e.g. `backend/tests/LeafLedger.IntegrationTests/**` `LedgerSystemDriver.cs` / `LedgerDbFixture` seed helpers / `Authorization/…` / `Ledger/LedgerHttpEndpointTests.cs` / `Authorization/EntraTokenValidationTests.cs` / the WP08 property driver — updated to resolve the identity (or seed a matching `identity_links` row) and seed the membership by the **internal `user_id`**. (Exact file set confirmed at implementation; the change is mechanical — re-key the membership seed.)
+- **New:** `backend/tests/LeafLedger.IntegrationTests/Authorization/IdentityLinkResolutionTests.cs` (`[Trait("Category","Integration")]`) — deterministic/concurrency-safe resolution, provisioning-is-link-only (no membership row), app-role-cannot-`SELECT`-the-table, actor-is-internal-id, no-auto-join, WP06 preservation.
+- **New/extended unit tests** for `HttpContextCurrentUser` subject canonicalization (org `oid`, personal-account consumers-tenant `sub` preference, `oid ?? sub` fallback, non-GUID reject).
+
+No files under `app/src/**` except (expected-empty) regenerated `api/**`; exactly **one** new migration; no `*.Domain` change; no `users`/Licensing/member-management schema; no frontend beyond `api/**`.
+
+## Boundary note
+
+- `IIdentityResolver` EF/Npgsql lives in Ledger `Infrastructure`, exposed as a public contract the Host consumes EF-free — same shape as `ISpaceMembershipQuery`. Arch tests stay green unchanged: `*.Domain` → SharedKernel only; `EfCoreIsConfinedToInfrastructureNamespaces`; no auth/identity type leaks into `Domain`.
+- Memberships/roles/identity currently live in `LedgerDbContext` per the D1 single-context baseline; extracting a dedicated `LeafLedger.Modules.Spaces` context (§3) remains a carry-forward, so the resolver is exposed from the Ledger module for now.
+
+## Implementation sequence
+
+1. Add the `20260712170000_IdentityLinks` raw-SQL migration (table + `resolve_identity_link` + grants; table ungranted); confirm `HasPendingModelChanges()` stays green.
+2. Add `IIdentityResolver` + `IdentityResolver` (txn-local app-role call to the function); register in `LedgerModule`; integration-test deterministic + concurrency-safe resolution and app-role-cannot-`SELECT`-the-table.
+3. Add subject canonicalization to `HttpContextCurrentUser` (D-WP13-SUBJECT); unit-test the matrix.
+4. Re-wire `RequireSpacePermissionFilter`: resolve `(subject, tid)` → `user_id`, key membership + `AuthorizationContext` by it, add the D-WP13-TID reject; switch `JournalPostingService`/`PeriodLifecycleService` actor source to the internal `user_id`.
+5. Update the integration-test seeds to key memberships by the resolved internal `user_id`; add `IdentityLinkResolutionTests` (provisioning-is-link-only, no-auto-join, actor-is-internal-id, WP06 preservation).
+6. Run Release build + arch tests + full suite (incl. integration under Docker `postgres:17`) + lint/typecheck/page-budget + the `contract` gate (must be green with **no** regen); document results/deviations; move to `verify`.
+
+## Acceptance criteria (concrete tests)
+
+1. **Build, boundaries & contract:** `dotnet build LeafLedger.sln -c Release` = 0/0; architecture tests green (`*.Domain` → SharedKernel only; EF confined to `Infrastructure`; no auth/identity type in `Domain`); the CI `contract` gate is green with **no OpenAPI/TS regeneration** (WP13 adds no route/response) — a regen-produced diff is a failure; `HasPendingModelChanges()` stays green (raw-SQL migration, no EF entity).
+2. **Migration shape:** after migrate, `identity_links` exists with `PRIMARY KEY (subject, tenant_id)`, `subject`/`tenant_id`/`user_id` all `uuid`; `resolve_identity_link(uuid, uuid)` exists as `SECURITY DEFINER` with `EXECUTE` granted to `leafledger_app` and revoked from `PUBLIC`; **`leafledger_app` has no direct `SELECT`/`INSERT` on `identity_links`** (a direct `SELECT` under the app role is denied — asserted). `Down` drops the function and table cleanly.
+3. **Deterministic resolution:** `resolve` for the same `(subject, tid)` returns the **same** `user_id` across repeated and concurrent calls; a different `subject` **or** a different `tid` yields a **different** `user_id`. (Concurrency: N parallel first-contact resolutions of one `(subject,tid)` produce exactly one link / one `user_id`, no duplicate-key error, no split identity.)
+4. **Provisioning is link-only (no auto-join):** resolving a never-seen `(subject, tid)` creates exactly one `identity_links` row and **zero** `memberships` rows; a first-contact validated principal with no membership posting to a space is **403 `auth.not_a_member`**; no space access is granted by first contact.
+5. **Authz keyed by internal `user_id`:** a membership seeded under the **resolved internal `user_id`** grants access (201); a membership seeded under the **raw subject GUID** (≠ resolved `user_id`) does **not** grant access (403) — proving the indirection is real, not a passthrough.
+6. **RLS actor = internal `user_id`:** a successful post/reversal and a period-lifecycle command bind `app.current_actor` = the resolved internal `user_id`; the persisted `created_by` / `audit_log.actor` equals that internal `user_id`, **not** the raw subject GUID.
+7. **Subject canonicalization (unit):** `SubjectId` = `sub` when `tid == 9188040d-6c67-4c5b-b112-36a304b66dad`; `oid` for an org token; `sub` when `oid` absent; non-GUID subject/`tid` → `null`/reject. The same principal always maps to the same `(subject, tid)` key.
+8. **`tid` required (D-WP13-TID):** an authenticated principal with **no `tid`** is **403 `auth.identity_unresolved`** and provisions **no** identity link; a principal with `tid` resolves normally.
+9. **No candidate-guessing / no email-alias path:** the diff contains **no** fuzzy-match, owner-migration, email-alias, or `ARRAY_CONTAINS`-style identity code; a subject/tid mismatch is a deny, never a fuzzy retry (asserted by the absence of such a path + a mismatch-denies test).
+10. **WP06/WP11 outcomes preserved:** for a correctly-linked `Member`+ principal the WP05/WP06/WP11 matrix is byte-unchanged — 201 happy path, 401 unauthenticated, 403 non-member/permission/scope/license, 422 domain, 404 missing target; cross-space RLS second wall still holds (a principal linked+member in space A cannot post/read space B); the token accept/reject matrix is unchanged.
+11. **Scope containment:** `git diff --name-only` is limited to the file list; exactly **one** new migration; no `*.Domain` change; no `users`/Licensing/member-management schema; no frontend beyond (expected-empty) `api/**`; the existing Ledger integration suite (incl. `HasPendingModelChanges()`) stays green.
+12. **Quality gate:** lint, typecheck, page budgets, arch/boundary tests, and the relevant unit + identity/authorization integration tests all pass in Release; integration tests run under Docker (`postgres:17`) via the `Category=Integration` filter and are green on the main-branch job.
+
+## Definition of done
+
+All 12 ACs pass; the internal `user_id` is a deterministic, concurrency-safe function of `(subject, tid)` resolved through `identity_links`; provisioning on first contact creates the link and **only** the link (no membership, no auto-join); the authorization membership read and the RLS `app.current_actor` binding are keyed by the internal `user_id`; subject canonicalization is total and deterministic; a token without `tid` is rejected without provisioning; the app role can resolve only its own validated identity and cannot enumerate the table; the OLD candidate-guessing / email-alias / owner-migration paths do not exist in the new code; WP06/WP11 outcomes and the OpenAPI contract are unchanged (no regen); exactly one new migration / no `Domain` / no out-of-scope change; Release build clean; full suite (unit + arch + integration) green. State → `verify` and route to LL QA Reviewer. A full `users`/profile table and the `LeafLedger.Modules.Spaces` extraction are a Spaces & Identity carry-forward; member-management/invitation UI is M2; the frontend MSAL/`sessionStorage`/sign-out glue is Phase 3.
+
+## Risks / notes
+
+- **Identity table is deliberately cross-space.** It maps identity → the id that *then* scopes tenancy, so it must **not** carry `space_id`-RLS. The security-definer resolver + ungranted table (D-WP13-RESOLVER) is the isolation mechanism; do not "fix" it by adding a space RLS policy.
+- **Test seed re-key is the main ripple.** Every integration test that seeds `memberships.user_id = subject` must seed by the resolved internal `user_id` (or seed a matching `identity_links` row + membership). Missing one surfaces as a `403 auth.not_a_member` in a previously-passing test — a signal, not a regression to route around.
+- **Provisioning ≠ authorization.** Creating an identity link must never be mistaken for granting access. The link-only property is the whole point (kills the auto-join class); it is asserted directly (AC4).
+- **Consumers-tenant subject preference is load-bearing.** Keying personal accounts by a synthetic zero-`oid` could collide two users; preferring `sub` for `tid == 9188040d-…` (D-WP13-SUBJECT) makes the key stable per person. Unit-pin it (AC7).
+- **No contract drift.** WP13 adds no route; a stray OpenAPI/TS regen would be an accidental diff — treat any as a finding.
+- **This is the identity-mapping half only.** WP11 made the *token* trustworthy; WP13 makes the *identity → user_id* mapping deterministic. After WP13 the Phase-2 `subject == user_id` simplification is gone; the frontend sign-out/`sessionStorage` teardown (Phase 3) and a real user-profile store (Spaces & Identity) remain their own units.
+```

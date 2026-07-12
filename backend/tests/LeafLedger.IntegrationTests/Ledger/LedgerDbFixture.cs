@@ -1,4 +1,5 @@
 using LeafLedger.Modules.Ledger.Infrastructure;
+using LeafLedger.IntegrationTests.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Testcontainers.PostgreSql;
@@ -136,18 +137,38 @@ public sealed class LedgerDbFixture : IAsyncLifetime
         await cmd.ExecuteNonQueryAsync();
     }
 
-    public async Task SeedMembershipAsync(Guid spaceId, Guid userId, string role = "Member")
+    public async Task SeedMembershipAsync(Guid spaceId, Guid userId, string role = "Member", Guid? tenantId = null)
     {
         await using var connection = await OpenSuperuserAsync();
+        var internalUserId = await ResolveIdentityLinkAsync(
+            connection,
+            userId,
+            tenantId ?? Guid.Parse(TestAuthHandler.DefaultTenantId));
         await using var cmd = new NpgsqlCommand(
             "INSERT INTO memberships (id, space_id, user_id, role, created_at) " +
             "VALUES (@id, @space, @user, @role, now());",
             connection);
         cmd.Parameters.AddWithValue("id", Guid.NewGuid());
         cmd.Parameters.AddWithValue("space", spaceId);
-        cmd.Parameters.AddWithValue("user", userId);
+        cmd.Parameters.AddWithValue("user", internalUserId);
         cmd.Parameters.AddWithValue("role", role);
         await cmd.ExecuteNonQueryAsync();
+    }
+
+    public async Task<Guid> ResolveIdentityLinkAsync(Guid subject, Guid tenantId)
+    {
+        await using var connection = await OpenSuperuserAsync();
+        return await ResolveIdentityLinkAsync(connection, subject, tenantId);
+    }
+
+    private static async Task<Guid> ResolveIdentityLinkAsync(NpgsqlConnection connection, Guid subject, Guid tenantId)
+    {
+        await using var command = new NpgsqlCommand(
+            "SELECT resolve_identity_link(@subject, @tenant);",
+            connection);
+        command.Parameters.AddWithValue("subject", subject);
+        command.Parameters.AddWithValue("tenant", tenantId);
+        return (Guid)(await command.ExecuteScalarAsync())!;
     }
 }
 

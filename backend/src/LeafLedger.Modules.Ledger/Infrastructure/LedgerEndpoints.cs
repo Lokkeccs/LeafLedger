@@ -78,7 +78,7 @@ public static class LedgerEndpoints
         HttpRequest httpRequest,
         CancellationToken cancellationToken)
     {
-        if (!TryGetActor(httpRequest.HttpContext.User, out var actorId))
+        if (!TryGetActor(httpRequest.HttpContext, out var actorId))
         {
             return AuthorizationFailure();
         }
@@ -102,7 +102,7 @@ public static class LedgerEndpoints
         HttpRequest httpRequest,
         CancellationToken cancellationToken)
     {
-        if (!TryGetActor(httpRequest.HttpContext.User, out var actorId))
+        if (!TryGetActor(httpRequest.HttpContext, out var actorId))
         {
             return AuthorizationFailure();
         }
@@ -171,10 +171,16 @@ public static class LedgerEndpoints
             type: "https://leafledger.dev/problems/idempotency",
             extensions: new Dictionary<string, object?> { ["code"] = code });
 
-    private static bool TryGetActor(ClaimsPrincipal principal, out Guid actorId)
+    private static bool TryGetActor(HttpContext context, out Guid actorId)
     {
-        var subject = principal.FindFirst("oid")?.Value ?? principal.FindFirst("sub")?.Value;
-        return Guid.TryParse(subject, out actorId);
+        if (context.Items.TryGetValue(LedgerRequestContext.ActorIdItemKey, out var value) && value is Guid resolvedActor)
+        {
+            actorId = resolvedActor;
+            return true;
+        }
+
+        actorId = Guid.Empty;
+        return false;
     }
 
     private static IResult AuthorizationFailure() =>

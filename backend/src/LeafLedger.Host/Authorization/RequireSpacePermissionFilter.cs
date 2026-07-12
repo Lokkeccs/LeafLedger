@@ -37,6 +37,11 @@ public sealed class RequireSpacePermissionFilter : IEndpointFilter
             return AuthorizationProblem(StatusCodes.Status401Unauthorized, "auth.unauthenticated", "Authentication is required.");
         }
 
+        if (!Guid.TryParse(currentUser.TenantId, out var tenantId))
+        {
+            return AuthorizationProblem(StatusCodes.Status403Forbidden, "auth.identity_unresolved", "The authenticated identity has no valid tenant.");
+        }
+
         if (!currentUser.HasScope(_requiredScope))
         {
             return AuthorizationProblem(StatusCodes.Status403Forbidden, "auth.forbidden", "The access scope is not valid for this operation.");
@@ -47,14 +52,17 @@ public sealed class RequireSpacePermissionFilter : IEndpointFilter
             return AuthorizationProblem(StatusCodes.Status403Forbidden, "auth.forbidden", "The requested space is not available.");
         }
 
+        var identityResolver = httpContext.RequestServices.GetRequiredService<IIdentityResolver>();
+        var userId = await identityResolver.ResolveUserIdAsync(subjectId, tenantId, httpContext.RequestAborted).ConfigureAwait(false);
+
         var entitlement = httpContext.RequestServices.GetRequiredService<ILicenseEntitlement>();
-        if (!await entitlement.IsEntitledAsync(subjectId, spaceId, _permission, httpContext.RequestAborted).ConfigureAwait(false))
+        if (!await entitlement.IsEntitledAsync(userId, spaceId, _permission, httpContext.RequestAborted).ConfigureAwait(false))
         {
             return AuthorizationProblem(StatusCodes.Status403Forbidden, "auth.license_inactive", "The current license does not permit this operation.");
         }
 
         var membershipQuery = httpContext.RequestServices.GetRequiredService<ISpaceMembershipQuery>();
-        var roleValue = await membershipQuery.GetRoleAsync(spaceId, subjectId, httpContext.RequestAborted).ConfigureAwait(false);
+        var roleValue = await membershipQuery.GetRoleAsync(spaceId, userId, httpContext.RequestAborted).ConfigureAwait(false);
         if (roleValue is null)
         {
             return AuthorizationProblem(StatusCodes.Status403Forbidden, "auth.not_a_member", "The current user is not a member of this space.");
@@ -65,7 +73,8 @@ public sealed class RequireSpacePermissionFilter : IEndpointFilter
             return AuthorizationProblem(StatusCodes.Status403Forbidden, "auth.permission_denied", "The current role does not grant this permission.");
         }
 
-        httpContext.Items[AuthorizationContext.ItemKey] = new AuthorizationContext(spaceId, subjectId, role);
+        httpContext.Items[AuthorizationContext.ItemKey] = new AuthorizationContext(spaceId, userId, role);
+        httpContext.Items[LedgerRequestContext.ActorIdItemKey] = userId;
         return await next(context).ConfigureAwait(false);
     }
 

@@ -169,4 +169,46 @@ public sealed class AuthorizationModelTests
         Assert.True(user.HasScope("ledger.write"));
         Assert.True(user.HasScope("profile"));
     }
+
+    [Fact]
+    public void Prefers_sub_for_the_consumers_tenant()
+    {
+        var user = CreateUser(
+            ("oid", "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+            ("sub", "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+            ("tid", "9188040d-6c67-4c5b-b112-36a304b66dad"));
+
+        Assert.Equal(Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), user.SubjectId);
+    }
+
+    [Fact]
+    public void Uses_oid_for_an_organization_token_and_sub_when_oid_is_absent()
+    {
+        var organizationUser = CreateUser(
+            ("oid", "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+            ("sub", "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+            ("tid", "cccccccc-cccc-cccc-cccc-cccccccccccc"));
+        Assert.Equal(Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), organizationUser.SubjectId);
+
+        var fallbackUser = CreateUser(
+            ("sub", "dddddddd-dddd-dddd-dddd-dddddddddddd"),
+            ("tid", "cccccccc-cccc-cccc-cccc-cccccccccccc"));
+
+        Assert.Equal(Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd"), fallbackUser.SubjectId);
+    }
+
+    private static HttpContextCurrentUser CreateUser(params (string Type, string Value)[] claims)
+    {
+        var accessor = new HttpContextAccessor
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(new ClaimsIdentity(
+                    claims.Select(claim => new Claim(claim.Type, claim.Value)),
+                    "test")),
+            },
+        };
+
+        return new HttpContextCurrentUser(accessor);
+    }
 }

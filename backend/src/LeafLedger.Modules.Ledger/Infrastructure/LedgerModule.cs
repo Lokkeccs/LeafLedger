@@ -25,6 +25,7 @@ public static class LedgerModule
         services.AddScoped<ILedgerReportService, LedgerReportService>();
         services.AddScoped<IPeriodLifecycleService, PeriodLifecycleService>();
         services.AddScoped<ISpaceMembershipQuery, SpaceMembershipQuery>();
+        services.AddScoped<IIdentityResolver, IdentityResolver>();
         services.AddSingleton<IdempotencyMetrics>();
         services.AddSingleton<IReportRefreshQueue, ReportRefreshQueue>();
         services.AddSingleton<ReportingRefreshMetrics>();
