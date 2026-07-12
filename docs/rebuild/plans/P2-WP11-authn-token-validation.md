@@ -1,6 +1,7 @@
 # P2-WP11 — AuthN hardening: Entra `common` token validation (JWKS signature + audience allowlist + issuer-pattern allowlist)
 
 - **Phase:** 2 (ledger core — deferred follow-up; Phase-2 exit gate already met at WP08).
+- **State:** done — QA re-review PASS 2026-07-12; merged to `main` via PR #22 as `20a8cc0`. Implementation and endpoint-level local-JWKS proof complete. No accounting decision required (token validation is access control, not accounting behavior → no golden fixtures, no LL Accounting Expert consult).
 - **State:** verify — QA re-review PASS 2026-07-12. Implementation and endpoint-level local-JWKS proof complete. No accounting decision required (token validation is access control, not accounting behavior → no golden fixtures, no LL Accounting Expert consult).
 - **Owner (implementation):** LL Backend Dev
 - **Depends on:** P2-WP06 (the authenticated-principal seam: `AddJwtBearer` wiring, `AuthenticationConfiguration`, `ICurrentUser`, the `TestAuthHandler` integration path, and the `RequireSpacePermission` filter that consumes the validated subject/scopes). No schema dependency.
@@ -146,7 +147,7 @@ No files under `app/src/**` except (expected-empty) regenerated `api/**`; **no n
 
 ## Definition of done
 
-All 12 ACs pass; the Host accepts only correctly-signed Entra `common` tokens with an allowlisted audience and a pattern-valid issuer bound to `tid`, rejecting every other case with 401; the placeholder static issuer list and the S2.6 `ValidateIssuer=false` risk are gone; audience validation is fail-closed; `tid` is exposed for WP13; WP06 authorization outcomes and the OpenAPI contract are unchanged (no regen); no migration / no `Domain` / no out-of-scope change; Release build clean; full suite (unit + arch + integration) green. Then state → `verify` and route to LL QA Reviewer. Identity→`user_id` indirection (identity-links) is **P2-WP13**; the frontend MSAL/`sessionStorage`/sign-out glue is **Phase 3**; a real-tenant staging smoke is an ops deploy step, not a WP11 gate.
+All 12 ACs pass; the Host accepts only correctly-signed Entra `common` tokens with an allowlisted audience and a pattern-valid issuer bound to `tid`, rejecting every other case with 401; the placeholder static issuer list and the S2.6 `ValidateIssuer=false` risk are gone; audience validation is fail-closed; `tid` is exposed for WP13; WP06 authorization outcomes and the OpenAPI contract are unchanged (no regen); no migration / no `Domain` / no out-of-scope change; Release build clean; full suite (unit + arch + integration) green. State is `done`; PR #22 is merged to `main`. Identity→`user_id` indirection (identity-links) is **P2-WP13**; the frontend MSAL/`sessionStorage`/sign-out glue is **Phase 3**; a real-tenant staging smoke is an ops deploy step, not a WP11 gate.
 
 ## QA verdict
 
@@ -160,6 +161,8 @@ All 12 ACs pass; the Host accepts only correctly-signed Entra `common` tokens wi
 **QA re-review PASS — 2026-07-12, LL QA Reviewer.** Both findings are closed. `EntraIssuerValidator` rejects query/fragment and other non-exact issuer variants while accepting the implicit HTTPS default port. The real JwtBearer endpoint suite covers valid v1 issuance, missing/query/fragment rejection, and tenant-allowlist acceptance/rejection. Focused tests pass **41/41**; full Release backend suite passes **298/298** (`135` integration); architecture tests pass **3/3**; `git diff --check` is clean. The unrelated WP08 documentation changes remain pre-existing working-tree scope and must be separated before commit.
 
 **Independent re-review PASS — 2026-07-12, LL QA Reviewer.** Reproduced the focused WP11 suite (**41/41**), Release build (**0/0**), full backend Release suite (**298/298**, including **135/135** Docker-backed integration and **3/3** architecture tests), frontend lint/typecheck/tests (**3/3**)/page budget/build, and contract stability (no OpenAPI or generated-client diff). No new behavioral, financial-integrity, security, or patch-layering findings. The unrelated WP08 plan modification remains outside WP11's declared file list and must be separated before commit.
+
+**Merge — 2026-07-12 — LL Git.** PR #22 (`P2-WP11: AuthN token validation hardening`) merged to `main`. The branch was synchronized with `origin/main`; documentation conflicts in the WP08 plan and status tracker were resolved while preserving the completed WP08 record and WP11 verification history. Merge-resolution commit: `20a8cc0`. WP11 is complete; identity-links remain P2-WP13 and frontend MSAL/session-state work remains Phase 3.
 
 ## Risks / notes
 
