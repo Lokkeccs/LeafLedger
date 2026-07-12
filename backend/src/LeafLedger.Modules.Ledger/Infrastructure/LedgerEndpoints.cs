@@ -1,5 +1,6 @@
 using LeafLedger.Modules.Ledger.Application.Posting;
 using LeafLedger.Modules.Ledger.Application.Reporting;
+using System.Text;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -21,6 +22,7 @@ public static class LedgerEndpoints
             .WithName("PostJournalEntry")
             .Produces<PostingResponse>(StatusCodes.Status201Created)
             .Produces<LedgerProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status409Conflict, "application/problem+json")
             .Produces<LedgerProblemDetails>(StatusCodes.Status422UnprocessableEntity, "application/problem+json")
             .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
             .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
@@ -31,6 +33,7 @@ public static class LedgerEndpoints
             .Produces<PostingResponse>(StatusCodes.Status201Created)
             .Produces<LedgerProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
             .Produces<LedgerProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status409Conflict, "application/problem+json")
             .Produces<LedgerProblemDetails>(StatusCodes.Status422UnprocessableEntity, "application/problem+json")
             .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
             .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
@@ -79,10 +82,15 @@ public static class LedgerEndpoints
             return AuthorizationFailure();
         }
 
+        if (!TryGetIdempotencyKey(httpRequest, out var idempotencyKey, out var keyError))
+        {
+            return keyError!;
+        }
+
         var outcome = await service.PostAsync(
-            new PostJournalEntryCommand(spaceId, actorId, request.Date, request.Description, request.Reference, request.Lines, GetIdempotencyKey(httpRequest)),
+            new PostJournalEntryCommand(spaceId, actorId, request.Date, request.Description, request.Reference, request.Lines, idempotencyKey),
             cancellationToken).ConfigureAwait(false);
-        return ToHttpResult(spaceId, outcome);
+        return ToHttpResult(spaceId, outcome, httpRequest.HttpContext.Response);
     }
 
     private static async Task<IResult> ReverseJournalEntryAsync(
@@ -98,14 +106,26 @@ public static class LedgerEndpoints
             return AuthorizationFailure();
         }
 
+        if (!TryGetIdempotencyKey(httpRequest, out var idempotencyKey, out var keyError))
+        {
+            return keyError!;
+        }
+
         var outcome = await service.ReverseAsync(
-            new ReverseJournalEntryCommand(spaceId, actorId, entryId, request.Date, GetIdempotencyKey(httpRequest)),
+            new ReverseJournalEntryCommand(spaceId, actorId, entryId, request.Date, idempotencyKey),
             cancellationToken).ConfigureAwait(false);
-        return ToHttpResult(spaceId, outcome);
+        return ToHttpResult(spaceId, outcome, httpRequest.HttpContext.Response);
     }
 
-    private static IResult ToHttpResult(Guid spaceId, PostingOutcome outcome)
+    private static IResult ToHttpResult(Guid spaceId, PostingOutcome outcome, HttpResponse response)
     {
+        if (outcome.IsReplay)
+        {
+            response.Headers.ContentType = "application/json; charset=utf-8";
+            response.Headers["Idempotent-Replayed"] = "true";
+            return Results.Content(outcome.Replay!.Body, "application/json", Encoding.UTF8, outcome.Replay.Status);
+        }
+
         if (outcome.IsSuccess)
         {
             return Results.Created($"/api/v1/spaces/{spaceId}/journal-entries/{outcome.Value!.Id}", outcome.Value);
@@ -123,8 +143,32 @@ public static class LedgerEndpoints
         return Results.Problem(problem);
     }
 
-    private static string? GetIdempotencyKey(HttpRequest request) =>
-        request.Headers.TryGetValue("Idempotency-Key", out var value) ? value.ToString() : null;
+    private static bool TryGetIdempotencyKey(HttpRequest request, out string? key, out IResult? error)
+    {
+        key = request.Headers.TryGetValue("Idempotency-Key", out var value) ? value.ToString() : null;
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            error = IdempotencyHeaderProblem("idempotency.key_required", "Idempotency-Key is required for write requests.");
+            return false;
+        }
+
+        if (!Ulid.TryParse(key, out _))
+        {
+            error = IdempotencyHeaderProblem("idempotency.key_invalid", "Idempotency-Key must be a valid ULID.");
+            return false;
+        }
+
+        error = null;
+        return true;
+    }
+
+    private static IResult IdempotencyHeaderProblem(string code, string detail) =>
+        Results.Problem(
+            statusCode: StatusCodes.Status400BadRequest,
+            title: "The idempotency key is invalid.",
+            detail: detail,
+            type: "https://leafledger.dev/problems/idempotency",
+            extensions: new Dictionary<string, object?> { ["code"] = code });
 
     private static bool TryGetActor(ClaimsPrincipal principal, out Guid actorId)
     {

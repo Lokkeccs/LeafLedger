@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddMetrics();
 builder.Services.AddScoped<ICurrentUser, HttpContextCurrentUser>();
 builder.Services.AddScoped<ILicenseEntitlement, AllowAllLicenseEntitlement>();
 builder.Services
@@ -50,6 +51,18 @@ builder.Services.AddOpenApi("v1", options =>
                         },
                     }] = Array.Empty<string>(),
                 });
+
+                if (operation.OperationId is "PostJournalEntry" or "ReverseJournalEntry")
+                {
+                    operation.Parameters ??= new List<OpenApiParameter>();
+                    operation.Parameters.Add(new OpenApiParameter
+                    {
+                        Name = "Idempotency-Key",
+                        In = ParameterLocation.Header,
+                        Required = true,
+                        Schema = new OpenApiSchema { Type = "string" },
+                    });
+                }
             }
         }
 

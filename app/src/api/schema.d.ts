@@ -294,7 +294,9 @@ export interface operations {
     PostJournalEntry: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
             path: {
                 spaceId: string;
             };
@@ -342,6 +344,15 @@ export interface operations {
                     "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["LedgerProblemDetails"];
+                };
+            };
             /** @description Unprocessable Entity */
             422: {
                 headers: {
@@ -356,7 +367,9 @@ export interface operations {
     ReverseJournalEntry: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
             path: {
                 spaceId: string;
                 entryId: string;
@@ -407,6 +420,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["LedgerProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

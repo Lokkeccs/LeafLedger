@@ -253,6 +253,11 @@ public sealed class LedgerAuthorizationTests : IAsyncLifetime
             request.Headers.Add("X-Test-Scope", scope);
         }
 
+        if (method == HttpMethod.Post)
+        {
+            request.Headers.Add("Idempotency-Key", Ulid.NewUlid().ToString());
+        }
+
         return request;
     }
 
