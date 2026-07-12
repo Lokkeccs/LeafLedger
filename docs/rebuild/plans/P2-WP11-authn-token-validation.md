@@ -2,6 +2,7 @@
 
 - **Phase:** 2 (ledger core — deferred follow-up; Phase-2 exit gate already met at WP08).
 - **State:** done — QA re-review PASS 2026-07-12; merged to `main` via PR #22 as `20a8cc0`. Implementation and endpoint-level local-JWKS proof complete. No accounting decision required (token validation is access control, not accounting behavior → no golden fixtures, no LL Accounting Expert consult).
+- **State:** verify — QA re-review PASS 2026-07-12. Implementation and endpoint-level local-JWKS proof complete. No accounting decision required (token validation is access control, not accounting behavior → no golden fixtures, no LL Accounting Expert consult).
 - **Owner (implementation):** LL Backend Dev
 - **Depends on:** P2-WP06 (the authenticated-principal seam: `AddJwtBearer` wiring, `AuthenticationConfiguration`, `ICurrentUser`, the `TestAuthHandler` integration path, and the `RequireSpacePermission` filter that consumes the validated subject/scopes). No schema dependency.
 - **Blocks:** production exposure of the WP05/WP06 write path behind a *real* IdP (WP06 wired JWT bearer *options* but exercised authorization through a test scheme); **P2-WP13** (identity-links) which consumes a trusted `sub`/`oid` + `tid` produced by hardened validation.
