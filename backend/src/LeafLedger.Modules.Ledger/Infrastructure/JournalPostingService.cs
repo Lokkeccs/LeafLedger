@@ -6,6 +6,7 @@ using LeafLedger.Modules.Ledger.Domain.Journal;
 using LeafLedger.Modules.Ledger.Domain.Periods;
 using LeafLedger.Modules.Ledger.Domain.PostingValidity;
 using LeafLedger.SharedKernel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
@@ -14,21 +15,28 @@ namespace LeafLedger.Modules.Ledger.Infrastructure;
 internal sealed class JournalPostingService : IJournalPostingService
 {
     private readonly LedgerDbContext _db;
+    private readonly IdempotencyMetrics _metrics;
 
-    public JournalPostingService(LedgerDbContext db) => _db = db;
+    public JournalPostingService(LedgerDbContext db, IdempotencyMetrics metrics)
+    {
+        _db = db;
+        _metrics = metrics;
+    }
 
     public Task<PostingOutcome> PostAsync(PostJournalEntryCommand command, CancellationToken cancellationToken = default) =>
-        ExecuteAsync(command.SpaceId, command.ActorId, command.IdempotencyKey, async (tx, ct) =>
+        ExecuteAsync(command.SpaceId, command.ActorId, command.IdempotencyKey, "post", IdempotencyStore.Hash(command), async (tx, ct) =>
             await PostWithinTransactionAsync(command, tx, ct).ConfigureAwait(false), cancellationToken);
 
     public Task<PostingOutcome> ReverseAsync(ReverseJournalEntryCommand command, CancellationToken cancellationToken = default) =>
-        ExecuteAsync(command.SpaceId, command.ActorId, command.IdempotencyKey, async (tx, ct) =>
+        ExecuteAsync(command.SpaceId, command.ActorId, command.IdempotencyKey, $"reverse:{command.EntryId:D}", IdempotencyStore.Hash(command), async (tx, ct) =>
             await ReverseWithinTransactionAsync(command, tx, ct).ConfigureAwait(false), cancellationToken);
 
     private async Task<PostingOutcome> ExecuteAsync(
         Guid spaceId,
         Guid actorId,
         string? idempotencyKey,
+        string target,
+        byte[] requestHash,
         Func<NpgsqlTransaction, CancellationToken, Task<PostingOutcome>> operation,
         CancellationToken cancellationToken)
     {
@@ -41,6 +49,37 @@ internal sealed class JournalPostingService : IJournalPostingService
         await using var transaction = (NpgsqlTransaction)await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
         _db.Database.UseTransaction(transaction);
         await BindTransactionAsync(connection, transaction, spaceId, actorId, cancellationToken).ConfigureAwait(false);
+
+        Guid? key = null;
+        if (!string.IsNullOrWhiteSpace(idempotencyKey))
+        {
+            try
+            {
+                key = IdempotencyStore.ParseKey(idempotencyKey);
+            }
+            catch (FormatException)
+            {
+                await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+                return PostingOutcome.Failed(400, new PostingIssue("idempotency.key_invalid", "Idempotency-Key must be a valid ULID."));
+            }
+
+            await AcquireKeyLockAsync(spaceId, key.Value, transaction, cancellationToken).ConfigureAwait(false);
+            var existing = await IdempotencyStore.FindLiveAsync(transaction, spaceId, key.Value, cancellationToken).ConfigureAwait(false);
+            if (existing is not null)
+            {
+                await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+                if (IdempotencyStore.IsSameRequest(existing, requestHash))
+                {
+                    return PostingOutcome.Replayed(new IdempotencyReplay(existing.ResponseStatus, existing.ResponseBody));
+                }
+
+                _metrics.RecordCollision(spaceId);
+                return PostingOutcome.Failed(409, new PostingIssue("idempotency.key_reused", "The idempotency key was already used for a different request."));
+            }
+
+            await IdempotencyStore.DeleteExpiredAsync(transaction, spaceId, key.Value, cancellationToken).ConfigureAwait(false);
+        }
+
         var outcome = await operation(transaction, cancellationToken).ConfigureAwait(false);
         if (!outcome.IsSuccess)
         {
@@ -49,8 +88,32 @@ internal sealed class JournalPostingService : IJournalPostingService
         }
 
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        if (key is not null)
+        {
+            await IdempotencyStore.InsertAsync(
+                transaction,
+                spaceId,
+                key.Value,
+                actorId,
+                target,
+                requestHash,
+                StatusCodes.Status201Created,
+                IdempotencyStore.SerializeResponse(outcome.Value!),
+                cancellationToken).ConfigureAwait(false);
+        }
+
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         return outcome;
+    }
+
+    private static async Task AcquireKeyLockAsync(Guid spaceId, Guid key, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            "SELECT pg_advisory_xact_lock(hashtextextended(@lock_key, 0));",
+            transaction.Connection,
+            transaction);
+        command.Parameters.AddWithValue("lock_key", $"{spaceId:D}:{key:D}");
+        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<PostingOutcome> PostWithinTransactionAsync(

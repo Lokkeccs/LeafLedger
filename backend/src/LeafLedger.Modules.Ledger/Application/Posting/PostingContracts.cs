@@ -43,15 +43,22 @@ public sealed record PostingIssue(string Code, string Message, int? Line = null)
 
 public sealed record PostingFailure(int Status, IReadOnlyList<PostingIssue> Issues);
 
-public readonly record struct PostingOutcome(PostingResponse? Value, PostingFailure? Failure)
+public readonly record struct PostingOutcome(PostingResponse? Value, PostingFailure? Failure, IdempotencyReplay? Replay = null)
 {
     public bool IsSuccess => Value is not null;
+
+    public bool IsReplay => Replay is not null;
 
     public static PostingOutcome Success(PostingResponse value) => new(value, null);
 
     public static PostingOutcome Failed(int status, params PostingIssue[] issues) =>
         new(null, new PostingFailure(status, issues));
+
+    public static PostingOutcome Replayed(IdempotencyReplay replay) =>
+        new(null, null, replay);
 }
+
+public sealed record IdempotencyReplay(int Status, string Body);
 
 public interface IJournalPostingService
 {

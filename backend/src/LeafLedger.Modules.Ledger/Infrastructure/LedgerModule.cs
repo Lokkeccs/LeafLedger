@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using LeafLedger.Modules.Ledger.Application.Posting;
 using LeafLedger.Modules.Ledger.Application.Reporting;
 
@@ -17,10 +18,13 @@ public static class LedgerModule
     public static IServiceCollection AddLedgerModule(this IServiceCollection services, string connectionString)
     {
         ArgumentNullException.ThrowIfNull(services);
+        services.AddMetrics();
         services.AddDbContext<LedgerDbContext>(options => options.UseNpgsql(connectionString));
         services.AddScoped<IJournalPostingService, JournalPostingService>();
         services.AddScoped<ILedgerReportService, LedgerReportService>();
         services.AddScoped<ISpaceMembershipQuery, SpaceMembershipQuery>();
+        services.AddSingleton<IdempotencyMetrics>();
+        services.AddSingleton<IHostedService>(_ => new IdempotencyCleanupService(connectionString));
         return services;
     }
 
