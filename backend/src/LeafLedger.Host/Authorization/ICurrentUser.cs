@@ -8,6 +8,8 @@ public interface ICurrentUser
 
     Guid? SubjectId { get; }
 
+    string? TenantId { get; }
+
     IReadOnlySet<string> Scopes { get; }
 
     bool HasScope(string scope);
@@ -32,6 +34,9 @@ public sealed class HttpContextCurrentUser : ICurrentUser
             return Guid.TryParse(subject, out var id) ? id : null;
         }
     }
+
+    public string? TenantId =>
+        _httpContextAccessor.HttpContext?.User.FindFirstValue("tid");
 
     public IReadOnlySet<string> Scopes =>
         (_httpContextAccessor.HttpContext?.User.Claims ?? Enumerable.Empty<Claim>())

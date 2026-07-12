@@ -118,6 +118,8 @@ public sealed class AuthorizationFilterTests
 
         public Guid? SubjectId { get; } = subjectId;
 
+        public string? TenantId => null;
+
         public IReadOnlySet<string> Scopes { get; } = scopes.ToHashSet(StringComparer.Ordinal);
 
         public bool HasScope(string scope) => Scopes.Contains(scope);

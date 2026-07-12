@@ -17,7 +17,10 @@ builder.Services
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
-    .AddJwtBearer(options => AuthenticationConfiguration.ConfigureJwtBearer(options, builder.Configuration));
+    .AddJwtBearer(options => AuthenticationConfiguration.ConfigureJwtBearer(
+        options,
+        builder.Configuration,
+        builder.Environment.IsDevelopment()));
 builder.Services.AddAuthorization();
 
 // OpenAPI: the "v1" document is the single client contract (P1-WP04).
