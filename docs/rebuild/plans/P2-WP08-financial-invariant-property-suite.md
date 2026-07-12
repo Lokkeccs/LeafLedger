@@ -1,7 +1,7 @@
 # P2-WP08 — Financial-invariant property suite (Phase-2 exit gate)
 
 - **Phase:** 2 (ledger core) — **the exit gate.** Phase 2 is not "done" until this suite is green.
-- **State:** verify — **unblocked**. P2-WP09 and P2-WP10 are merged to `main`; the QA re-review findings are fixed in the test tier and the focused/full Release gates are green. See [QA verdict](#qa-verdict).
+- **State:** done. **QA PASS 2026-07-12; merged to `main` via PR #21 as `1aa35ae`.** P2-WP09 and P2-WP10 were merged before implementation; all QA re-review findings were fixed in the test tier and the focused/full Release gates are green. Phase 2's exit criterion is met. See [QA verdict](#qa-verdict).
 - **Owner (implementation):** LL Backend Dev
 - **Depends on:** P2-WP02 (schema + deferred balance trigger + RLS second wall + `postgres:17` Docker fixture), P2-WP03 (ChartOfAccounts domain), P2-WP04 (JournalEntry domain + posting-validity + period-state + exact-integer balance), P2-WP05 (`POST …/journal-entries` (+`/reverse`), eager balance 422, per-space `entry_no`, txn-local binding), P2-WP06 (authorization filter + principal-bound RLS binding + `TestAuthHandler`), P2-WP07 (`trial_balance` view + `GET …/integrity` `balanced` flag — the ≡ 0 oracle), **P2-WP09** (idempotency middleware — the exactly-once oracle), **P2-WP10** (period create/open/close/lock — produces closed/locked periods to reject against).
 - **Blocks:** the Phase-2 close-out (Part 4 §Phase 2 exit criterion) and the PR pipeline's `unit + invariant` gate becoming truly flagship-complete (Part 5 §1.1/§1.2).
@@ -143,7 +143,7 @@ No `app/**`, no `openapi/**`, no `*.Domain`, no migration, no production `Infras
 
 ## Definition of done
 
-All 12 ACs pass; the flagship property suite is green, PR-blocking, deterministic, shrinking-enabled, and Docker-backed; the six/seven invariants (I1–I7) hold for every generated sequence; the balance trigger and RLS are proven the database second wall directly; period boundary inclusivity is pinned; no production code, migration, DDL, or frontend changed (any surfaced defect is a routed finding); FX/VAT rounding properties and load/perf are explicitly deferred. Then state → `verify` and route to LL QA Reviewer. On PASS, **Phase 2's exit criterion is met** — record it in status.md.
+All 12 ACs pass; the flagship property suite is green, PR-blocking, deterministic, shrinking-enabled, and Docker-backed; the six/seven invariants (I1–I7) hold for every generated sequence; the balance trigger and RLS are proven the database second wall directly; period boundary inclusivity is pinned; no production code, migration, DDL, or frontend changed (any surfaced defect is a routed finding); FX/VAT rounding properties and load/perf are explicitly deferred. **QA PASS 2026-07-12; state `done`; Phase 2's exit criterion is met and the package is merged to `main` via PR #21.**
 
 ## Sequencing / blocker
 
@@ -154,7 +154,7 @@ All 12 ACs pass; the flagship property suite is green, PR-blocking, deterministi
 | **P2-WP09** (idempotency middleware) | Invariant **I5** — "retried posts exactly-once" | **done** (PR #18 merged 2026-07-12) |
 | **P2-WP10** (period create/open/close/lock) | Invariant **I3** — "closed-period posts rejected" | **done** (PR #19 merged 2026-07-12) |
 
-All slices (I1–I7) are now implementable against `main` (WP02–WP10). The sequence **WP09 → WP10 → WP08** is complete through WP10; WP08 is the next implementation package and remains the Phase-2 exit gate.
+All slices (I1–I7) are now implemented and verified against `main` (WP02–WP10). The sequence **WP09 → WP10 → WP08** is complete, and the Phase-2 exit gate is closed. Next planned phase: P3 frontend re-platform; P2-WP11 and P2-WP12 remain proposed follow-up work.
 
 ## Risks / notes
 
@@ -196,4 +196,6 @@ Required next action: compare the reference model against observable system stat
 
 **Resolution — 2026-07-12:** All three QA re-review findings were addressed in the test tier. I1 now keeps cumulative model state aligned with the reused driver across generated iterations, compares per-account trial-balance lines and live source-entry counts after every command, and tracks reversals by deterministic post key rather than sequence-local indexes. I4 now creates an entry in a second space and verifies that a first-space reverse attempt returns `journal_entry.not_found` without either space changing. The additional-account seed helper was moved into `LedgerSystemDriver.cs`, leaving `LedgerDbFixture.cs` outside the WP08 diff and preserving the declared file list.
 
-**QA re-review follow-up — 2026-07-12 — PASS pending final independent review.** Focused property suite: **15/15**. Full Release backend suite: **291/291** with zero failures. `git diff --check` is clean; no production source, migration, frontend, OpenAPI, or fixture changes are present. State -> verify; next LL QA Reviewer.
+**QA re-review follow-up — 2026-07-12 — PASS.** LL QA Reviewer independently reproduced focused property **15/15** and the full Release backend suite **291/291** with zero failures (**127/127** integration, **3/3** architecture). The final review confirmed model/system agreement after each generated command, cross-space reverse-target isolation, direct database balance-trigger and RLS properties, deterministic replay/shrinking, clean declared scope, and no production source, migration, frontend, OpenAPI, or fixture changes. State -> **done**.
+
+**Merge — 2026-07-12 — LL Git.** PR #21 (`P2-WP08: Financial invariant property suite`) merged to `main` as `1aa35ae`. Phase 2 is complete; next agent is LL Frontend Dev for Phase 3 re-platform work.
