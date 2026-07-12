@@ -12,23 +12,30 @@ public static class AuthenticationConfiguration
     {
         ArgumentNullException.ThrowIfNull(configuration);
         var section = configuration.GetSection("Authentication");
+        var tenantAllowlist = ReadValues(section, "TenantAllowlist");
         return new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
             RequireSignedTokens = true,
             ValidateIssuer = true,
-            ValidIssuers = ReadValues(section, "ValidIssuers"),
+            IssuerValidator = (issuer, token, parameters) =>
+                EntraIssuerValidator.ValidateIssuer(issuer, token, parameters, tenantAllowlist),
             ValidateAudience = true,
             ValidAudiences = ReadValues(section, "Audiences"),
             ValidateLifetime = true,
         };
     }
 
-    public static void ConfigureJwtBearer(JwtBearerOptions options, IConfiguration configuration)
+    public static void ConfigureJwtBearer(JwtBearerOptions options, IConfiguration configuration, bool isDevelopment = false)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(configuration);
         var section = configuration.GetSection("Authentication");
+        if (!isDevelopment && ReadValues(section, "Audiences").Length == 0)
+        {
+            throw new InvalidOperationException("Authentication:Audiences must contain at least one value outside Development.");
+        }
+
         options.Authority = section["Authority"];
         options.MapInboundClaims = false;
         options.TokenValidationParameters = CreateTokenValidationParameters(configuration);
