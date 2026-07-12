@@ -34,7 +34,7 @@ public class PeriodStateGoldenFixtureTests
             new PeriodSnapshot(
                 item.GetProperty("name").GetString()!,
                 FixtureJson.Date(item, "startDate"),
-                FixtureJson.Date(item, "endDate"),
+                FixtureJson.Date(item, "endDate").AddDays(1),
                 ParseState(item.GetProperty("state").GetString()!))).ToArray();
 
         if (fixture.Unit == "getEffectivePeriodState")

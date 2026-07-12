@@ -1,0 +1,16 @@
+{
+  "input": {
+    "date": "2026-02-01",
+    "periods": [
+      {
+        "name": "January 2026",
+        "startDate": "2026-01-01",
+        "endDate": "2026-01-31",
+        "state": "open"
+      }
+    ]
+  },
+  "expected": {
+    "value": null
+  }
+}

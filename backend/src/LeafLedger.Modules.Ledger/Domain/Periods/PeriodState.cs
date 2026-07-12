@@ -13,7 +13,7 @@ public enum PeriodState
 public sealed record PeriodSnapshot(
     string Name,
     DateOnly StartDate,
-    DateOnly EndDate,
+    DateOnly EndExclusive,
     PeriodState State);
 
 public sealed record PeriodClosedError(string PeriodName, PeriodState State, DateOnly TxDate);

@@ -3,7 +3,7 @@
     "repo": "Lokkeccs/Accounting",
     "sha": "085bedba467e3d46d3889db3bc80ea023e69756e"
   },
-  "count": 59,
+  "count": 71,
   "cases": [
     {
       "id": "acc-missing-business",
@@ -358,6 +358,78 @@
       "unit": "resolveAccountFxPolicy",
       "description": "no account override -> group fallback (monetary bank group)",
       "file": "fx-metadata/fx-account-policy-fallback.json"
+    },
+    {
+      "id": "open-to-open",
+      "unit": "updatePeriodState",
+      "description": "open to open",
+      "file": "period-lifecycle/period-transitions/open-to-open.json"
+    },
+    {
+      "id": "open-to-closed",
+      "unit": "updatePeriodState",
+      "description": "open to closed",
+      "file": "period-lifecycle/period-transitions/open-to-closed.json"
+    },
+    {
+      "id": "open-to-locked",
+      "unit": "updatePeriodState",
+      "description": "open to locked request",
+      "file": "period-lifecycle/period-transitions/open-to-locked.json"
+    },
+    {
+      "id": "closed-to-open",
+      "unit": "updatePeriodState",
+      "description": "closed to open",
+      "file": "period-lifecycle/period-transitions/closed-to-open.json"
+    },
+    {
+      "id": "closed-to-closed",
+      "unit": "updatePeriodState",
+      "description": "closed to closed",
+      "file": "period-lifecycle/period-transitions/closed-to-closed.json"
+    },
+    {
+      "id": "closed-to-locked",
+      "unit": "updatePeriodState",
+      "description": "closed to locked request",
+      "file": "period-lifecycle/period-transitions/closed-to-locked.json"
+    },
+    {
+      "id": "locked-to-open",
+      "unit": "updatePeriodState",
+      "description": "locked to open",
+      "file": "period-lifecycle/period-transitions/locked-to-open.json"
+    },
+    {
+      "id": "locked-to-closed",
+      "unit": "updatePeriodState",
+      "description": "locked to closed",
+      "file": "period-lifecycle/period-transitions/locked-to-closed.json"
+    },
+    {
+      "id": "locked-to-locked",
+      "unit": "updatePeriodState",
+      "description": "locked to locked",
+      "file": "period-lifecycle/period-transitions/locked-to-locked.json"
+    },
+    {
+      "id": "at-start",
+      "unit": "getPeriodForDate",
+      "description": "date at inclusive period start",
+      "file": "period-lifecycle/period-boundaries/at-start.json"
+    },
+    {
+      "id": "at-inclusive-end",
+      "unit": "getPeriodForDate",
+      "description": "date at inclusive period end",
+      "file": "period-lifecycle/period-boundaries/at-inclusive-end.json"
+    },
+    {
+      "id": "after-inclusive-end",
+      "unit": "getPeriodForDate",
+      "description": "date after inclusive period end",
+      "file": "period-lifecycle/period-boundaries/after-inclusive-end.json"
     }
   ]
 }
