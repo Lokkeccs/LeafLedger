@@ -229,6 +229,8 @@ public sealed class LedgerReportTests : IAsyncLifetime
         command.Parameters.AddWithValue("line4", Guid.NewGuid());
         command.Parameters.AddWithValue("line5", Guid.NewGuid());
         await command.ExecuteNonQueryAsync();
+        await using var refresh = new NpgsqlCommand("SELECT refresh_trial_balance_mat();", connection);
+        await refresh.ExecuteNonQueryAsync();
 
         return new ReportAccounts(incomeId, entryId);
     }
