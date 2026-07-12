@@ -50,7 +50,7 @@ internal sealed class LedgerReportService : ILedgerReportService
 
     public async Task<IntegrityReport> GetIntegrityAsync(Guid spaceId, CancellationToken cancellationToken = default)
     {
-        var rows = await ReadTrialBalanceAsync(spaceId, cancellationToken).ConfigureAwait(false);
+        var rows = await ReadTrialBalanceAsync(spaceId, "trial_balance_live", cancellationToken).ConfigureAwait(false);
         var hashRows = rows.Select(row => new IntegrityBalanceRow(row.AccountId, row.AccountCode, row.BaseBalanceMinor));
         var total = rows.Sum(row => row.BaseBalanceMinor);
         return new IntegrityReport(spaceId, IntegrityHasher.Algorithm, IntegrityHasher.Version, rows.Count,
@@ -58,10 +58,13 @@ internal sealed class LedgerReportService : ILedgerReportService
     }
 
     private async Task<IReadOnlyList<TrialBalanceRow>> ReadTrialBalanceAsync(Guid spaceId, CancellationToken cancellationToken)
+        => await ReadTrialBalanceAsync(spaceId, "trial_balance", cancellationToken).ConfigureAwait(false);
+
+    private async Task<IReadOnlyList<TrialBalanceRow>> ReadTrialBalanceAsync(Guid spaceId, string relationName, CancellationToken cancellationToken)
     {
         await using var binding = await OpenBoundConnectionAsync(spaceId, cancellationToken).ConfigureAwait(false);
         await using var command = new NpgsqlCommand(
-            "SELECT account_id, account_code, account_name, account_kind, base_balance_minor FROM trial_balance ORDER BY account_code, account_id;",
+            $"SELECT account_id, account_code, account_name, account_kind, base_balance_minor FROM {relationName} ORDER BY account_code, account_id;",
             binding.Connection,
             binding.Transaction);
         return await ReadRowsAsync(command, cancellationToken).ConfigureAwait(false);

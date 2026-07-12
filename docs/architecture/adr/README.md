@@ -26,6 +26,7 @@ itself, its consequences, and the alternatives rejected.
 | [ADR-0003](./ADR-0003-api-contract-pipeline.md) | API contract pipeline — build-time OpenAPI → generated TypeScript client | accepted | 2026-07-06 | P1-WP04 |
 | ADR-0004 | *(reserved)* Single migration `DbContext` for the Phase-2 baseline; per-module split deferred | reserved | — | P2-WP02 (N-D1) |
 | [ADR-0005](./ADR-0005-posting-requires-open-period.md) | Posting requires a defined, open period — deliberate divergence from old "no period ⇒ allowed" | accepted | 2026-07-11 | P2-WP04 (A1) |
+| [ADR-0006](./ADR-0006-materialized-view-tenancy-wall.md) | Preserve report tenancy with a GUC-filtered wrapper over materialized data | accepted | 2026-07-12 | P2-WP12 (D-WP12-TENANCY) |
 
 > **ADR-0004 is reserved, not skipped:** the single-context-baseline decision (P2-WP02 N-D1) was
 > earmarked as ADR-0004 before ADR-0005 was written. It stays reserved until LL Docs Editor drafts it;

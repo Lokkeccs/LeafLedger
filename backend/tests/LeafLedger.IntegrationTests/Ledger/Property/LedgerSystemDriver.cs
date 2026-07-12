@@ -92,17 +92,19 @@ internal sealed class LedgerSystemDriver : IAsyncDisposable
 
     public async Task<IReadOnlyDictionary<Guid, long>> GetTrialBalanceByAccountAsync()
     {
-        var response = await GetTrialBalanceAsync();
-        if (response.StatusCode != HttpStatusCode.OK)
+        await using var connection = await _fixture.OpenSuperuserAsync();
+        await using var command = new NpgsqlCommand(
+            "SELECT account_id, base_balance_minor FROM trial_balance_live WHERE space_id = @space;",
+            connection);
+        command.Parameters.AddWithValue("space", SpaceId);
+        await using var reader = await command.ExecuteReaderAsync();
+        var balances = new Dictionary<Guid, long>();
+        while (await reader.ReadAsync())
         {
-            throw new InvalidOperationException($"Could not read trial balance: {response.StatusCode}");
+            balances.Add(reader.GetGuid(0), reader.GetInt64(1));
         }
 
-        return response.Body.GetProperty("lines")
-            .EnumerateArray()
-            .ToDictionary(
-                line => line.GetProperty("accountId").GetGuid(),
-                line => line.GetProperty("baseBalanceMinor").GetInt64());
+        return balances;
     }
 
     public async Task<int> GetLiveEntryCountAsync()
