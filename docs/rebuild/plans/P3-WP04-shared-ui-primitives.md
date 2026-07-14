@@ -1,7 +1,7 @@
 # P3-WP04 — Shared UI primitives + design tokens (DataTable, modal, form primitives, generic pickers)
 
 - **Phase:** 3 (frontend re-platform)
-- **State:** done — QA PASS on 2026-07-14.
+- **State:** done — QA PASS on 2026-07-14; merged to `main` via PR #29 as commit `38f7c88` on 2026-07-14.
 - **Owner (implementation):** LL Frontend Dev
 - **Depends on:**
   - **P3-WP01** (done) — the app-shell provider tree, desktop-first `AppLayout`, and the ad-hoc CSS-custom-property set currently living in `app/src/index.css` (`--ink`, `--muted`, `--paper`, `--surface`, `--line`, `--accent`, `--focus`, `--shadow`). WP04 formalizes those into a canonical token layer the primitives reference.
@@ -188,6 +188,7 @@ WP04 respects the frontend layering (**features → application → api**) and p
 - **2026-07-14 — User / LL Architect:** **All six decisions and the plan approved on their recommended routes** (D-P3-UI-TOKENS, -RESPONSIVE, -AMOUNT, -THEME, -PICKERS, -BOUNDARY). No overrides. Decisions are now implementation constraints; the plan is unblocked. State stays `planned`, ready for LL Frontend Dev.
 - **2026-07-14 — LL Frontend Dev:** Implemented the canonical token layer and migrated the shell aliases; added the desktop-only `DataTable`, `ModalShell`, `FormSection`, `FormField`, `ToggleSwitch`, generic `DateField`, and integer-safe `MoneyInput`; exported the public primitives from the shared leaf and added the approved ESLint boundary. Added focused shared coverage (**9/9**) for table states/actions, modal portal/accessibility/closing, controlled fields, and USD/JPY/BHD/negative/large money parsing. No `app/src/api/**`, backend, OpenAPI, or runtime dependency changes. Full frontend validation: Vitest **37/37**, lint, typecheck, strict page budget, production build, duplicate-key check, and `npm audit --omit=dev` (**0 vulnerabilities**) pass. The build retains the existing large-chunk warning. State → `verify`; next action is LL QA Reviewer acceptance review.
 - **2026-07-14 — LL Frontend Dev:** Addressed QA findings: generalized `FormField` with an explicit custom control slot while retaining the input convenience path; added contract tests outside the shared leaf for the canonical token set/import and shell aliases, desktop-only/no-float implementation constraints, and deferred-module/data-path absence. Focused remediation tests **12/12** and full frontend Vitest **40/40** pass. Lint, typecheck, strict page budget, production build, duplicate-key check, `npm audit --omit=dev` (**0 vulnerabilities**), `git diff --check`, and generated/backend scope checks pass. The build retains the existing large-chunk warning. State → `verify`; next action is LL QA Reviewer re-review.
+- **2026-07-14 — LL Git:** PR #29 was merged to `main` as commit `38f7c88`. The WP04 plan and tracker were finalized with the merge reference; the next work package is P3-WP05.
 
 ## QA verdict
 
@@ -199,4 +200,4 @@ WP04 respects the frontend layering (**features → application → api**) and p
 
 **Reproduced gates:** Vitest **40/40** across 14 files; lint, strict typecheck, strict page budget, duplicate-key check, production build, and `git diff --check` pass. `npm audit --omit=dev` reports **0 vulnerabilities**. The existing production large-chunk warning remains non-blocking. No financial, authorization, backend, OpenAPI, or secret-handling surface is introduced by this presentation-only WP.
 
-**Verdict:** All planned acceptance criteria and prior QA findings are satisfied. State → **done**. **Next action:** proceed to P3-WP05 planning/implementation.
+**Verdict:** All planned acceptance criteria and prior QA findings are satisfied. State → **done**. Merged to `main` via PR #29 as commit `38f7c88`. **Next action:** proceed to P3-WP05 planning/implementation.
