@@ -22,6 +22,7 @@ body { margin: 0; min-width: 960px; }
 button, a { font: inherit; }
 button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
 #root { min-height: 100svh; }
+.app-splash { min-height: 100svh; display: grid; place-items: center; color: var(--muted); background: var(--paper); }
 
 .app-frame { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: 100svh; }
 .nav-rail { display: flex; flex-direction: column; gap: 42px; padding: 28px 24px; color: var(--surface); background: var(--ink); }
@@ -33,6 +34,9 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 3px s
 .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 0 42px; border-bottom: 1px solid var(--line); background: var(--surface); }
 .top-bar-label { color: var(--muted); text-transform: uppercase; font-size: 12px; letter-spacing: .12em; }
 .status-dot { color: var(--focus); font-size: 13px; }
+.auth-chrome { display: flex; align-items: center; gap: 12px; margin-left: auto; color: var(--muted); font-size: 13px; }
+.auth-chrome button { margin: 0; padding: 6px 10px; font-size: 13px; }
+.auth-error { color: var(--accent); }
 .content-pane { padding: 64px clamp(42px, 7vw, 110px); background: var(--paper); }
 .home-route { max-width: 720px; }
 .eyebrow { margin: 0 0 12px; color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }

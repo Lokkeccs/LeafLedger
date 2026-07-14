@@ -165,4 +165,8 @@ WP01 respects the frontend layering (**features → application → api**) and t
 5. **Hallucination scan**: No unrequested libraries or features were invented. The query implementation matches TanStack strictly. `useTableBreakpoint` wasn't ported (verified with select string check).
 6. **Patch-layering scan**: Error boundaries use correct `render(): never` signatures required by React 19 testing. Traps are strongly typed around actual object schemas.
 
-Ready for merge.
+**Merged:** PR #26 merged to `main` on 2026-07-13. WP01 is complete on the default branch; the next planned work is P3-WP02 (MSAL authentication).
+
+## Documentation Log
+
+- **2026-07-13 — LL Docs Editor:** Recorded PR #26 as merged to `main`. P3-WP01 remains `done`; the app-shell foundation is available for the remaining Phase-3 work packages. Next: P3-WP02 (MSAL authentication).
