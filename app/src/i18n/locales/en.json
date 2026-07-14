@@ -1,0 +1,3261 @@
+{
+  "common": {
+    "save": "Save",
+    "saved": "Saved",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close",
+    "search": "Search…",
+    "loading": "Loading…",
+    "noResults": "No results.",
+    "all": "All",
+    "yes": "Yes",
+    "no": "No",
+    "from": "from",
+    "until": "until",
+    "always": "Always",
+    "active": "Active",
+    "future": "Future",
+    "expired": "Expired",
+    "inactive": "Inactive",
+    "new": "New",
+    "view": "View",
+    "status": "Status",
+    "actions": "Actions",
+    "filters": "Filters",
+    "advanced": "Advanced filters",
+    "clearFilters": "Clear filters",
+    "activeOn": "Active on",
+    "name": "Name",
+    "code": "Code",
+    "description": "Description",
+    "type": "Type",
+    "currency": "Currency",
+    "symbol": "Symbol",
+    "role": "Role",
+    "validFrom": "Valid From",
+    "validTo": "Valid To",
+    "createdAt": "Created",
+    "updatedAt": "Updated",
+    "noData": "No data yet.",
+    "uploadFile": "Upload File",
+    "export": "Export",
+    "import": "Import",
+    "confirm": "Confirm",
+    "remove": "Remove",
+    "set": "Set",
+    "base": "Base",
+    "filter": "Filter",
+    "activeFilters_one": "{{count}} active filter",
+    "activeFilters_other": "{{count}} active filters",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "dragToReorder": "Drag to reorder",
+    "optional": "optional",
+    "details": "Details",
+    "validity": "Validity",
+    "header": "Header",
+    "classification": "Classification",
+    "cashFlow": "Cash Flow",
+    "options": "Options",
+    "fxPolicy": "FX policy",
+    "owners": "Owners",
+    "back": "← Back",
+    "saving": "Saving…",
+    "saveError": "Could not save. Please try again."
+  },
+  "accountPicker": {
+    "placeholder": "Select account…",
+    "search": "Search by number or name…",
+    "clear": "No account",
+    "recent": "Recently used",
+    "suggested": "Suggested",
+    "noResults": "No matching accounts",
+    "back": "← Back",
+    "columnType": "Type"
+  },
+  "transfer": {
+    "title": "Transfer",
+    "subtitle": "Move money between your accounts without recording an expense.",
+    "from": "From account",
+    "to": "To account",
+    "amount": "Amount",
+    "date": "Date",
+    "description": "Description",
+    "descriptionPlaceholder": "e.g. Monthly savings transfer",
+    "defaultDescription": "Transfer",
+    "selectAccount": "Select account…",
+    "submit": "Record transfer",
+    "error": "Could not save the transfer. Please try again."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "journal": "Transaction data",
+    "journalEntries": "Journal entries",
+    "budget": "Budget",
+    "scan": "Scan",
+    "masterData": "Master data",
+    "admin": "Admin",
+    "accounts": "Accounts",
+    "businessPartners": "Business Partners",
+    "projects": "Projects",
+    "users": "Users",
+    "roles": "Roles",
+    "system": "System",
+    "space": "Space",
+    "period": "Periods",
+    "settings": "Settings",
+    "general": "General",
+    "getStarted": "Get Started",
+    "backToGetStarted": "Back to Get Started",
+    "import": "Import",
+    "previousImports": "Previous Imports",
+    "preferences": "Preferences",
+    "fxRates": "FX Rates",
+    "subledgers": "Subledgers",
+    "notifications": "Notifications",
+    "fxPolicy": "FX Policy",
+    "cashFlowPolicy": "Cash Flow",
+    "investmentPolicy": "Investments",
+    "primary": "Primary navigation",
+    "overview": "Overview",
+    "workspace": "Workspace",
+    "online": "Online"
+  },
+  "layout": {
+    "appName": "Accounting",
+    "expandSidebar": "Expand sidebar",
+    "collapseSidebar": "Collapse sidebar"
+  },
+  "help": {
+    "openButton": "Help",
+    "openInHelpCenter": "Open in Help Center",
+    "pageAnchor": "Page help",
+    "drawerTitle": "Help drawer",
+    "eyebrow": "Context help",
+    "relatedActions": "Related actions",
+    "actions": {
+      "openGetStarted": "Open Get Started",
+      "openLedger": "Open Ledger",
+      "openImport": "Open Import",
+      "openPreviousImports": "Open Previous Imports",
+      "openAccountGroups": "Open Account Groups",
+      "openCurrencies": "Open Currencies",
+      "openAccounts": "Open Accounts",
+      "openDashboardProjects": "Open Dashboard Projects",
+      "openJournalEntries": "Open Journal Entries",
+      "openUsers": "Open Users",
+      "openRoles": "Open Roles"
+    },
+    "empty": {
+      "title": "Help is not set up for this page yet",
+      "summary": "This help system now covers the main workflow areas, but a few secondary routes still need page-specific guidance.",
+      "body": "Use Get Started for setup guidance, or return here from the dashboard, journal entries, or accounts pages to see contextual help."
+    },
+    "tour": {
+      "sectionTitle": "Guided tours",
+      "startIntro": "Start intro tour",
+      "restartIntro": "Restart intro tour",
+      "startPageTour": "Start page tour",
+      "replayPageTour": "Replay page tour",
+      "overlayLabel": "Guided help tour",
+      "progress": "Step {{current}} of {{total}}",
+      "skip": "Skip",
+      "previous": "Previous",
+      "next": "Next",
+      "finish": "Finish"
+    },
+    "tours": {
+      "intro": {
+        "steps": {
+          "navigation": {
+            "title": "Navigation",
+            "body": "Use the main navigation to move between setup, daily work, dashboards, and administration."
+          },
+          "spaceSwitcher": {
+            "title": "Current space",
+            "body": "This shows which accounting space you are in. If you manage multiple spaces, switch here before entering data."
+          },
+          "profile": {
+            "title": "Profile and access",
+            "body": "Open your profile menu to sign in, sign out, and manage space-level actions that depend on your access."
+          },
+          "helpButton": {
+            "title": "Help entry point",
+            "body": "Open Help at any time to get page-specific guidance and available tours without leaving your current workflow."
+          }
+        }
+      },
+      "page": {
+        "journalEntries": {
+          "steps": {
+            "header": {
+              "title": "Journal workbench",
+              "body": "This page is the operational center for manual postings, review, and adjustment entries."
+            },
+            "import": {
+              "title": "Import options",
+              "body": "Use import when entries already exist in another source or when you want to trigger a flow instead of typing them one by one."
+            },
+            "newEntry": {
+              "title": "Create a new entry",
+              "body": "Use new entry for one-off postings, corrections, and transactions that need immediate review before posting."
+            }
+          }
+        },
+        "accounts": {
+          "steps": {
+            "header": {
+              "title": "Chart of accounts",
+              "body": "Manage the accounts that will receive transaction lines and drive your reporting structure."
+            },
+            "import": {
+              "title": "Bring in accounts",
+              "body": "Import is useful when you already have a chart of accounts from an external system or template."
+            },
+            "newAccount": {
+              "title": "Create an account",
+              "body": "Add a new account when you need a distinct balance or activity bucket that should appear separately in reporting."
+            }
+          }
+        },
+        "accountGroups": {
+          "steps": {
+            "header": {
+              "title": "Account groups",
+              "body": "Groups define the higher-level reporting buckets that individual accounts roll up into."
+            },
+            "import": {
+              "title": "Import groups",
+              "body": "Use import or export to standardize your group structure before you scale account creation."
+            }
+          }
+        },
+        "currencies": {
+          "steps": {
+            "header": {
+              "title": "Currencies",
+              "body": "Set up the currencies your space can use before posting transactions that depend on them."
+            },
+            "add": {
+              "title": "Add a currency",
+              "body": "Enable another currency here when you need it for accounts, counterparties, or transaction entry."
+            }
+          }
+        },
+        "projects": {
+          "steps": {
+            "header": {
+              "title": "Projects",
+              "body": "Projects help you tag and analyze work, costs, and revenues beyond the chart of accounts alone."
+            },
+            "import": {
+              "title": "Import projects",
+              "body": "Import is useful when project codes already exist in your operational systems and should stay aligned here."
+            }
+          }
+        },
+        "ocr": {
+          "steps": {
+            "header": {
+              "title": "OCR intake",
+              "body": "Upload invoices or receipts here, review extracted fields, and turn them into properly reviewed accounting records."
+            },
+            "addFiles": {
+              "title": "Add source documents",
+              "body": "Start by adding files or using the camera, then review the extracted result before creating or linking a transaction."
+            }
+          }
+        },
+        "users": {
+          "steps": {
+            "header": {
+              "title": "Users and access",
+              "body": "Manage who can work in the space and how long their access assignments should remain valid."
+            },
+            "newUser": {
+              "title": "Invite or add a user",
+              "body": "Add a user when collaboration changes, but review roles and validity dates so access matches responsibility."
+            }
+          }
+        },
+        "getStarted": {
+          "steps": {
+            "header": {
+              "title": "Setup checklist",
+              "body": "Use this page to complete the core setup work in a sensible order before relying on daily workflows and reporting."
+            }
+          }
+        },
+        "dashboardLedger": {
+          "steps": {
+            "header": {
+              "title": "Ledger analysis",
+              "body": "This dashboard helps you filter and explain posted activity without editing any underlying transactions."
+            },
+            "clear": {
+              "title": "Reset the analysis",
+              "body": "Clear filters when you want to return to a broader view and rebuild the analysis one condition at a time."
+            }
+          }
+        },
+        "businessPartners": {
+          "steps": {
+            "header": {
+              "title": "Partner master data",
+              "body": "Manage your customer and vendor records here so transactions and document workflows can stay tied to consistent counterparties."
+            },
+            "newPartner": {
+              "title": "Add a partner",
+              "body": "Create a new partner when reporting, document review, or future transactions should refer to a distinct external party."
+            }
+          }
+        },
+        "attachments": {
+          "steps": {
+            "header": {
+              "title": "Supporting files",
+              "body": "Use this area for receipts, invoices, and other files that support accounting work or need to be linked later."
+            },
+            "upload": {
+              "title": "Upload a file",
+              "body": "Add a document here when it should be available for later viewing, matching, or transaction support."
+            }
+          }
+        },
+        "roles": {
+          "steps": {
+            "header": {
+              "title": "Permission roles",
+              "body": "Roles define reusable permission sets. Changes here can affect access for multiple users at once."
+            },
+            "addRole": {
+              "title": "Create a role",
+              "body": "Add a role when you need a permission set that should be reusable across several collaborators."
+            }
+          }
+        },
+        "budget": {
+          "steps": {
+            "header": {
+              "title": "Budget plans",
+              "body": "Use this page to compare targets and actuals without changing the posted accounting records."
+            },
+            "newPlan": {
+              "title": "Create a plan",
+              "body": "Create a new budget plan when you need a new year, scenario, or planning cadence to compare against actual activity."
+            }
+          }
+        },
+        "previousImports": {
+          "steps": {
+            "header": {
+              "title": "Import history",
+              "body": "Review completed imports here when you need traceability, troubleshooting, or confirmation of what a rule or flow produced."
+            }
+          }
+        }
+      }
+    },
+    "entries": {
+      "dashboardOverview": {
+        "title": "Dashboard overview",
+        "summary": "Use the dashboard to spot trends quickly before you drill into detailed journal activity.",
+        "sections": {
+          "whatYouSee": {
+            "heading": "What you see here",
+            "body": "The dashboard is a read-first area. It summarizes what already exists in your books so you can detect missing data, unusual movements, and areas that need deeper review.",
+            "bullets": [
+              "Overview widgets show high-level financial signals.",
+              "Other dashboard tabs let you drill into ledger, cash flow, partners, and projects.",
+              "If a view looks empty, the underlying master data or journal entries may still need setup."
+            ]
+          },
+          "howToUseIt": {
+            "heading": "How to use it",
+            "body": "Start here to review the current state of the books, then move into ledger or setup pages to investigate or complete missing information."
+          }
+        }
+      },
+      "journalEntries": {
+        "title": "Journal entries",
+        "summary": "This is where accounting events are recorded and reviewed. Accurate entries here drive reporting everywhere else.",
+        "sections": {
+          "whatThisPageDoes": {
+            "heading": "What this page does",
+            "body": "Journal entries are the core accounting records in the system. Each entry should describe a business event and connect the affected accounts through balanced lines.",
+            "bullets": [
+              "Use entries to record day-to-day transactions and adjustments.",
+              "Imports and OCR-assisted flows eventually feed into journal data.",
+              "Downstream dashboards and reports only reflect what is posted here."
+            ]
+          },
+          "firstSteps": {
+            "heading": "Good first steps",
+            "body": "Before posting many entries, make sure your currencies, account groups, and accounts are in place so entries can be classified consistently."
+          }
+        }
+      },
+      "accounts": {
+        "title": "Accounts",
+        "summary": "Set up and maintain your chart of accounts so postings classify correctly and reporting stays reliable.",
+        "sections": {
+          "whatBelongsHere": {
+            "heading": "Start here",
+            "body": "Set account groups and currencies first. Then create accounts manually or import from the template so your chart stays consistent from day one.",
+            "bullets": [
+              "Use one account per reporting purpose and keep account codes unique.",
+              "Use the import template, upload, review warnings, then commit.",
+              "Fix error rows before import to avoid cleanup afterwards."
+            ]
+          },
+          "beforeYouCreate": {
+            "heading": "Import rules by space type",
+            "body": "Business spaces: isActive, owner, and owners are ignored; FX columns apply only when explicitly provided. Personal spaces: isActive, owner, and owners are supported; FX policy columns are ignored. In owners, shares can be entered as 60, 60%, or 0.6. Quick format guide: booleans accept TRUE/FALSE/1/0/YES/NO, dates should be YYYY-MM-DD, and currencies should use ISO codes like CHF, EUR, or USD."
+          }
+        }
+      },
+      "accountGroups": {
+        "title": "Account groups",
+        "summary": "Account groups shape how accounts roll up into reporting sections, cash flow mapping, and analysis views.",
+        "sections": {
+          "whyGroupsMatter": {
+            "heading": "Why groups matter",
+            "body": "Groups keep the chart organized. They let similar accounts behave consistently in reports and reduce manual classification work later."
+          },
+          "setupOrder": {
+            "heading": "Recommended setup order",
+            "body": "Define or import groups first, then create accounts inside them. That sequence avoids rework when balances and mappings already depend on a stable structure."
+          }
+        }
+      },
+      "currencies": {
+        "title": "Currencies",
+        "summary": "Currencies determine which monetary values can be used in the space and how postings stay consistent across accounts and documents.",
+        "sections": {
+          "baseCurrency": {
+            "heading": "Base and enabled currencies",
+            "body": "Start from the main operating currency of the space, then enable only the additional currencies you actually need for accounting activity."
+          },
+          "beforePosting": {
+            "heading": "Set this up before posting",
+            "body": "Review currencies before transactions arrive. Changing currency support after accounts or documents are already active is harder to control."
+          }
+        }
+      },
+      "projects": {
+        "title": "Projects",
+        "summary": "Projects let you analyze work, profitability, and spending in a way that cuts across accounts and counterparties.",
+        "sections": {
+          "whenToUseProjects": {
+            "heading": "When to use projects",
+            "body": "Use projects when you need a stable code for jobs, mandates, initiatives, or internal workstreams that should be visible in reporting."
+          },
+          "statusDiscipline": {
+            "heading": "Status discipline",
+            "body": "Keep project status current. Active, on-hold, completed, and cancelled states make filtering and downstream review more trustworthy."
+          }
+        }
+      },
+      "ocr": {
+        "title": "Document scan and OCR",
+        "summary": "OCR helps you extract draft accounting data from receipts and invoices, but the extracted result still needs accounting review.",
+        "sections": {
+          "whatOcrDoes": {
+            "heading": "What OCR does well",
+            "body": "It speeds up document intake by reading dates, amounts, counterparties, and other fields so you start from a draft instead of a blank form."
+          },
+          "reviewBeforeSave": {
+            "heading": "Review before saving",
+            "body": "Treat extracted data as a suggestion. Check taxes, account mapping, dates, currency, and attachments before creating or linking accounting records."
+          }
+        }
+      },
+      "adminSystem": {
+        "title": "System administration",
+        "summary": "This area contains general app settings, user preferences, language, date/number formats, and other configuration options.",
+        "sections": {
+          "whatBelongsHere": {
+            "heading": "What belongs here",
+            "body": "Use this page for system-level configuration, backup routines, OCR settings, and advanced storage or sync administration."
+          },
+          "sharedSpaceWarning": {
+            "heading": "Be careful in shared spaces",
+            "body": "Some actions here affect every collaborator in the active space. Review the current space and storage mode before changing or deleting anything."
+          }
+        }
+      },
+      "adminSpace": {
+        "title": "Space administration",
+        "summary": "Manage basic information about this accounting space.",
+        "sections": {}
+      },
+      "users": {
+        "title": "Users",
+        "summary": "User management controls who can access the accounting space and how long their role assignments remain valid.",
+        "sections": {
+          "whoShouldBeHere": {
+            "heading": "Who should be listed here",
+            "body": "Add users who need operational or review access to the active space. Keep the list aligned with real responsibilities, not just convenience."
+          },
+          "roleValidity": {
+            "heading": "Role validity",
+            "body": "Use validity dates when access should start or end on a known schedule. That makes temporary collaboration easier to control and audit."
+          }
+        }
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "tabs": {
+      "overview": "Overview",
+      "ledger": "Ledger",
+      "cashFlow": "Cash Flow",
+      "businessPartners": "Business Partners",
+      "projects": "Projects",
+      "pivot": "Pivot"
+    },
+    "placeholder": "This dashboard view is ready for content.",
+    "pivot": {
+      "title": "Pivot",
+      "description": "Build your own view: choose rows, columns, measures and filters to pivot your ledger like a spreadsheet.",
+      "rows": "Rows",
+      "columns": "Columns",
+      "measures": "Measures",
+      "filters": "Filters",
+      "addFilter": "Add filter",
+      "filterDimension": "Filter field",
+      "filterValues": "Filter values",
+      "sortBy": "Sort rows by",
+      "sortDefault": "Label",
+      "sortDirection": "Sort direction",
+      "sortAsc": "Ascending",
+      "sortDesc": "Descending",
+      "showRowTotals": "Row totals",
+      "showColumnTotals": "Column totals",
+      "rowSubtotals": "Group subtotals",
+      "expand": "Expand group",
+      "collapse": "Collapse group",
+      "reset": "Reset layout",
+      "total": "Total",
+      "allRows": "All",
+      "allColumns": "All",
+      "noData": "No data matches the current layout. Adjust rows, columns, or filters.",
+      "summary": "{{rows}} rows · {{columns}} columns · {{facts}} ledger lines",
+      "dimensions": {
+        "accountType": "Account type",
+        "accountGroup": "Account group",
+        "account": "Account",
+        "year": "Year",
+        "quarter": "Quarter",
+        "month": "Month",
+        "businessPartner": "Business partner",
+        "project": "Project",
+        "status": "Status"
+      },
+      "measure": {
+        "amount": "Net amount",
+        "debit": "Debit",
+        "credit": "Credit",
+        "count": "Count"
+      },
+      "status": {
+        "pending": "Pending",
+        "posted": "Posted",
+        "cleared": "Cleared",
+        "void": "Void"
+      },
+      "fallback": {
+        "noBusinessPartner": "(no partner)",
+        "noProject": "(no project)",
+        "unknownAccount": "(unknown)"
+      },
+      "views": {
+        "apply": "Saved views…",
+        "save": "Save view",
+        "namePrompt": "Name this view",
+        "delete": "Delete view…"
+      },
+      "drill": {
+        "title": "{{row}} × {{column}}",
+        "empty": "No ledger lines for this cell.",
+        "date": "Date",
+        "description": "Description",
+        "account": "Account",
+        "amount": "Amount"
+      }
+    },
+    "overview": {
+      "subtitle": "Financial snapshot for {{year}}",
+      "noData": "No transactions yet. Your overview will appear once journal entries are posted.",
+      "kpi": {
+        "netResult": "Net Result YTD",
+        "cashBalance": "Cash & Bank",
+        "income": "Income YTD",
+        "expenses": "Expenses YTD",
+        "pending": "Pending Entries",
+        "ytdLabel": "Year to date {{year}}",
+        "rangeLabel": "{{from}} – {{until}}",
+        "rangeFrom": "From {{date}}",
+        "rangeTo": "Until {{date}}",
+        "pendingLabel": "awaiting review"
+      },
+      "statement": {
+        "cumulativeNet": "Cumulative net"
+      },
+      "plChart": {
+        "title": "Revenue vs Expenses — rolling 12 months",
+        "revenue": "Revenue",
+        "expense": "Expenses",
+        "net": "Net result"
+      },
+      "balanceSheet": {
+        "title": "Balance Sheet Snapshot",
+        "assets": "Assets",
+        "liabilities": "Liabilities",
+        "equity": "Equity",
+        "netWorth": "Net Worth"
+      },
+      "topExpenses": {
+        "title": "Top expense groups — {{month}}",
+        "amount": "Amount"
+      },
+      "budget": {
+        "title": "Budget vs Actual {{year}}",
+        "income": "Income",
+        "expenses": "Expenses",
+        "net": "Net result",
+        "ofBudget": "of budget",
+        "noBudget": "no budget set",
+        "ytdLine": "{{pct}}% of year elapsed",
+        "ytdNote": "Grey line = {{pct}}% of budget year elapsed"
+      }
+    },
+    "ledger": {
+      "description": "Filter journal activity by account, account group, date range, owner, and attribution.",
+      "account": "Account",
+      "allAccounts": "All accounts",
+      "accountGroup": "Account group",
+      "allAccountGroups": "All account groups",
+      "owner": "Owner",
+      "allOwners": "All owners",
+      "attribution": "Attribution",
+      "allAttributions": "All attributions",
+      "fromDate": "From",
+      "toDate": "Until",
+      "datePreset": "Period",
+      "datePresetCustom": "Custom range",
+      "presetTabReporting": "Reporting",
+      "presetTabRolling": "Rolling",
+      "presetTabCustom": "Custom",
+      "presetTabPick": "Pick",
+      "presetTabPresets": "Presets",
+      "datePresetYTD": "Year to date",
+      "datePresetCurrentMonth": "Current month",
+      "datePresetCurrentQuarter": "Current quarter",
+      "datePresetCurrentYear": "Current year",
+      "datePresetLastMonth": "Last month",
+      "datePresetLastQuarter": "Last quarter",
+      "datePresetLastYear": "Last year",
+      "last7Days": "Last 7d",
+      "last30Days": "Last 30d",
+      "last90Days": "Last 90d",
+      "savedPresetsTitle": "Saved ranges",
+      "customPeriodTitle": "Custom period",
+      "pickDatesTitle": "Pick exact dates",
+      "anchorLabel": "Anchor",
+      "offsetLabel": "Offset",
+      "offsetUnitLabel": "Shift by",
+      "previewLabel": "Preview",
+      "savePresetPlaceholder": "e.g. Last half-year",
+      "savePresetButton": "Save preset",
+      "applyWithoutSaving": "Apply",
+      "saveRangeButton": "Save this range",
+      "deletePresetAriaLabel": "Delete preset",
+      "offsetUnitMonth": "month(s)",
+      "offsetUnitQuarter": "quarter(s)",
+      "offsetUnitYear": "year(s)",
+      "clearFilters": "Clear filters",
+      "activity": "Inflow and outflow",
+      "expense": "Expense",
+      "earnings": "Earnings",
+      "refund": "Refund",
+      "increase": "Increase",
+      "decrease": "Decrease",
+      "inflow": "Inflow",
+      "outflow": "Outflow",
+      "positiveAmountDirection": "positive line amounts",
+      "negativeAmountDirection": "negative line amounts",
+      "flowMeaningHint": "{{inflow}} = {{inflowDirection}}; {{outflow}} = {{outflowDirection}} for {{scope}}.",
+      "journalEntries": "Journal entries",
+      "matchingEntries_one": "{{count}} matching entry",
+      "matchingEntries_other": "{{count}} matching entries",
+      "matchingLines_one": "{{count}} matching line",
+      "matchingLines_other": "{{count}} matching lines",
+      "noEntries": "No journal entries match these filters.",
+      "reference": "Reference",
+      "accountColumn": "Account",
+      "memo": "Memo",
+      "owners": "Owners",
+      "attributions": "Attributions",
+      "noMemo": "No memo",
+      "unassigned": "Unassigned",
+      "drillYear": "Year",
+      "drillQuarter": "Quarter",
+      "drillMonth": "Month",
+      "drillDay": "Day",
+      "showBalance": "Show balance",
+      "scopeWithValue": "Scope: {{value}}",
+      "scopeAllYears": "Scope: all years",
+      "combinedFlow": "Net flow (in - out)",
+      "balance": "Balance",
+      "clickToDrill": "Click to zoom in",
+      "drillBackOne": "Back one level",
+      "drillPointHint": "Click a highlighted point to drill into a selected period.",
+      "drillDialogTitle": "Drill down?",
+      "breadcrumbAll": "All years",
+      "removeFilter": "Remove filter",
+      "loadMore": "Show more ({{shown}} of {{total}})",
+      "drillSelectedPointConfirm": "Drill down into {{value}}?"
+    },
+    "transactions": "Transactions",
+    "accounts": "Accounts",
+    "netIncome": "Net Income",
+    "lastSync": "Last Sync",
+    "incomeVsExpense": "Income vs Expense (Monthly)",
+    "balanceByType": "Balance by Type",
+    "income": "income",
+    "expense": "expense",
+    "assets": "Assets",
+    "liabilities": "Liabilities",
+    "cashFlow": {
+      "title": "Cash Flow Statement",
+      "description": "Review cash movement by operating, investing, and financing activity over a selected period.",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "chartTitle": "Cash Flow By Period",
+      "statementTitle": "Cash Flow Statement",
+      "scopeAllDates": "Scope: all dates",
+      "scopeWithValue": "Scope: {{value}}",
+      "noEntries": "No cash flow activity matches this period.",
+      "operatingActivities": "Operating Activities",
+      "netIncome": "Net Income",
+      "workingCapitalChanges": "Changes in Working Capital",
+      "netOperating": "Net Cash from Operations",
+      "investingActivities": "Investing Activities",
+      "netInvesting": "Net Cash from Investing",
+      "financingActivities": "Financing Activities",
+      "netFinancing": "Net Cash from Financing",
+      "netChange": "Net Change in Cash",
+      "operating": "Operating",
+      "investing": "Investing",
+      "financing": "Financing",
+      "cumulativeCash": "Cumulative cash",
+      "showCumulative": "Show cumulative cash",
+      "showDetails": "Show details",
+      "hideDetails": "Hide details",
+      "printHint": "Print view keeps the statement and summary, and hides interactive controls."
+    },
+    "projects": {
+      "description": "Select a project to view its transactions and cash flow.",
+      "selectProject": "Select a project",
+      "noProjectSelected": "Select a project above to see its overview.",
+      "noTransactions": "No journal entries are assigned to this project.",
+      "inflow": "Inflow",
+      "outflow": "Outflow",
+      "netFlow": "Net flow",
+      "balance": "Cumulative balance",
+      "chartTitle": "Monthly cash flow — {{name}}",
+      "journalEntries": "Journal entries",
+      "entries_one": "{{count}} entry",
+      "entries_other": "{{count}} entries",
+      "loadMore": "Show more ({{shown}} of {{total}})"
+    },
+    "businessPartners": {
+      "description": "Select a business partner to view its transactions and cash flow.",
+      "selectBusinessPartner": "Select a business partner",
+      "noBusinessPartnerSelected": "Select a business partner above to see its overview.",
+      "noTransactions": "No journal entries are assigned to this business partner.",
+      "inflow": "Inflow",
+      "outflow": "Outflow",
+      "netFlow": "Net flow",
+      "balance": "Cumulative balance",
+      "chartTitle": "Monthly cash flow — {{name}}",
+      "journalEntries": "Journal entries",
+      "entries_one": "{{count}} entry",
+      "entries_other": "{{count}} entries",
+      "loadMore": "Show more ({{shown}} of {{total}})"
+    }
+  },
+  "accounts": {
+    "title": "Chart of Accounts",
+    "newAccount": "New Account",
+    "importAccounts": "Import accounts",
+    "exportAccounts": "Export accounts",
+    "downloadTemplate": "Download template",
+    "searchPlaceholder": "Search by name or code…",
+    "noAccounts": "No accounts yet.",
+    "noAccountsHint": "Create your first account to get started.",
+    "noMatch": "No accounts match your filters.",
+    "starterAccountsPrompt": {
+      "title": "Add starter accounts?",
+      "body": "We can create a minimal chart of accounts for you now, or you can start from scratch and add accounts manually.",
+      "seed": "Create starter accounts",
+      "manual": "Start manually"
+    },
+    "account_one": "{{count}} account",
+    "account_other": "{{count}} accounts",
+    "importComplete": "Import complete: {{created}} created, {{updated}} updated.",
+    "types": {
+      "asset": "Assets",
+      "liability": "Liabilities",
+      "equity": "Equity",
+      "income": "Income",
+      "expense": "Expenses"
+    },
+    "status": {
+      "always": "Always",
+      "active": "Active",
+      "future": "Future",
+      "expired": "Expired",
+      "inactive": "Inactive"
+    },
+    "form": {
+      "createTitle": "New Account",
+      "editTitle": "Edit Account",
+      "name": "Name",
+      "namePlaceholder": "Account name",
+      "code": "Account Code",
+      "codePlaceholder": "e.g. 1010",
+      "selectTypeGroupFirst": "Select type and group first.",
+      "suggestedCode": "Suggested code: {{code}}",
+      "noSuggestedCode": "No free code is currently available in this range.",
+      "codeNumericError": "Account code must be numeric for the selected group.",
+      "codeRangeError": "Account code must be within {{start}}-{{end}}.",
+      "codeStepError": "Account code must follow the group step of {{step}}.",
+      "type": "Type",
+      "group": "Group",
+      "selectGroup": "Select group…",
+      "enterGroupName": "Enter group name",
+      "currency": "Currency",
+      "iban": "IBAN",
+      "ibanPlaceholder": "e.g. CH56 0483 5012 3456 7800 9",
+      "ibanHint": "(optional — used to auto-match import rules)",
+      "description": "Description",
+      "descriptionPlaceholder": "Brief description of this account…",
+      "validFrom": "Valid From",
+      "validTo": "Valid To",
+      "isActive": "Active",
+      "owners": "Owners",
+      "noUsers": "No users configured.",
+      "addUsers": "Add users",
+      "noUsersFirst": "first.",
+      "sharePercentPlaceholder": "50",
+      "noCurrencies": "No currencies configured.",
+      "addCurrencies": "Add currencies",
+      "customGroupLabel": "Custom Group Name",
+      "selectUser": "Select user…",
+      "addOwner": "+ Add owner",
+      "removeOwner": "Remove",
+      "saveAndNew": "Save & New",
+      "deactivate": "Deactivate",
+      "activate": "Activate"
+    },
+    "table": {
+      "code": "Code",
+      "name": "Name",
+      "currency": "Currency",
+      "owners": "Owners",
+      "status": "Status"
+    },
+    "import": {
+      "reviewTitle": "Review Import",
+      "toCreate": "to create",
+      "toUpdate": "to update",
+      "skipped": "skipped",
+      "error_one": "{{count}} error",
+      "error_other": "{{count}} errors",
+      "selectAll": "Select all",
+      "deselectAll": "Deselect all",
+      "toggleHint": "Toggle rows to include or skip them. For updates you can choose which existing account to merge into.",
+      "importBtn_one": "Import {{count}} account",
+      "importBtn_other": "Import {{count}} accounts",
+      "notConfigured": "⚠ not configured",
+      "newAccount": "new account",
+      "updateExisting": "update existing",
+      "createAsNew": "Create as new",
+      "mergeTo": "Merge →",
+      "pickAccount": "— pick account —",
+      "filters": {
+        "errors": "Errors",
+        "success": "Success"
+      },
+      "columns": {
+        "rowNum": "#",
+        "code": "Code",
+        "nameDesc": "Name / Description",
+        "typeGroup": "Type · Group",
+        "currency": "Currency",
+        "ibanOwner": "IBAN · Owner",
+        "validity": "Validity",
+        "status": "Status",
+        "action": "Action / Merge target"
+      }
+    },
+    "fxPolicy": {
+      "pageTitle": "FX Policy",
+      "description": "Review and update FX treatment for all asset and liability accounts. Row changes are saved immediately.",
+      "groupFilter": "Group",
+      "allGroups": "All groups",
+      "noAccounts": "No asset or liability accounts yet.",
+      "noAccountsHint": "Add accounts in the Accounts tab first.",
+      "noMatch": "No accounts match the current filters.",
+      "treatment": "FX Treatment",
+      "rateTiming": "Rate Timing",
+      "closingRevalue": "Revalue at Close",
+      "treatmentInherited": "(inherited)",
+      "monetary": "Monetary",
+      "historical": "Historical",
+      "currentValue": "Current Value",
+      "timingInherited": "(inherited)",
+      "transactionDate": "Transaction date",
+      "settlementDate": "Settlement date",
+      "valuationDate": "Valuation date",
+      "massUpdate": {
+        "selectedCount_one": "{{count}} account selected",
+        "selectedCount_other": "{{count}} accounts selected",
+        "applyTo": "Apply to selected:",
+        "noChange": "\u2014 no change \u2014",
+        "apply": "Apply",
+        "clearSelection": "Clear selection",
+        "successToast_one": "Updated {{count}} account",
+        "successToast_other": "Updated {{count}} accounts"
+      }
+    },
+    "cashFlowPolicy": {
+      "pageTitle": "Cash Flow Policy",
+      "description": "Review and update cash flow classification for all accounts. Row changes are saved immediately.",
+      "activityFilter": "Activity",
+      "allActivities": "All activities",
+      "typeFilter": "Account Type",
+      "allTypes": "All types",
+      "noAccounts": "No accounts yet.",
+      "noAccountsHint": "Add accounts in the Accounts tab first.",
+      "noMatch": "No accounts match the current filters.",
+      "activityColumn": "Cash Flow Activity",
+      "isCashEquivalentColumn": "Cash Equivalent",
+      "activityOptions": {
+        "operating": "Operating",
+        "investing": "Investing",
+        "financing": "Financing",
+        "none": "None"
+      },
+      "massUpdate": {
+        "selectedCount_one": "{{count}} account selected",
+        "selectedCount_other": "{{count}} accounts selected",
+        "applyTo": "Apply to selected:",
+        "noChange": "\u2014 no change \u2014",
+        "apply": "Apply",
+        "clearSelection": "Clear selection",
+        "successToast_one": "Updated {{count}} account",
+        "successToast_other": "Updated {{count}} accounts"
+      }
+    },
+    "investmentPolicy": {
+      "pageTitle": "Investment Accounts",
+      "description": "Assign an investment role to accounts used in investment tracking. Row changes are saved immediately.",
+      "roleFilter": "Role",
+      "allRoles": "All roles",
+      "typeFilter": "Account Type",
+      "allTypes": "All types",
+      "noAccounts": "No accounts yet.",
+      "noAccountsHint": "Add accounts in the Accounts tab first.",
+      "noMatch": "No accounts match the current filters.",
+      "roleColumn": "Investment Role",
+      "roleOptions": {
+        "asset": "Asset",
+        "unrealizedGain": "Unrealized gain",
+        "realizedGain": "Realized gain",
+        "dividendIncome": "Dividend income",
+        "none": "None"
+      },
+      "massUpdate": {
+        "selectedCount_one": "{{count}} account selected",
+        "selectedCount_other": "{{count}} accounts selected",
+        "applyTo": "Apply to selected:",
+        "noChange": "\u2014 no change \u2014",
+        "apply": "Apply",
+        "clearSelection": "Clear selection",
+        "successToast_one": "Updated {{count}} account",
+        "successToast_other": "Updated {{count}} accounts"
+      }
+    }
+  },
+  "businessPartners": {
+    "title": "Business Partners",
+    "newPartner": "New Business Partner",
+    "downloadTemplate": "Download template",
+    "importPartners": "Import partners",
+    "importComplete": "Import complete: {{created}} created, {{updated}} updated.",
+    "importCompleteWithSkipped": "Import complete: {{created}} created, {{updated}} updated, {{skipped}} skipped.",
+    "importFailed": "Import failed: {{message}}",
+    "searchPlaceholder": "Search by partner or suggested account…",
+    "noPartners": "No business partners yet.",
+    "noMatch": "No business partners match your filters.",
+    "confirmDelete": "Delete business partner \"{{name}}\"?",
+    "noSuggestedAccountGroups": "No suggested accounts",
+    "types": {
+      "customer": "Customer",
+      "vendor": "Vendor",
+      "both": "Customer & Vendor",
+      "financial-services": "Financial Services"
+    },
+    "table": {
+      "name": "Name",
+      "type": "Type",
+      "accountGroups": "Suggested accounts",
+      "status": "Status"
+    },
+    "form": {
+      "createTitle": "New Business Partner",
+      "editTitle": "Edit Business Partner",
+      "name": "Name",
+      "namePlaceholder": "Business partner name",
+      "type": "Type",
+      "active": "Active",
+      "suggestedAccountGroups": "Suggested accounts",
+      "suggestedAccountGroupsHint": "These accounts are shown first when this partner is selected in a journal entry.",
+      "groupSearchPlaceholder": "Filter accounts…",
+      "noGroupsMatch": "No account groups match this filter.",
+      "nameRequired": "Name is required.",
+      "invalidDateRange": "Valid From must be on or before Valid To."
+    },
+    "importPreview": {
+      "title": "Review business partner import",
+      "summary": "File: {{file}}. Valid rows: {{valid}} ({{created}} create, {{updated}} update).",
+      "skipped": "Skipped rows: {{invalid}} invalid, {{duplicates}} duplicate-name overrides.",
+      "sampleIssues": "Sample issues",
+      "apply": "Import now",
+      "noValidRows": "No valid rows to import. Invalid rows: {{invalid}}."
+    }
+  },
+  "accountGroups": {
+    "title": "Account Groups",
+    "groups": {
+      "bankAccounts": "Bank Accounts",
+      "cashEquivalents": "Cash & Cash Equivalents",
+      "financialInvestments": "Financial Investments",
+      "realEstate": "Real Estate",
+      "otherFixedAssets": "Other Fixed Assets",
+      "receivables": "Receivables",
+      "inventory": "Inventory",
+      "prepaidExpenses": "Prepaid Expenses",
+      "intangibleAssets": "Intangible Assets",
+      "otherAssets": "Other Assets",
+      "accountsPayable": "Accounts Payable",
+      "currentLiabilities": "Current Liabilities",
+      "longTermDebt": "Long-term Debt",
+      "loansAndMortgages": "Loans & Mortgages",
+      "accruedLiabilities": "Accrued Liabilities",
+      "deferredRevenue": "Deferred Revenue",
+      "taxLiabilities": "Tax Liabilities",
+      "otherLiabilities": "Other Liabilities",
+      "ownersCapital": "Owner's Capital",
+      "retainedEarnings": "Retained Earnings",
+      "currentYearEarnings": "Current-Year Earnings",
+      "ownersDrawings": "Owner's Drawings",
+      "additionalPaidInCapital": "Additional Paid-in Capital",
+      "treasuryStock": "Treasury Stock",
+      "otherEquity": "Other Equity",
+      "operatingRevenue": "Operating Revenue",
+      "serviceRevenue": "Service Revenue",
+      "productSales": "Product Sales",
+      "investmentIncome": "Investment Income",
+      "rentalIncome": "Rental Income",
+      "otherIncome": "Other Income",
+      "costOfGoodsSold": "Cost of Goods Sold",
+      "operatingExpenses": "Operating Expenses",
+      "administrativeExpenses": "Administrative Expenses",
+      "payrollAndBenefits": "Payroll & Benefits",
+      "marketingAndAdvertising": "Marketing & Advertising",
+      "rentAndUtilities": "Rent & Utilities",
+      "taxesAndFees": "Taxes & Fees",
+      "depreciationAndAmortization": "Depreciation & Amortization",
+      "financialExpenses": "Financial Expenses",
+      "accruedExpense": "Accrued expense",
+      "prepaidExpense": "Prepaid expense",
+      "otherExpenses": "Other Expenses",
+      "cashCoins": "Cash & Coins",
+      "savingsEmergencyFund": "Savings & Emergency Fund",
+      "retirementPension": "Retirement & Pension",
+      "personalProperty": "Personal Property",
+      "vehicles": "Vehicles",
+      "prepaidAccruals": "Prepaid Expenses & Accruals",
+      "creditCards": "Credit Cards",
+      "carLoans": "Car Loans",
+      "studentLoans": "Student Loans",
+      "personalLoansCredit": "Personal Loans & Credit",
+      "mortgages": "Mortgages",
+      "provisions": "Provisions",
+      "deferredLiabilities": "Deferred & Accrued Liabilities",
+      "netWorth": "Net Worth",
+      "profitAndLoss": "Profit & Loss",
+      "salaryWages": "Salary & Wages",
+      "freelanceSideIncome": "Freelance & Side Income",
+      "capitalGains": "Capital Gains",
+      "benefitsAllowances": "Benefits & Allowances",
+      "giftsInheritance": "Gifts & Inheritance",
+      "housing": "Housing",
+      "foodDining": "Food & Dining",
+      "transportMobility": "Transport & Mobility",
+      "healthcareInsurance": "Healthcare & Insurance",
+      "subscriptionsMedia": "Subscriptions & Media",
+      "leisureSports": "Leisure & Sports",
+      "personalCare": "Personal Care",
+      "education": "Education",
+      "holidaysTravel": "Holidays & Travel",
+      "giftsAndDonations": "Gifts & Donations",
+      "childrenFamily": "Children & Family",
+      "losses": "Losses",
+      "extraordinaryExpenses": "Extraordinary Expenses"
+    },
+    "description": "Manage the sub-categories available within each account type. Optionally set a {{validFrom}} / {{validTo}} range to make a group available only during a specific period — useful for seasonal categories or fiscal-year restructuring. Groups without dates are always available.",
+    "searchPlaceholder": "Search groups…",
+    "noGroups": "No groups yet.",
+    "addGroup": "Add group",
+    "groupName": "Group name",
+    "exportGroups": "Export account groups",
+    "downloadTemplate": "Download template",
+    "importGroups": "Import account groups",
+    "importComplete": "Import complete: {{created}} created, {{updated}} updated.",
+    "members": {
+      "button": "Members ({{count}})",
+      "title": "Manage members: {{group}}",
+      "searchPlaceholder": "Search accounts…",
+      "currentGroup": "Current group",
+      "action": "Membership",
+      "inGroup": "In group",
+      "notInGroup": "Not in group",
+      "ungrouped": "Ungrouped",
+      "summary": "{{added}} to add · {{removed}} to remove · {{unchanged}} unchanged",
+      "selectAll": "Select all",
+      "deselectAll": "Clear all",
+      "apply": "Apply changes",
+      "noAccounts": "No accounts for this account type yet.",
+      "tableLabel": "Account group members",
+      "updateComplete": "Members updated: {{added}} added, {{removed}} removed, {{skipped}} skipped.",
+      "reassignWarning": "{{count}} account(s) will be moved from their current group to this one.",
+      "willBeMoved": "Will be moved"
+    },
+    "status": {
+      "all": "All",
+      "always": "Always",
+      "active": "Active",
+      "future": "Future",
+      "expired": "Expired"
+    },
+    "fxPolicy": {
+      "title": "FX policy",
+      "treatment": "Treatment",
+      "rateTiming": "Rate timing",
+      "closingRevalue": "Include in period-end revaluation",
+      "vatFxOverride": "VAT FX override",
+      "treatmentOptions": {
+        "monetary": "Monetary (closing-rate revaluation)",
+        "historical": "Historical-cost (no closing revaluation)",
+        "currentValue": "Current-value / tradable"
+      },
+      "rateTimingOptions": {
+        "transactionDate": "Transaction date",
+        "settlementDate": "Settlement date",
+        "valuationDate": "Valuation date"
+      },
+      "vatFxOptions": {
+        "spaceDefault": "Use space default",
+        "daily": "Daily rate",
+        "monthlyAverage": "Monthly average"
+      },
+      "ambiguousWarning": "This group mixes different valuation bases. Confirm FX treatment explicitly."
+    }
+  },
+  "currencies": {
+    "title": "Currencies",
+    "addTitle": "Add Currency",
+    "exportCurrencies": "Export currencies",
+    "downloadTemplate": "Download template",
+    "importCurrencies": "Import currencies",
+    "importComplete": "Import complete: {{created}} added.",
+    "importCompleteWithSkipped": "Import complete: {{created}} added, {{skipped}} skipped.",
+    "importBaseNotChanged": "Base currency not changed — a base is already set.",
+    "importFailed": "Import failed: {{message}}",
+    "importPreview": {
+      "title": "Review currency import",
+      "summary": "File: {{file}}. Valid rows: {{valid}} ({{created}} to add).",
+      "skipped": "Skipped rows: {{invalid}} invalid, {{duplicates}} duplicate code rows, {{alreadyEnabled}} already enabled.",
+      "sampleIssues": "Sample issues",
+      "apply": "Import now",
+      "noValidRows": "No valid rows to import. Invalid: {{invalid}}, duplicates: {{duplicates}}, already enabled: {{alreadyEnabled}}."
+    },
+    "searchPlaceholder": "Search by code or name…",
+    "searchEnabled": "Search enabled currencies…",
+    "selectHint": "Select a currency to add.",
+    "firstCurrencyHint": "The first currency added becomes the base (functional) currency.",
+    "setAsBase": "Set as base",
+    "cannotRemoveBase": "Cannot remove the base currency. Set another currency as base first.",
+    "confirmRemove": "Remove {{code}} from your currencies?",
+    "exchangeRateNote": "Exchange rates will be sourced from",
+    "exchangeRateSource": "frankfurter.app",
+    "exchangeRateSuffix": "(ECB data, no API key required).",
+    "noResults": "No results.",
+    "noCurrencies": "No currencies configured yet. Click ➕ to add your first currency.",
+    "noMatch": "No currencies match your search.",
+    "removeTitle": "Remove {{code}}",
+    "table": {
+      "code": "CODE",
+      "name": "NAME",
+      "symbol": "SYMBOL",
+      "role": "ROLE"
+    }
+  },
+  "journal": {
+    "title": "Journal Entries",
+    "import": "⬆ Import",
+    "moreImportOptions": "More import options",
+    "manualImport": "📄 Manual Import",
+    "runFlow": "▶ Run Import Flow",
+    "newEntry": "New Journal Entry",
+    "searchPlaceholder": "Search by description or reference…",
+    "searchIn": "Search in",
+    "transactionId": "Transaction ID",
+    "transactionIdPlaceholder": "e.g. 1024",
+    "entries": "Entries",
+    "entryCount_one": "{{count}} entry",
+    "entryCount_other": "{{count}} entries",
+    "amount": "Amount",
+    "description": "Description",
+    "noTransactions": "No transactions yet",
+    "noMatch": "No transactions match your filters.",
+    "confirmDelete": "Delete \"{{name}}\"?",
+    "status": {
+      "all": "All",
+      "pending": "Pending",
+      "posted": "Posted",
+      "cleared": "Cleared",
+      "void": "Void"
+    },
+    "form": {
+      "newTitle": "New Journal Entry",
+      "editTitle": "Edit Journal Entry",
+      "saveAndNew": "Save & New",
+      "saveAndNewTip": "Save and add another entry",
+      "description": "Description",
+      "descriptionPlaceholder": "e.g. March salary",
+      "date": "Date",
+      "status": "Status",
+      "reference": "Reference",
+      "referencePlaceholder": "Invoice / check #",
+      "project": "Project",
+      "noProject": "No project",
+      "businessPartner": "Business partner",
+      "noBusinessPartner": "No business partner",
+      "addNewBusinessPartner": "Add new partner…",
+      "linksSection": "Links & context",
+      "realEstateProperty": "Property",
+      "noRealEstateProperty": "No property",
+      "addNewRealEstateProperty": "Add new property…",
+      "realEstateEntryType": "Entry type",
+      "noRealEstateEntryType": "— select type —",
+      "investmentPosition": "Investment",
+      "noInvestmentPosition": "No investment",
+      "addNewInvestmentPosition": "Add new position…",
+      "invLotType": "Lot type",
+      "invLotTypeBuy": "Buy",
+      "invLotTypeSell": "Sell",
+      "invShares": "Shares / units",
+      "invPricePerShare": "Price per share",
+      "invTotal": "Total: {{amount}}",
+      "invLotWillBeCreated": "A lot will be linked on save.",
+      "invLotSaveWarning": "Transaction saved. The investment lot could not be linked — please add it manually in the Investments subledger.",
+      "reEntryType": {
+        "maintenance": "Maintenance",
+        "rentalincome": "Rental income",
+        "mortgage": "Mortgage",
+        "acquisition": "Acquisition",
+        "depreciation": "Depreciation",
+        "other": "Other"
+      },
+      "lines": "Lines",
+      "linesHint": "(positive = debit, negative = credit)",
+      "balanced": "✔ Balanced",
+      "outOfBalance": "⚠ Out of balance by {{amount}}",
+      "selectAccount": "Select account…",
+      "suggestedAccounts": "Suggested for {{name}}",
+      "otherAccounts": "Other accounts",
+      "amountPlaceholder": "Amount",
+      "memoPlaceholder": "Memo (optional)",
+      "removeLine": "Remove line",
+      "vatCode": "VAT code",
+      "vatCodeNone": "— No VAT —",
+      "vatBreakdown": "Base {{base}} + VAT {{tax}}",
+      "vatGrossHint": "Apply the VAT code only to the gross amount line (expense or revenue). Do not apply it to the offsetting cash or asset line.",
+      "headerVatCode": "VAT code",
+      "headerVatCodeHint": "Automatically applied to expense and income lines. Cash, bank, and asset lines are not affected.",
+      "headerVatEnforced": "Apply to all lines",
+      "attribution": "Attribution",
+      "auto": "auto",
+      "rederive": "↺ Re-derive",
+      "rederiveTip": "Re-derive from counterpart accounts",
+      "addAttribution": "+ Add",
+      "noUsers": "No users configured.",
+      "noAttribution": "No attribution — click \"+Add\" or fill in counterpart account ownerships to auto-derive.",
+      "selectUser": "Select user…",
+      "sharesOk": "✔ Shares sum to 100%",
+      "sharesWrong": "⚠ {{pct}}% (need 100%)",
+      "attrRequired": "Attribution required",
+      "attrWrong": "Shares sum to {{pct}}% (need 100%)",
+      "addLine": "+ Add line",
+      "attrSummary": "Attribution summary",
+      "addEntry": "Add Entry",
+      "updateEntry": "Update Entry",
+      "transactionCurrency": "Transaction currency",
+      "appliedFxRate": "Applied FX rate",
+      "baseCurrency": "Base currency",
+      "fxHintSaved": "FX rate applied at posting time.",
+      "fxHintNew": "Rate will be fetched automatically on save, or enter a custom rate above.",
+      "fxRateAutoHint": "Auto on save",
+      "baseCurrencyDebit": "Debit ({{base}})",
+      "baseCurrencyCredit": "Credit ({{base}})",
+      "baseCurrencyDelta": "Δ ({{base}})"
+    },
+    "accruals": {
+      "open": "Generate accruals",
+      "title": "Generate accrual entries",
+      "mode": "Mode",
+      "modeAccrued": "Accrued expense (expense vs liability)",
+      "modePrepaid": "Prepaid expense amortization (expense vs prepaid asset)",
+      "totalAmount": "Total amount",
+      "sourceAccount": "Source account",
+      "counterAccount": "Counter account",
+      "selectAccount": "Select account…",
+      "startMonth": "Start month",
+      "endMonth": "End month",
+      "rhythm": "Rhythm",
+      "rhythmMonthly": "Monthly",
+      "rhythmQuarterly": "Quarterly",
+      "rhythmSemiYearly": "Semi-yearly",
+      "rhythmYearly": "Yearly",
+      "copyProject": "Copy current project by default",
+      "copyAttribution": "Copy current attribution to generated expense lines",
+      "includeInitialPrepaid": "Include initial prepaid booking (prepaid expense vs credit account)",
+      "initialPrepaidOnlyInPrepaidMode": "Switch mode to \"Prepaid expense amortization\" to enable this option.",
+      "initialDate": "Initial booking date",
+      "initialCreditAccount": "Initial credit account",
+      "initialDescription": "Initial booking description",
+      "initialLabel": "initial prepaid booking",
+      "initialEntryPreview": "Initial entry preview",
+      "schedulePreview": "Amortization schedule preview",
+      "previewHint": "Review and adjust generated periods before posting.",
+      "generatePreview": "Generate preview",
+      "postNow": "Post generated entries",
+      "posting": "Posting…",
+      "defaultDescription": "Accrual",
+      "memoInitialPrepaid": "Initial prepaid booking",
+      "memoInitialCredit": "Initial prepaid credit leg",
+      "memoAccrued": "Accrued expense",
+      "memoAccruedCounter": "Accrued liability",
+      "memoAmortization": "Prepaid amortization",
+      "memoAmortizationCounter": "Reduce prepaid asset",
+      "error": {
+        "accounts": "Select both source and counter accounts.",
+        "amount": "Enter a positive amount.",
+        "period": "Choose a valid period range.",
+        "sourceType": "Source account must be of type: {{type}}.",
+        "counterType": "Counter account must be of type: {{type}}.",
+        "initialDate": "Provide an initial booking date.",
+        "initialCreditAccount": "Select an initial credit account.",
+        "initialCreditDistinct": "Initial credit account must differ from the prepaid asset account.",
+        "attributionMissing": "No attribution available to copy for generated expense lines.",
+        "attributionInvalid": "Attribution shares must sum to 100% before posting accruals.",
+        "generic": "Could not generate accrual entries."
+      }
+    },
+    "importModal": {
+      "title": "Import Data",
+      "noRules": "No import rules defined yet. Go to Settings → Import Rules to create one.",
+      "ruleLabel": "Import rule",
+      "selectRule": "— select a rule —",
+      "fileLabel": "Source file",
+      "supportedFormats": "Supported: .csv, .xlsx, .xls, .txt",
+      "parsing": "Parsing…",
+      "parseFile": "Analyze file →",
+      "previewTitle": "Preview — {{count}} rows analyzed",
+      "bankDetected": "Account auto-detected:",
+      "bankNotDetected": "Account not detected — set per row.",
+      "back": "← Back",
+      "doneTitle": "Import complete",
+      "bookedCount_one": "✅ {{count}} transaction booked successfully.",
+      "bookedCount_other": "✅ {{count}} transactions booked successfully.",
+      "skippedCount_one": "{{count}} row skipped (errors or missing counter account).",
+      "skippedCount_other": "{{count}} rows skipped (errors or missing counter account).",
+      "noDataRows": "No data rows found. Check the \"Skip rows\" setting in the rule.",
+      "parseError": "Parse error: {{msg}}",
+      "bookError": "Booking error: {{msg}}"
+    },
+    "flowModal": {
+      "title": "▶ Run Import Flow",
+      "noFlowsTitle": "No import flows available",
+      "noFlowsBody": "Create or manage import flows in Journal Entries → Import → Import Flows, then return here to run one.",
+      "openFlows": "Open Import Flows",
+      "selectLabel": "Select a flow",
+      "selectPlaceholder": "— Select flow —",
+      "start": "▶ Start",
+      "stepLabel": "Step {{n}}: {{name}}",
+      "stepPermission": "{{label}} — requesting permission…",
+      "stepCollecting": "{{label}} — collecting files…",
+      "stepParsing": "{{label}} — parsing {{count}} file(s)…",
+      "stepProgress": "{{current}} / {{total}} steps",
+      "transferSuggestions": "🔗 Transfer suggestions",
+      "transferSuggestionsHint": "— rows that may represent the same internal transfer",
+      "linked": "✓ Linked",
+      "counterSetTo": "— counter account set to",
+      "inflowExcluded": "· inflow row excluded",
+      "undo": "Undo",
+      "linkTransfer": "Link transfer",
+      "linkTransferTip": "Set outflow counter-account to the inflow bank account, and exclude the inflow row",
+      "dismiss": "Dismiss",
+      "booking": "Booking transactions…",
+      "doneCount_one": "Flow complete — {{count}} transaction booked",
+      "doneCount_other": "Flow complete — {{count}} transactions booked",
+      "transfersLinked_one": "{{count}} internal transfer linked",
+      "transfersLinked_other": "{{count}} internal transfers linked"
+    },
+    "previewTable": {
+      "setBulkForFiltered": "Set counter accounts for filtered rows:",
+      "setBulkForAll": "Set all counter accounts:",
+      "setBulkAttrForFiltered": "Set attribution for filtered rows:",
+      "setBulkAttrForAll": "Set attribution for all:",
+      "selectAccount": "— select account —",
+      "applyToFiltered": "Apply to filtered",
+      "applyToAll": "Apply to all",
+      "readyStat": "{{ready}} ready · {{invalid}} incomplete",
+      "excludedStat": "· {{count}} excluded",
+      "autoHidden_one": "🤖 {{count}} row auto-hidden as transfer counterpart. Click Unlink on the matching outflow row to restore.",
+      "autoHidden_other": "🤖 {{count}} rows auto-hidden as transfer counterparts. Click Unlink on the matching outflow row to restore.",
+      "filterPlaceholder": "Filter by date, description, amount, account…",
+      "shownOf": "{{shown}} of {{total}} shown",
+      "colStep": "Step",
+      "colDate": "Date",
+      "colSettlementDate": "Settlement date",
+      "colDocumentDate": "Document date",
+      "colTaxDate": "Tax date",
+      "colDueDate": "Due date",
+      "colDesc": "Description",
+      "colAmount": "Amount",
+      "colDir": "Dir",
+      "colBank": "Bank account",
+      "colCounter": "Counter account",
+      "colDebit": "Debit",
+      "colCredit": "Credit",
+      "colReference": "Reference",
+      "colCurrency": "Currency",
+      "colAttribution": "Attribution",
+      "colProject": "Project",
+      "filterColumns": "Filter columns",
+      "filterIncompleteTitle": "Show only incomplete entries",
+      "showAllEntries": "Show all entries",
+      "showIncompleteEntries": "Show incomplete entries ({{count}})",
+      "pillValidation": "Validation",
+      "pillFilter": "Filter",
+      "pillBulkEdit": "Bulk edit",
+      "showBulkTools": "Show bulk edit tools",
+      "hideBulkTools": "Hide bulk edit tools",
+      "bulkFieldLabel": "What column would you like to change?",
+      "noProject": "— no project —",
+      "noInvestmentLotType": "No lot type",
+      "setBulkProjectForAll": "Set project for all:",
+      "setBulkProjectForFiltered": "Set project for filtered rows:",
+      "inflow": "Inflow (debit bank)",
+      "outflow": "Outflow (credit bank)",
+      "selectRow": "— select —",
+      "unlinkTip": "Unlink transfer pair",
+      "unlink": "Unlink",
+      "includeRow": "Include row",
+      "excludeRow": "Exclude row",
+      "excludeHint": "Uncheck rows to exclude them from booking.",
+      "booking": "Booking…",
+      "bookCount_one": "Book {{count}} transaction",
+      "bookCount_other": "Book {{count}} transactions",
+      "attrNeeded": "Missing",
+      "attrSet": "Set",
+      "attrEdit": "Edit",
+      "attrDone": "Done",
+      "attrEditorTitle": "Edit attribution:",
+      "attrUser": "user",
+      "attrAdd": "Add person",
+      "generateAccrual": "Generate accrual",
+      "generateAccrualFromRow": "Generate accrual from import row",
+      "accrualLinked": "Linked to accrual group"
+    },
+    "importStaging": {
+      "title": "Import Data",
+      "reviewTitle_one": "Staging — {{count}} row",
+      "reviewTitle_other": "Staging — {{count}} rows",
+      "backToJournal": "Back to Journal",
+      "discard": "Discard staging",
+      "confirmDiscard": "Discard the current import staging? All unsaved rows will be lost.",
+      "autosaved": "✓ Auto-saved",
+      "saveDraft": "Save draft",
+      "saveDraftTitle": "Save draft — keep this staging in Previous Imports for later",
+      "draftSaved": "✓ Draft saved",
+      "importMore": "Import another file",
+      "viewTransactions": "View transactions",
+      "postJobRunning": "Posting import…",
+      "postJobHint": "You can keep working — the import continues in the background.",
+      "postJobDone": "Import posted: {{count}} transaction(s).",
+      "postJobFailed": "Import stopped after {{count}} transaction(s). Reopen the import to continue.",
+      "postJobUnknownError": "Posting failed.",
+      "leaveGuard": {
+        "title": "Leave import staging?",
+        "message": "You have an import draft that has not been posted to the GL. What would you like to do before leaving?",
+        "saveDraftAndLeave": "Save draft and leave",
+        "discardAndLeave": "Discard and leave",
+        "stayOnPage": "Stay on page"
+      },
+      "resumePrompt": {
+        "title": "Resume existing draft?",
+        "message": "You have a draft import from {{date}}. Resume it or start a new import?",
+        "resume": "Resume draft",
+        "startNew": "Start new (discard draft)"
+      }
+    }
+  },
+  "budget": {
+    "title": "Budget",
+    "description": "Define income, expense, and profit/loss budgets by account type, account group, and account.",
+    "loading": "Loading budget...",
+    "form": {
+      "newPlanName": "New plan name",
+      "year": "Year",
+      "periodMonthly": "Monthly budget",
+      "periodYearly": "Yearly budget",
+      "createPlan": "Create plan",
+      "active": "active",
+      "setActive": "Set active",
+      "savePlan": "Save plan",
+      "deletePlan": "Delete plan",
+      "newTarget": "New target",
+      "editTarget": "Edit target",
+      "typeIncome": "Income",
+      "typeExpense": "Expense",
+      "allGroups": "All groups",
+      "allAccounts": "All accounts in scope",
+      "monthlyAmount": "Monthly amount",
+      "yearlyAmount": "Yearly amount",
+      "notes": "Notes (optional)",
+      "useSeasonality": "Use seasonality overrides",
+      "addTarget": "Add target",
+      "updateTarget": "Update target",
+      "clear": "Clear"
+    },
+    "profitLoss": {
+      "title": "Profit/Loss",
+      "mode": "Mode",
+      "derived": "Derived from income - expense",
+      "explicit": "Explicit target",
+      "explicitAmount": "Explicit target amount"
+    },
+    "charts": {
+      "monthlyTitle": "Monthly Overview ({{year}})",
+      "budgetIncome": "Budget income",
+      "actualIncome": "Actual income",
+      "budgetExpense": "Budget expense",
+      "actualExpense": "Actual expense",
+      "budgetPL": "Budget P/L",
+      "actualPL": "Actual P/L"
+    },
+    "kpi": {
+      "income": "Income budget",
+      "expense": "Expense budget",
+      "profitLoss": "Profit/Loss budget",
+      "actual": "Actual",
+      "variance": "Variance"
+    },
+    "table": {
+      "title": "Targets",
+      "noTargets": "No targets yet.",
+      "type": "Type",
+      "group": "Group",
+      "account": "Account",
+      "budget": "Budget",
+      "actual": "Actual",
+      "variance": "Variance",
+      "actions": "Actions",
+      "total": "Total",
+      "expandAll": "Expand all",
+      "collapseAll": "Collapse all",
+      "all": "All"
+    },
+    "coverage": {
+      "title": "Coverage Overview",
+      "full": "Covered",
+      "partial": "Partial",
+      "none": "Not set",
+      "accounts": "{{covered}}/{{total}}"
+    },
+    "summary": {
+      "title": "Summary ({{year}})",
+      "incomeBudget": "Income budget",
+      "expenseBudget": "Expense budget",
+      "profitBudget": "Profit/Loss budget",
+      "actual": "actual",
+      "variance": "variance"
+    },
+    "messages": {
+      "planNameRequired": "Provide a budget plan name.",
+      "planYearInvalid": "Provide a valid budget year.",
+      "planCreated": "Budget plan created.",
+      "planCreateFailed": "Could not create budget plan.",
+      "planSaved": "Budget plan saved.",
+      "planSaveFailed": "Could not save budget plan.",
+      "planDeleteConfirm": "Delete budget plan \"{{name}}\"?",
+      "planDeleted": "Budget plan deleted.",
+      "planDeleteFailed": "Could not delete budget plan.",
+      "planSelectFirst": "Create or select a budget plan first.",
+      "targetAmountInvalid": "Provide a valid budget amount.",
+      "targetAccountInvalid": "Select a valid account.",
+      "targetOverlap": "Overlapping budget target detected. Adjust account, group, or type.",
+      "targetSaved": "Budget target saved.",
+      "targetSaveFailed": "Could not save budget target.",
+      "targetDeleteConfirm": "Delete this budget target?",
+      "targetDeleted": "Budget target deleted.",
+      "targetDeleteFailed": "Could not delete budget target."
+    }
+  },
+  "projects": {
+    "title": "Projects",
+    "newProject": "New Project",
+    "exportProjects": "Export projects",
+    "downloadTemplate": "Download template",
+    "importProjects": "Import projects",
+    "importComplete": "Import complete: {{created}} created, {{updated}} updated.",
+    "importCompleteWithSkipped": "Import complete: {{created}} created, {{updated}} updated, {{skipped}} skipped.",
+    "importFailed": "Import failed: {{message}}",
+    "importPreview": {
+      "title": "Review project import",
+      "summary": "File: {{file}}. Valid rows: {{valid}} ({{created}} create, {{updated}} update).",
+      "skipped": "Skipped rows: {{invalid}} invalid, {{duplicates}} duplicate-code overrides.",
+      "sampleIssues": "Sample issues",
+      "apply": "Import now",
+      "noValidRows": "No valid rows to import. Invalid rows: {{invalid}}."
+    },
+    "searchPlaceholder": "Search by name or code…",
+    "noProjects": "No projects yet.",
+    "noProjectsHint": "Create your first project.",
+    "noMatch": "No projects match your filters.",
+    "confirmDelete": "Delete this project? Transactions assigned to it will be unaffected but will lose the project reference.",
+    "status": {
+      "active": "Active",
+      "onHold": "On Hold",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "form": {
+      "createTitle": "New Project",
+      "editTitle": "Edit Project",
+      "code": "Code",
+      "codePlaceholder": "e.g. PROJ-001",
+      "name": "Name",
+      "namePlaceholder": "Project name",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional description",
+      "status": "Status",
+      "validFrom": "Valid From",
+      "validTo": "Valid To"
+    },
+    "table": {
+      "code": "Code",
+      "name": "Name",
+      "status": "Status",
+      "validity": "Validity"
+    }
+  },
+  "adminSpace": {
+    "title": "Space",
+    "identity": "Identity",
+    "name": "Space name",
+    "description": "Description",
+    "descriptionHint": "A short description visible to members. Max 500 characters.",
+    "icon": "Icon / logo",
+    "iconHint": "PNG or JPEG, recommended 128 × 128 px.",
+    "iconPreviewAlt": "Space icon",
+    "noIcon": "No icon",
+    "uploadIcon": "Upload image",
+    "uploading": "Uploading…",
+    "uploadError": "Icon upload failed: {{message}}",
+    "iconNotAvailable": "Icon upload is only available for cloud-synced spaces.",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Space settings saved.",
+    "saveError": "Failed to save: {{message}}",
+    "nameRequired": "Space name is required.",
+    "localOnlyHint": "Changes will be saved to the cloud once this space is connected to a remote.",
+    "fiscalYear": {
+      "title": "Fiscal Year",
+      "hint": "Used when generating accounting and VAT periods for this space. Changing these settings does not alter already-generated periods.",
+      "startMonth": "Fiscal year start month",
+      "granularity": "Default period granularity",
+      "monthly": "Monthly (12 periods)",
+      "quarterly": "Quarterly (4 periods)",
+      "vatFrequency": "VAT filing frequency",
+      "vatQuarterly": "Quarterly",
+      "vatSemiAnnual": "Semi-annual"
+    },
+    "preferences": {
+      "title": "Preferences",
+      "hint": "These settings apply to all members of this space and cannot be overridden by individual users.",
+      "formatAndAppearance": "Formatting and appearance",
+      "formatAndAppearanceHint": "Controls how dates, numbers, and accent color appear for the whole space.",
+      "dateFormat": "Date format",
+      "numberFormat": "Number format",
+      "accentColor": "Accent color"
+    },
+    "businessInfo": {
+      "title": "Business Information",
+      "hint": "Legal and registration details for this business space.",
+      "legalForm": "Legal form",
+      "legalFormPlaceholder": "Select legal form",
+      "ag": "AG (Aktiengesellschaft)",
+      "gmbh": "GmbH (Gesellschaft mit beschränkter Haftung)",
+      "klg": "KlG (Kollektivgesellschaft)",
+      "komg": "KomG (Kommanditgesellschaft)",
+      "einzelunternehmen": "Sole proprietorship (Einzelunternehmen)",
+      "verein": "Verein (Association)",
+      "stiftung": "Stiftung (Foundation)",
+      "genossenschaft": "Genossenschaft (Cooperative)",
+      "uidNumber": "UID / CHE number",
+      "uidHint": "Format: CHE-XXX.XXX.XXX",
+      "uidInvalid": "Format should be CHE-XXX.XXX.XXX",
+      "cantonOfDomicile": "Canton of domicile",
+      "cantonPlaceholder": "Select canton",
+      "registeredAddress": "Registered address",
+      "street": "Street",
+      "postalCode": "Postal code",
+      "city": "City"
+    },
+    "upgradeModal": {
+      "title": "Multi-user account is ready",
+      "body": "This space now supports team collaboration. You can invite additional people and manage access by role.",
+      "itemInvite": "Invite colleagues to this space from the Users tab.",
+      "itemRoles": "Assign the right permissions for each person with roles.",
+      "openUsers": "Continue to Users"
+    }
+  },
+  "adminPeriod": {
+    "title": "Accounting Periods",
+    "fiscalYearLabel": "Fiscal year",
+    "accountingPeriods": "Accounting Periods",
+    "vatPeriods": "VAT Periods",
+    "generate": "Generate {{year}} periods",
+    "generateVat": "Generate {{year}} VAT periods",
+    "generating": "Generating…",
+    "generated": "Periods generated",
+    "vatGenerated": "VAT periods generated",
+    "generateError": "Failed to generate periods",
+    "noPeriodsYet": "No periods for {{year}}. Click \"Generate\" to create them.",
+    "noVatPeriodsYet": "No VAT periods for {{year}}. Click \"Generate\" to create them.",
+    "period": "Period",
+    "dateRange": "Date range",
+    "state": "State",
+    "transactions": "Transactions",
+    "filedAt": "Filed at",
+    "actions": "Actions",
+    "close": "Close",
+    "reopen": "Reopen",
+    "locked": "Locked",
+    "filed": "Filed",
+    "markAsFiled": "Mark as filed",
+    "transitionError": "Cannot change period state",
+    "vatAlreadyFiled": "Period already filed",
+    "vatFiled": "Marked as filed",
+    "businessOnly": "Period management is available for business spaces only."
+  },
+  "users": {
+    "title": "Users",
+    "newUser": "New User",
+    "exportUsers": "Export Users",
+    "downloadTemplate": "Download Template",
+    "importUsers": "Import Users",
+    "searchPlaceholder": "Search by name…",
+    "noUsers": "No users yet.",
+    "noUsersHint": "Add your first user.",
+    "noMatch": "No users match your filters.",
+    "confirmDelete": "Delete this user? Transactions will keep their attribution data.",
+    "importComplete": "Import complete: {{created}} created, {{updated}} updated.",
+    "importCompleteWithSkipped": "Import complete: {{created}} created, {{updated}} updated, {{skipped}} skipped.",
+    "importFailed": "Failed to import users: {{message}}",
+    "importPreview": {
+      "title": "Review Users Import",
+      "summary": "File {{file}}: {{valid}} valid rows ({{created}} create, {{updated}} update)",
+      "skipped": "Skipped rows: {{invalid}} invalid, {{duplicates}} duplicates",
+      "sampleIssues": "Sample issues",
+      "apply": "Apply import",
+      "noValidRows": "No valid rows found ({{invalid}} invalid)."
+    },
+    "status": {
+      "always": "Always",
+      "active": "Active",
+      "future": "Future",
+      "expired": "Expired"
+    },
+    "form": {
+      "createTitle": "New User",
+      "editTitle": "Edit User",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "duplicateEmail": "This email is already assigned to another user.",
+      "shareInvite": "Send invitation email",
+      "noShareHint": "No shared cloud workspace connected. The user will be added locally but cannot receive an automated invitation.",
+      "shareError": "User added, but cloud sharing failed: {{error}}",
+      "membershipProvisionFailed": "The user was saved, but cloud access could not be granted. Make sure you are online and a space admin, then save again.",
+      "validFrom": "Valid From",
+      "validTo": "Valid To",
+      "role": "Role"
+    },
+    "role": {
+      "admin": "Admin",
+      "accountant": "Accountant",
+      "manager": "Manager"
+    },
+    "table": {
+      "name": "Name",
+      "validity": "Validity",
+      "status": "Status"
+    }
+  },
+  "attachments": {
+    "title": "Attachments",
+    "uploadFile": "Upload File",
+    "noAttachments": "No attachments yet. Upload a receipt or document.",
+    "openError": "Could not open attachment: {{error}}",
+    "copyDiagnosticsPrompt": "Copy diagnostics for support?",
+    "clipboardUnavailable": "Clipboard access is not available in this browser context.",
+    "diagnosticsCopied": "Attachment diagnostics copied to clipboard.",
+    "copyDiagnosticsFailed": "Could not copy diagnostics to clipboard."
+  },
+  "auth": {
+    "title": "Sign in to unlock all features",
+    "subtitle": "Connect your Microsoft account to sync your data across devices.",
+    "accountSection": "Microsoft Account",
+    "notSignedIn": "Not signed in. Sign in to enable cloud sync.",
+    "signInMicrosoft": "Sign in with Microsoft",
+    "notConfigured": "Sign-in not configured",
+    "signingIn": "Signing in…",
+    "signOut": "Sign out",
+    "signingOut": "Signing out…",
+    "notNow": "Not now",
+    "neverAsk": "Don't ask me again",
+    "feature": {
+      "onedrive": "Sync data across devices via cloud sync",
+      "multiDevice": "Access your books from any device",
+      "secure": "Secure cloud backup",
+      "attachments": "Sync attachments and scanned documents"
+    }
+  },
+  "rolesPage": {
+    "title": "Roles",
+    "subtitle": "Roles are rows, navigation rights are columns. Toggle access per role.",
+    "newRolePlaceholder": "New role name",
+    "add": "Add role",
+    "addBusy": "Adding...",
+    "loading": "Loading roles...",
+    "roleColumn": "Role",
+    "actionsColumn": "Actions",
+    "systemRole": "System role",
+    "assignedUsers": "Assigned to {{count}} user",
+    "assignedUsers_other": "Assigned to {{count}} users",
+    "renameTitle": "Rename role",
+    "renameBusy": "Saving...",
+    "deleteTitle": "Delete role",
+    "deleteBlockedAssigned": "Reassign users before deleting this role",
+    "deleteConfirm": "Delete role \"{{name}}\"?",
+    "error": {
+      "requiredName": "Role name is required.",
+      "renameFailed": "Failed to rename role.",
+      "deleteFailed": "Failed to delete role.",
+      "preventAdminLockout": "You cannot remove the last Admin area right from your current role."
+    }
+  },
+  "periodClose": {
+    "title": "Year-End Close",
+    "description": "Formalize the end of an accounting period and transfer results to retained earnings.",
+    "selectYear": "Select Period Year",
+    "confirm": "Are you sure you want to close period {{year}}? This will create a closing journal entry and transfer the result to retained earnings.",
+    "alreadyClosed": "Period {{year}} is closed",
+    "closeButton": "Close Period",
+    "success": "Period {{year}} closed successfully.",
+    "summary": "Closing Summary",
+    "summaryHint": "This closing will transfer the current-year earnings to retained earnings and reset the income/expense accounts for the next period.",
+    "history": "Closing History",
+    "historyYear": "Year",
+    "historyDate": "Closed On",
+    "historyTransaction": "Closing Transaction",
+    "noHistory": "No closed periods yet."
+  },
+  "settings": {
+    "general": "General",
+    "preferences": "Preferences",
+    "info": {
+      "tab": "Info",
+      "title": "Info",
+      "hint": "View app legal documents.",
+      "privacy": "Privacy Policy",
+      "privacyDesc": "How your data is stored, synced, and protected.",
+      "terms": "Terms & Conditions",
+      "termsDesc": "Usage terms, disclaimers, and your responsibilities."
+    },
+    "language": {
+      "title": "Language",
+      "hint": "Choose the display language for the app."
+    },
+    "dateFormat": {
+      "title": "Date Format",
+      "hint": "Choose how dates are displayed throughout the app.",
+      "browserNote": "Note: date picker fields in forms always use the browser/OS locale and may not reflect this setting.",
+      "system": "System default",
+      "iso": "ISO (YYYY-MM-DD)",
+      "european": "European (DD/MM/YYYY)",
+      "us": "US (MM/DD/YYYY)",
+      "dotted": "Dotted (DD.MM.YYYY)"
+    },
+    "numberFormat": {
+      "title": "Number Format",
+      "hint": "Choose how numbers and amounts are displayed throughout the app.",
+      "system": "System default",
+      "us": "Comma thousands, dot decimals (1,234.56)",
+      "european": "Dot thousands, comma decimals (1.234,56)",
+      "swiss": "Apostrophe thousands, dot decimals (1'234.56)"
+    },
+    "fxRates": {
+      "title": "FX Rate Source",
+      "hint": "Choose how exchange rates are sourced for FX revaluation and settlement adjustments.",
+      "providerLabel": "Provider",
+      "providerFrankfurter": "Frankfurter (ECB reference feed)",
+      "sourcePolicyLabel": "Rate source policy",
+      "policyCacheFirst": "Cache first, then live lookup",
+      "policyLiveFirst": "Live lookup first, then cache fallback",
+      "policyCacheOnly": "Cache only (offline-safe)",
+      "businessHint": "Used for business-space period-end revaluation and realized FX settlement adjustments.",
+      "personalHint": "Personal spaces keep a simplified FX flow; this is stored per space for advanced FX features.",
+      "saving": "Saving FX settings...",
+      "saveFailed": "Could not save FX settings: {{error}}"
+    },
+    "cloudSync": {
+      "title": "Cloud Sync",
+      "hint": "Choose a cloud provider to back up and sync your data across devices.",
+      "syncWith": "Sync with {{provider}}",
+      "connecting": "Connecting to {{provider}}…",
+      "synced": "Synced! Pulled {{pulled}}, pushed {{pushed}} changes.",
+      "failed": "Sync failed: {{error}}",
+      "signInRequired": "Please sign in with your Microsoft account to sync your data."
+    },
+    "sync": {
+      "status": {
+        "syncing": "Syncing…",
+        "downloading": "Downloading…",
+        "uploading": "Uploading…",
+        "finalizing": "Finalizing…",
+        "failed": "Sync failed"
+      }
+    },
+    "conflict": {
+      "title": "Sync conflicts",
+      "subtitle": "Some of your changes conflict with updates from another device or user. Choose which version to keep.",
+      "subtitleWithValidation": "Some of your changes violate business rules or conflict with updates from other users. Fix or resolve them to continue.",
+      "yours": "Your version",
+      "server": "Server version",
+      "keepMine": "Keep mine",
+      "acceptTheirs": "Accept theirs",
+      "acceptAll": "Accept all server versions",
+      "dismiss": "Decide later"
+    },
+    "validationErrors": {
+      "title": "Business Rule Violations",
+      "hint": "Edit this item to fix the validation error.",
+      "accountCodeHint": "Go back to the account form and change the account code to a unique value.",
+      "discard": "Discard this change"
+    },
+    "dataConflicts": {
+      "title": "Data Conflicts"
+    },
+    "sharedSetup": {
+      "title": "Shared Space Setup",
+      "subtitle": "This space is collaborative. Connect shared cloud storage before syncing.",
+      "label": "Shared Library",
+      "buttons": {
+        "settingUp": "Setting up…",
+        "create": "Create Shared Library",
+        "connecting": "Connecting…",
+        "connect": "Connect Shared Library",
+        "relink": "Relink Shared Library",
+        "disconnect": "Disconnect Library"
+      },
+      "details": {
+        "status": "Status",
+        "connected": "Connected",
+        "site": "Site",
+        "library": "Library",
+        "folder": "Folder",
+        "driveId": "Drive ID",
+        "rootItemId": "Root Item ID"
+      },
+      "status": {
+        "noCandidates": "Click \"Create Shared Library\" to set up sharing. For work accounts, you will create a SharePoint library. For personal accounts, a shared folder will be auto-created.",
+        "personalHint": "Click \"Create Shared Library\" to auto-setup shared cloud storage for your personal account.",
+        "listFailed": "Could not list shared libraries: {{error}}",
+        "signInFirst": "Please sign in first.",
+        "checkingAccount": "Checking account type…",
+        "creatingFolder": "Creating shared folder…",
+        "folderConnected": "Shared folder created and connected. Multi-user sync is now ready.",
+        "openedSharePoint": "SharePoint opened in a new tab. Create a document library, then come back and click \"Connect Shared Library\".",
+        "failed": "Failed: {{error}}",
+        "connecting": "Connecting shared library…",
+        "connected": "Shared library connected. Multi-user sync is now ready.",
+        "connectFailed": "Shared setup failed: {{error}}",
+        "disconnecting": "Disconnecting shared library…",
+        "disconnected": "Shared library disconnected. Select a library to reconnect.",
+        "disconnectFailed": "Disconnect failed: {{error}}"
+      }
+    },
+    "sharingHealth": {
+      "title": "Sharing Health Check",
+      "hint": "Verify that all users with an email address have been granted access to shared cloud storage.",
+      "runCheck": "Run Health Check",
+      "checkFailed": "Health check failed: {{error}}",
+      "noUsers": "No local users with an email address found.",
+      "colName": "Name",
+      "colEmail": "Email",
+      "colStatus": "Access Status",
+      "statusOk": "Has access",
+      "statusMissing": "Missing access",
+      "statusRegrantFailed": "Re-grant failed",
+      "regrant": "Re-grant Access"
+    },
+    "license": {
+      "title": "License",
+      "check": "Check License",
+      "checking": "Checking…",
+      "valid": "License valid until {{date}}",
+      "invalid": "License expired or invalid",
+      "error": "Error: {{error}}"
+    },
+    "backup": {
+      "title": "Backup",
+      "hint": "Select a folder where the app will save full JSON backups of all your data.",
+      "folderLabel": "Backup folder",
+      "startBackup": "Start backup",
+      "restoreFromBackup": "Restore from backup",
+      "restoreConfirm": "This will replace current data with the selected backup. Continue?",
+      "restoreInProgress": "Restoring backup…",
+      "restoreInProgressShort": "Restoring…",
+      "restoreSuccess": "Backup restored from {{file}}. Reloading…",
+      "restoreFailed": "Restore failed: {{error}}",
+      "restoreNotSupported": "Your browser does not support file picker restore.",
+      "invalidFile": "Invalid backup file format.",
+      "selectFolder": "Select Backup Folder",
+      "changeFolder": "Change Folder",
+      "backupNow": "Back Up Now",
+      "lastBackup": "Last backup",
+      "inProgress": "Backing up…",
+      "inProgressShort": "Backing up…",
+      "success": "Backup saved as {{file}}",
+      "failed": "Backup failed: {{error}}",
+      "noFolder": "No backup folder selected. Please choose a folder first.",
+      "notSupported": "Your browser does not support folder selection. Please use a modern Chromium-based browser.",
+      "permissionDenied": "Write permission was denied for the selected folder.",
+      "pickFailed": "Could not open folder picker: {{error}}"
+    },
+    "data": {
+      "title": "Data Management",
+      "export": "Export Data (JSON)",
+      "clearAll": "Delete Current Space",
+      "confirmClearWarning1": "Are you sure? This will permanently delete the current space and its data. This action cannot be undone.",
+      "confirmClearWarning2": "Please confirm again: This will permanently delete the current space you have open. Are you absolutely certain?"
+    },
+    "theme": {
+      "title": "Theme",
+      "hint": "Choose how the app looks.",
+      "light": "Light",
+      "lightDesc": "Always use the light theme",
+      "dark": "Dark",
+      "darkDesc": "Always use the dark theme",
+      "system": "System",
+      "systemDesc": "Follow the OS preference",
+      "accentTitle": "Accent Color",
+      "accentHint": "Choose the main color used by buttons and highlights.",
+      "accentPreset": "Accent color",
+      "custom": "Custom"
+    },
+    "ocr": {
+      "title": "OCR / Scan Settings",
+      "hint": "Configure the AI engine used to extract data from scanned receipts and invoices. If no API key is set, Tesseract.js runs entirely in your browser (free, offline).",
+      "apiKey": "OpenAI API Key (optional)",
+      "apiKeyHint": "Uses GPT-4o-mini Vision for superior accuracy (~$0.0002 per document). Leave blank to use Tesseract.js.",
+      "model": "OpenAI Model",
+      "saveSettings": "Save Settings",
+      "saved": "Saved!"
+    },
+    "import": {
+      "title": "Import",
+      "rules": "Rules",
+      "flows": "Flows",
+      "automation": "Automation"
+    }
+  },
+  "importRules": {
+    "title": "Import Rules",
+    "newRule": "New Rule",
+    "description": "Define how Excel / CSV bank statements are mapped to journal entries.",
+    "noRules": "No import rules yet. Click + to create one.",
+    "noRulesHint": "Rules automatically categorise transactions when importing bank statements.",
+    "confirmDelete": "Delete import rule \"{{name}}\"?",
+    "picker": {
+      "title": "New Import Rule",
+      "subtitle": "What kind of file will this rule import?",
+      "bankTitle": "Bank Statement",
+      "bankDesc": "Each row is one transaction side (credit or debit). The counter account is filled in manually or via automation rules.",
+      "fullTitle": "Full Journal Entry",
+      "fullDesc": "Each row encodes a complete entry with explicit debit and credit accounts — no manual matching needed.",
+      "splitTitle": "Split Journal Entry",
+      "splitDesc": "Each row is one journal line; rows sharing the same reference are combined into one transaction."
+    },
+    "table": {
+      "name": "Rule name",
+      "delimiter": "Delimiter",
+      "skipRows": "Skip rows",
+      "bankAccount": "Bank account",
+      "dateFormat": "Date format",
+      "autoIban": "Auto (IBAN)",
+      "autoColumn": "Auto ({{col}})"
+    },
+    "modal": {
+      "titleNew": "New Import Rule",
+      "titleEdit": "Edit Import Rule",
+      "titleView": "Import Rule",
+      "sectionFileStructure": "File Structure",
+      "sectionBankAccount": "Bank Account",
+      "sectionColumnMappings": "Column Mappings",
+      "labelRuleName": "Rule name",
+      "labelDelimiter": "Delimiter",
+      "labelSkipRows": "Skip rows (preamble)",
+      "labelDateFormat": "Date format",
+      "labelBankAccount": "Bank account",
+      "placeholderRuleName": "e.g. UBS Checking Account",
+      "delimiterAuto": "Auto-detect",
+      "rowsBeforeHeaders": "rows before column headers",
+      "bankFixed": "Fixed account",
+      "bankIban": "Detect from IBAN in file preamble",
+      "bankColumn": "Detect from data column",
+      "ibanHint": "Specify where the IBAN appears in the preamble rows (0-based indices). Example for the UBS CSV: row 1, column 1 (second field of the second row).",
+      "ibanColumnHint": "Enter the column header whose value will be matched against account IBANs on each data row. Useful for statements that include multiple accounts or cards in a single file (e.g. a \"Kontonummer\" column).",
+      "labelPreambleRow": "Preamble row index",
+      "labelColIndex": "Column index",
+      "labelIbanColumn": "Column header",
+      "placeholderIbanColumn": "e.g. Kontonummer",
+      "colMappingsDesc": "Enter the exact column header name from your file. Multiple Description mappings are concatenated with \" | \".",
+      "tableField": "Field",
+      "tableColumn": "Column header in file",
+      "tableSignConvention": "Sign convention",
+      "fieldDate": "Date",
+      "fieldSettlementDate": "Settlement date",
+      "fieldDocumentDate": "Document date",
+      "fieldTaxDate": "Tax date",
+      "fieldDueDate": "Due date",
+      "fieldDescription": "Description",
+      "fieldReference": "Reference / Transaction ID",
+      "fieldMemo": "Memo",
+      "fieldAmount": "Amount (single column)",
+      "fieldDebitCol": "Debit column (outflow)",
+      "fieldCreditCol": "Credit column (inflow)",
+      "signNegative": "Values are negative (e.g. -3000)",
+      "signPositive": "Values are positive (e.g. 3000)",
+      "addMapping": "+ Add mapping",
+      "errRuleName": "Rule name is required.",
+      "errDateMapping": "A Date mapping is required.",
+      "errAmountMapping": "Either an Amount column or both Debit column + Credit column are required.",
+      "errAmountConflict": "Cannot combine Amount (single) with Debit/Credit columns — use one approach.",
+      "errEmptyColumns": "All column names must be filled in.",
+      "errBankAccount": "Select a bank account or switch to IBAN detection.",
+      "errIbanColumn": "Enter the column header used for account detection.",
+      "entryModeLabel": "Import mode",
+      "entryModeBank": "Bank statement (one side per row)",
+      "entryModeFull": "Full journal entry (DR + CR per row)",
+      "fieldProjectCol": "Project column",
+      "fieldDebitAccountCol": "Debit account column",
+      "fieldCreditAccountCol": "Credit account column",
+      "fieldFxRateOverrideCol": "FX rate column (override)",
+      "fieldCurrencyCol": "Currency column",
+      "fieldRealEstatePropertyCol": "Real estate property column",
+      "fieldInvestmentPositionCol": "Investment position column",
+      "fieldBusinessPartnerCol": "Business partner column",
+      "sectionRealEstate": "Real Estate",
+      "labelRealEstateProperty": "Property (fixed assignment)",
+      "labelRealEstateEntryType": "Entry type (fixed assignment)",
+      "sectionInvestments": "Investments",
+      "labelInvestmentPosition": "Investment position (fixed assignment)",
+      "labelInvestmentLotType": "Lot type (fixed assignment)",
+      "labelDefaultCurrency": "Default currency",
+      "currencyModeFixed": "Fixed",
+      "currencyModeColumn": "From column",
+      "currencyColHint": "Currency will be read from the mapped column for each row. Set a fallback below for rows where the column is empty.",
+      "labelCurrencyFallback": "Fallback when column is empty",
+      "defaultCurrencyHint": "ISO 4217 code, e.g. CHF or EUR",
+      "fieldAccountCol": "Account column",
+      "errDebitAccountMapping": "A Debit account column mapping is required in full journal-entry mode.",
+      "errCreditAccountMapping": "A Credit account column mapping is required in full journal-entry mode.",
+      "errAccountMapping": "An Account column mapping is required in split multi-line mode."
+    }
+  },
+  "importFlows": {
+    "title": "Import Flows",
+    "newFlow": "＋ New Flow",
+    "description": "Define reusable multi-step import sequences. Run them from the Journal Entries page.",
+    "noFlows": "No import flows yet. Click + to create one.",
+    "noFlowsHint": "Flows chain multiple rules into a reusable pipeline.",
+    "confirmDelete": "Delete flow \"{{name}}\"?",
+    "noSteps": "No steps defined.",
+    "noSource": "(no source)",
+    "preview": "preview",
+    "stepCount_one": "{{count}} step",
+    "stepCount_other": "{{count}} steps",
+    "updated": "Updated",
+    "modal": {
+      "titleNew": "New Import Flow",
+      "titleEdit": "Edit Import Flow",
+      "labelFlowName": "Flow name",
+      "placeholderFlowName": "e.g. Monthly Bank Import",
+      "previewLabel": "Preview before booking",
+      "previewDesc": "show a review table per step and require confirmation before transactions are created.",
+      "sectionSteps": "Steps",
+      "noSteps": "No steps yet. Click “Add Step” to define a source.",
+      "stepN": "Step {{n}}",
+      "labelImportRule": "Import rule",
+      "labelSource": "Source",
+      "fsaNotSupported": "File System Access API is not supported in this browser. Use Chrome or Edge.",
+      "pickFile": "Pick File…",
+      "pickFolder": "Pick Folder…",
+      "labelAfterImport": "After import",
+      "labelArchiveFolder": "Archive folder",
+      "pickArchiveFolder": "Pick Archive Folder…",
+      "includeSubfolders": "Include subfolders",
+      "afterLeave": "Leave as-is",
+      "afterDelete": "Delete after import",
+      "afterArchive": "Move to archive folder",
+      "folderSourcesOnly": "(folder sources only)",
+      "addStep": "Add Step",
+      "cancelBtn": "Cancel",
+      "saveBtn": "Save Flow",
+      "savingBtn": "Saving…",
+      "errFlowName": "Flow name is required.",
+      "errNoSteps": "Add at least one step.",
+      "errStepRule": "Step {{n}}: select an import rule.",
+      "errStepSource": "Step {{n}}: pick a source file or folder.",
+      "errStepArchive": "Step {{n}}: pick an archive folder.",
+      "errSave": "Failed to save: {{message}}"
+    }
+  },
+  "automation": {
+    "title": "Automation Rules",
+    "suggestionsTitle": "Suggested Rules",
+    "description": "Rules applied automatically during import to link transfers and assign counter accounts.",
+    "suggestionsDesc": "Patterns learned from past entries where the same description was consistently assigned to the same account (3+ times).",
+    "newRule": "New Automation Rule",
+    "noRules": "No automation rules yet. Click + to create one.",
+    "noSuggestions": "No patterns detected yet. Import and manually categorise more transactions to see suggestions here.",
+    "suggestions": "Suggested rules",
+    "addRule": "Add rule",
+    "dismiss": "Dismiss",
+    "confirmDelete": "Delete automation rule \"{{name}}\"?",
+    "typeTransferMatch": "🔗 Transfer Match",
+    "typeDescriptionAssign": "🏷️ Description → Account",
+    "typeAmountTransferMatch": "⚖️ Amount Match",
+    "typePendingMatch": "📎 Pending Match",
+    "typeAccrualMatch": "⏱️ Accrual Match",
+    "typeSubledgerMatch": "🏠 Subledger Match",
+    "enableRule": "Enable rule",
+    "disableRule": "Disable rule",
+    "usedTimes": "used {{count}} times",
+    "acceptAsRule": "✓ Accept as Rule",
+    "adding": "Adding…",
+    "acceptAll": "✓ Accept all ({{count}})",
+    "dismissAll": "Dismiss all",
+    "table": {
+      "name": "Rule name",
+      "type": "Type",
+      "details": "Details"
+    }
+  },
+  "ocr": {
+    "title": "Scan Documents",
+    "addFiles": "📁 Add Files",
+    "camera": "📷 Camera",
+    "cameraTip": "Take photo with camera (mobile)",
+    "browseFiles": "📁 Browse Files",
+    "takePhoto": "📷 Take Photo",
+    "addMore": "+ Add more",
+    "selectDoc": "Select a document from the left panel",
+    "dropToAdd": "Drop to add 📄",
+    "actionPrompt": "What would you like to do with this document?",
+    "createPending": "🕐 Create Pending Entry",
+    "linkExisting": "🔗 Link to Existing",
+    "generateAccruals": "⏱️ Generate accruals",
+    "openJournal": "📝 Open Journal Entry",
+    "actionDone": "✅ Action completed for this document.",
+    "extractFailed": "Extraction failed",
+    "retry": "Retry",
+    "dropZone": {
+      "title": "Drop receipts or invoices here",
+      "subtitle": "Supports images (JPEG, PNG, HEIC) and PDF files"
+    },
+    "status": "{{pending}} pending · {{done}} done",
+    "toast": {
+      "pendingCreated": "Pending entry created",
+      "attachmentLinked": "Attachment linked to transaction",
+      "attachmentFailed": "Failed to save attachment: {{msg}}",
+      "accrualCreated": "Accrual entries created"
+    },
+    "form": {
+      "selectDoc": "Select a document to view extracted data",
+      "extracting": "Extracting data from document…",
+      "confidence": "Confidence: {{pct}}%",
+      "reExtract": "↺ Re-extract",
+      "date": "Date",
+      "vendor": "Vendor / Description",
+      "vendorPlaceholder": "e.g. Supermarket, Restaurant…",
+      "totalAmount": "Total Amount",
+      "currency": "Currency",
+      "reference": "Reference / Invoice #",
+      "referencePlaceholder": "e.g. INV-2024-001",
+      "taxAmount": "Tax Amount",
+      "lineItems": "Line Items",
+      "lineDesc": "Description",
+      "lineQty": "Qty",
+      "lineUnit": "Unit",
+      "lineTotal": "Total",
+      "removeLine": "Remove line item",
+      "noLineItems": "No line items extracted.",
+      "addLine": "+ Add line",
+      "rawText": "Raw text"
+    },
+    "pending": {
+      "title": "Create Pending Journal Entry",
+      "description": "This will create a pending entry that can be matched once a bank statement is imported.",
+      "date": "Date",
+      "vendor": "Vendor",
+      "amount": "Amount",
+      "ref": "Ref",
+      "bankAccount": "Bank / Payment Account",
+      "unknownBank": "— Unknown / select later —",
+      "counterAccount": "Counter Account (Expense / Income)",
+      "selectAccount": "— Select account —",
+      "createEntry": "Create Entry"
+    },
+    "link": {
+      "title": "Link to Existing Transaction",
+      "description": "Search for the bank transaction that matches this document, then confirm to link the attachment.",
+      "searchPlaceholder": "Search by description or reference…",
+      "noResults": "No transactions found.",
+      "confirm": "Link Attachment"
+    }
+  },
+  "scan": {
+    "history": {
+      "detail": {
+        "amountHint": "Use comma or dot for decimals (for example 123,45 or 123.45)."
+      }
+    }
+  },
+  "spaces": {
+    "create": "Create new accounting space",
+    "switch": "Open other space",
+    "switchToLabel": "Switch to {{name}}",
+    "activeLabel": "Current: {{name}}",
+    "currentSpaceLabel": "Space: {{name}}",
+    "openSwitcher": "Open space switcher"
+  },
+  "onboarding": {
+    "finish": "Get started",
+    "saving": "Saving…",
+    "title": "Set up your accounting space",
+    "subtitle": "Name your space and choose how you'll use it.",
+    "optionGroupLabel": "How will you use this space?",
+    "openingBalances": {
+      "title": "Enter your current balances",
+      "subtitle": "Optionally enter the current balance of each account. You can always add more accounts and edit balances later.",
+      "skip": "Skip for now",
+      "confirm": "Save balances",
+      "amountLabel": "Balance for {{account}}"
+    },
+    "starterAccounts": {
+      "label": "Starter accounts",
+      "hint": "Auto-populate a minimal set of starter accounts (fully editable)"
+    },
+    "space": {
+      "title": "Name your accounting space",
+      "subtitle": "Create a profile for personal, business, or hobby accounting.",
+      "nameLabel": "Space name",
+      "namePlaceholder": "e.g. Personal, Studio LLC, Woodworking",
+      "descriptionLabel": "Description (optional)",
+      "descriptionPlaceholder": "Add a short note about what this space is for"
+    },
+    "option": {
+      "businessSolo": "Business · Solo",
+      "businessSoloDesc": "Company accounts, tracked solo",
+      "businessTeam": "Business · Team",
+      "businessTeamDesc": "Shared books with colleagues",
+      "personalSolo": "Personal · Solo",
+      "personalSoloDesc": "Household budget, private finances",
+      "personalTeam": "Personal · Household",
+      "personalTeamDesc": "Shared finances with family members"
+    },
+    "sharedSetup": {
+      "title": "Shared Space Setup",
+      "subtitle": "Connect this collaborative space to shared storage before inviting users.",
+      "label": "Shared Library",
+      "noLibraries": "No shared libraries found",
+      "buttons": {
+        "settingUp": "Setting up…",
+        "create": "Create Shared Library",
+        "connect": "Connect Shared Library",
+        "setupPersonal": "Set Up Shared Cloud Folder",
+        "disconnect": "Disconnect Library"
+      },
+      "personalIntro": "You are signed in with a personal Microsoft account. We will create shared cloud storage for this space.",
+      "details": {
+        "status": "Status",
+        "connected": "Connected",
+        "site": "Site",
+        "library": "Library",
+        "folder": "Folder"
+      },
+      "status": {
+        "noCandidates": "Click \"Create Shared Library\" to set up sharing. For work accounts, you will create a SharePoint library. For personal accounts, a shared folder will be auto-created.",
+        "personalHint": "Click \"Create Shared Library\" to auto-setup shared cloud storage for your personal account.",
+        "listFailed": "Could not list shared libraries: {{error}}",
+        "signInFirst": "Please sign in first.",
+        "checkingAccount": "Checking account type…",
+        "creatingFolder": "Creating shared folder…",
+        "folderConnected": "Shared folder created and connected. Continue onboarding.",
+        "openedSharePoint": "SharePoint opened in a new tab. Create a document library, then click \"Connect Shared Library\".",
+        "failed": "Failed: {{error}}",
+        "connecting": "Connecting shared library…",
+        "connected": "Shared library connected. Continue onboarding.",
+        "connectFailed": "Shared setup failed: {{error}}",
+        "disconnected": "Shared library disconnected.",
+        "signInToContinue": "Sign in with Microsoft to set up shared storage."
+      }
+    },
+    "teamUsers": {
+      "title": "Add team members",
+      "subtitle": "Add additional users for this space. You can choose whether to prepare invite emails.",
+      "empty": "No additional users added yet.",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email address",
+      "role": "Role",
+      "invite": "Invite via automated mail",
+      "remove": "Remove user",
+      "invalid": "Please enter first name, last name, and a valid email address.",
+      "add": "Add user"
+    }
+  },
+  "onboardingIntro": {
+    "title": "Set up your space",
+    "subtitle": "Finish the key setup tasks in your own pace.",
+    "subtitleWithSpace": "Finish the key setup tasks for {{name}} in your own pace.",
+    "progress": "{{done}} of {{total}} steps completed",
+    "done": "Done",
+    "pending": "Pending",
+    "openStep": "Open step",
+    "markDone": "Mark as done manually",
+    "undoManual": "Undo",
+    "successTitle": "All set!",
+    "successSubtitle": "Great work. Taking you to your dashboard...",
+    "successClickHint": "Click to continue",
+    "goToDashboard": "Go to dashboard",
+    "setupInfo": {
+      "line": "Why do these setup steps come first?",
+      "expand": "More info",
+      "collapse": "Hide info",
+      "title": "Start with foundations to avoid rework later.",
+      "body": "Currencies, accounts, groups, partners, projects, and user access define how every entry is validated, posted, and reported. Setting them up first keeps imports and daily bookkeeping consistent."
+    },
+    "steps": {
+      "currencies": {
+        "title": "Set currencies",
+        "description": "Set your base currency and add any operating currencies you use. This keeps multi-currency postings and reporting conversions consistent."
+      },
+      "accountGroups": {
+        "title": "Create account groups (optional)",
+        "description": "Define account groups to structure your chart of accounts before it grows. This keeps account classification and reporting clean.",
+        "personalTitle": "Review account groups",
+        "personalDescription": "Review the suggested account groups and adjust only if needed before creating accounts."
+      },
+      "accounts": {
+        "title": "Create accounts",
+        "description": "Add your core chart of accounts (assets, liabilities, equity, income, expenses) and ownership defaults. These accounts drive every journal posting and report."
+      },
+      "businessPartners": {
+        "title": "Add business partners",
+        "description": "Add your recurring customers and suppliers. This lets you link transactions to the right counterparty from day one."
+      },
+      "projects": {
+        "title": "Create projects",
+        "description": "Create the projects you want to track in planning and reporting. Use them to allocate revenue and costs by initiative."
+      },
+      "users": {
+        "title": "Add users",
+        "description": "Invite teammates and assign the right role for each person. Start with least-privilege access and expand only when needed."
+      },
+      "vat": {
+        "title": "Set up VAT codes",
+        "description": "Add your VAT codes (e.g. standard rate, reduced rate, exempt). This lets you classify VAT on transactions and generate filing-ready VAT periods."
+      },
+      "spaceInfo": {
+        "title": "Set up business data",
+        "description": "Enter your company's legal form, UID number, and registered address in Admin → Space. This data is used for reporting and legal document generation."
+      },
+      "openingBalances": {
+        "title": "Enter opening balances",
+        "description": "Enter the current balance of each account. This creates the opening journal entry so your reports start from the correct position. You can skip and add them later."
+      }
+    }
+  },
+  "fx": {
+    "noForeignCurrencies": "No foreign currencies are configured for this space. Add currencies in Master data → Accounts → Currencies.",
+    "fetchingRates": "Fetching rates…",
+    "filter": {
+      "currencyPair": "Currency pair",
+      "from": "From",
+      "to": "To"
+    },
+    "chart": {
+      "title": "Exchange rate: {{quote}} → {{base}}",
+      "noData": "No rates available for this period. The rates are fetched from Frankfurter. Check your connection and try again."
+    },
+    "table": {
+      "date": "Date",
+      "rate": "Rate ({{quote}}/{{base}})",
+      "source": "Source",
+      "noRates": "No rates cached for this period.",
+      "page": "Page {{page}} / {{total}}"
+    }
+  },
+  "subledgers": {
+    "title": "Subledgers",
+    "tabs": {
+      "realEstate": "Real Estate",
+      "investments": "Investments",
+      "payroll": "Payroll",
+      "vat": "VAT (MWST)"
+    },
+    "comingSoon": {
+      "payroll": "Payroll subledger – coming soon."
+    },
+    "investments": {
+      "title": "Investment Portfolio",
+      "addPosition": "Add Investment",
+      "emptyState": "No investments yet. Add your first financial instrument.",
+      "confirmDelete": "Delete this position and all its lots?",
+      "lookup": {
+        "title": "Add Investment",
+        "tabLookup": "Look up by ISIN",
+        "tabManual": "Enter manually",
+        "isinLabel": "ISIN",
+        "isinHint": "ISIN = 2-letter country code + 9 alphanumeric + 1 check digit",
+        "inputLabel": "ISIN, FIGI or Swiss Valor",
+        "inputPlaceholder": "e.g. US0378331005",
+        "enterManuallyFallback": "Enter details manually instead",
+        "searchButton": "Look Up",
+        "searching": "Searching…",
+        "resultTitle": "Instrument found",
+        "notFound": "No instrument found for this identifier.",
+        "errorFetch": "Lookup failed. Please check your connection.",
+        "confirmButton": "Add to Portfolio",
+        "cancelButton": "Cancel",
+        "fields": {
+          "name": "Name",
+          "ticker": "Ticker",
+          "exchange": "Exchange",
+          "currency": "Currency"
+        }
+      },
+      "detail": {
+        "tabs": {
+          "overview": "Overview",
+          "lots": "Lots",
+          "prices": "Prices",
+          "accounts": "Accounts"
+        }
+      },
+      "overview": {
+        "totalShares": "Total Shares",
+        "avgCost": "Avg. Cost",
+        "lastPrice": "Last Price",
+        "lastPriceManual": "Last Price (manual)",
+        "currentValue": "Current Value",
+        "unrealizedPL": "Unrealized P&L",
+        "noPriceData": "Price data not yet available. Prices are refreshed daily.",
+        "noConfirmedLots": "No confirmed lots yet.",
+        "priceAsOf": "as of {{date}}",
+        "manualBadge": "manual",
+        "priceStale": "Outdated",
+        "addPrice": "Add price",
+        "priceEntry": {
+          "title": "Price entry",
+          "date": "Date",
+          "price": "Price per share",
+          "notes": "Notes"
+        }
+      },
+      "prices": {
+        "title": "Price history",
+        "empty": "No price history. Add your first price in the Overview tab.",
+        "deleteConfirm": "Delete this price entry?",
+        "columns": {
+          "date": "Date",
+          "price": "Price",
+          "notes": "Notes"
+        }
+      },
+      "charts": {
+        "allocation": "Portfolio Allocation",
+        "unrealizedPL": "Unrealized P&L",
+        "refreshPrices": "Refresh end-of-day prices",
+        "refreshPartialError": "Some prices could not be refreshed. Check your connection.",
+        "refreshError": "Price refresh failed. Check your connection and try again."
+      },
+      "assetClass": {
+        "label": "Asset Class",
+        "shares": "Shares",
+        "etf": "ETFs",
+        "funds": "Funds",
+        "bonds": "Bonds",
+        "loans": "Loans",
+        "crypto": "Crypto",
+        "commodities": "Commodities",
+        "other": "Other"
+      },
+      "columns": {
+        "totalInvestment": "Total Investment",
+        "marketValue": "Market Value",
+        "unrealizedPL": "P&L %"
+      },
+      "unmapped": {
+        "rowIndicator": "{{count}} GL entries awaiting lot details",
+        "pageBanner": "{{count}} GL entries are tagged to investments but not yet mapped to a lot. Open a position to add shares and price to create the lot.",
+        "agingBreakdown": "{{recent}} recent · {{aging}} aging · {{overdue}} overdue",
+        "sectionTitle": "Unmapped GL entries ({{count}})",
+        "sectionHint": "These journal entries are tagged to this position but have no lot yet. Add shares and price to create the lot.",
+        "viewEntry": "View",
+        "createLot": "Create lot",
+        "captureTitle": "Create lot from GL entry",
+        "aging": {
+          "recent": "Recent",
+          "aging": "Aging",
+          "overdue": "Overdue"
+        }
+      },
+      "lots": {
+        "title": "Acquisition Lots",
+        "addLot": "Add Lot",
+        "emptyState": "No lots recorded yet.",
+        "confirmDelete": "Delete this lot?",
+        "pendingBanner": "{{count}} pending lot(s) awaiting confirmation.",
+        "unlinkedBanner": "{{count}} confirmed lot(s) have no linked journal entry — investment value may not appear on the balance sheet.",
+        "unlinkedWarning": "No GL journal entry linked",
+        "amountBased": "— (amount)",
+        "targetLabel": "target",
+        "resolve": {
+          "title": "Resolve Pending Purchase",
+          "targetAmount": "Target Investment",
+          "eodSuggestion": "Last EoD Price (suggested)",
+          "actualShares": "Actual Shares Received",
+          "impliedPrice": "Implied Price per Share",
+          "overridePrice": "Price per Share (override)"
+        },
+        "columns": {
+          "date": "Date",
+          "type": "Type",
+          "shares": "Shares",
+          "price": "Price / Share",
+          "amount": "Amount",
+          "costs": "Costs",
+          "status": "Status",
+          "glEntry": "GL Entry"
+        },
+        "lotType": {
+          "buy": "Buy",
+          "sell": "Sell",
+          "dividend": "Dividend"
+        },
+        "status": {
+          "pending": "Pending",
+          "confirmed": "Confirmed"
+        },
+        "actions": {
+          "confirm": "Confirm",
+          "delete": "Delete",
+          "addJournalEntry": "Add GL entry",
+          "linkExisting": "Link existing GL entry",
+          "unlink": "Unlink GL entry"
+        },
+        "journalPrompt": {
+          "title": {
+            "buy": "Record Investment Purchase",
+            "sell": "Record Investment Sale",
+            "dividend": "Record Dividend Income"
+          },
+          "hint": {
+            "buy": "Post a journal entry for the cost of this lot to the GL asset account.",
+            "sell": "Post a journal entry for the proceeds of this sale. Realized gain or loss will be calculated automatically.",
+            "dividend": "Post a journal entry for the dividend payout: gross income credited, net cash and Quellensteuer (withholding tax) debited."
+          },
+          "debitAccount": "Asset Account (Debit)",
+          "creditAccount": "Bank / Settlement Account (Credit)",
+          "bankAccount": "Bank / Cash Account (Debit — net received)",
+          "quellensteuerAccount": "Quellensteuer Account (Debit — withholding tax)",
+          "dividendIncomeAccount": "Dividend Income Account (Credit)"
+        },
+        "form": {
+          "titleAdd": "Add Lot",
+          "titleEdit": "Edit Lot",
+          "lotType": "Type",
+          "acquisitionDate": "Date",
+          "shares": "Shares",
+          "pricePerShare": "Price per Share",
+          "transactionCosts": "Transaction Costs",
+          "currency": "Currency",
+          "notes": "Notes",
+          "recurring": "Repeat this purchase (recurring)"
+        },
+        "dividend": {
+          "grossLabel": "Gross Dividend",
+          "quellensteuerLabel": "Quellensteuer (Withholding Tax)",
+          "netLabel": "Net Paid Out",
+          "gross": "Gross",
+          "quellensteuer": "Quellensteuer",
+          "net": "Net"
+        },
+        "journalDescription": {
+          "buy": "Investment purchase —",
+          "sell": "Investment sale —",
+          "dividend": "Dividend income —"
+        }
+      },
+      "schedule": {
+        "title": "Periodic Investment Schedule",
+        "emptyState": "No scheduled investments defined.",
+        "confirmDelete": "Delete this recurring plan?",
+        "activeLabel": "Active",
+        "inactiveLabel": "Inactive",
+        "addPlan": "Add Plan",
+        "columns": {
+          "rhythm": "Rhythm",
+          "fixedAmount": "Amount / Period",
+          "sharesOrAmount": "Qty / Amount",
+          "startDate": "Start Date",
+          "endDate": "End Date",
+          "lastGenerated": "Last Generated",
+          "status": "Status"
+        },
+        "rhythm": {
+          "monthly": "Monthly",
+          "quarterly": "Quarterly",
+          "yearly": "Yearly"
+        },
+        "form": {
+          "titleAdd": "Add Schedule",
+          "titleEdit": "Edit Schedule",
+          "rhythm": "Rhythm",
+          "startDate": "Start Date",
+          "endDate": "End Date (optional)",
+          "shares": "Shares per Period",
+          "fixedAmount": "Fixed Amount per Period",
+          "currency": "Currency",
+          "isActive": "Active",
+          "modeShares": "Fixed shares",
+          "modeAmount": "Fixed amount per period"
+        }
+      },
+      "accounts": {
+        "classTitle": "GL Accounts — {{assetClass}} · {{currency}}",
+        "classDescription": "These accounts apply to all {{assetClass}} positions in {{currency}}. Saving updates all matching positions automatically.",
+        "notConfigured": "No GL accounts configured yet for {{assetClass}} positions in {{currency}}. Set them up below — they will apply to all current and future positions in this class and currency.",
+        "missingClassOrCurrency": "Set an asset class and currency on this position before configuring GL accounts.",
+        "glAsset": "Asset Account (holding fair value)",
+        "glUnrealizedGain": "Unrealized Gain / Loss Account",
+        "glRealizedGain": "Realized Gain / Loss Account",
+        "glDividend": "Dividend Income Account",
+        "noAccountsLinked": "No accounts linked yet.",
+        "saveButton": "Save Accounts",
+        "autoCreate": "Add accounts automatically",
+        "autoCreateModal": {
+          "title": "Create GL Accounts — {{assetClass}} · {{currency}}",
+          "description": "The following accounts will be created and linked to all {{assetClass}} positions in {{currency}}.",
+          "confirmButton": "Create accounts",
+          "codeHeader": "Code",
+          "nameHeader": "Name",
+          "typeHeader": "Type",
+          "codeNote": "Codes shown are the starting suggestion. If a code is already in use, it will be incremented automatically."
+        }
+      }
+    },
+    "realEstate": {
+      "title": "Real Estate Properties",
+      "addProperty": "Add Property",
+      "emptyState": "No properties yet. Add your first real estate property.",
+      "totalAssetValue": "Total Asset Value",
+      "kpi": {
+        "landValue": "Land Value",
+        "buildingValue": "Building Value",
+        "totalCosts": "Total Costs",
+        "outstandingMortgages": "Outstanding Mortgages",
+        "ytdRentalIncome": "YTD Rental Income",
+        "annualDepreciation": "Annual Depreciation"
+      },
+      "overview": {
+        "editProperty": "Edit Property",
+        "photo": "Property Photo",
+        "uploadPhoto": "Upload Photo",
+        "changePhoto": "Change Photo",
+        "removePhoto": "Remove Photo",
+        "links": "Links",
+        "addLink": "Add Link",
+        "saveLink": "Save",
+        "linkLabel": "Label",
+        "linkUrl": "URL",
+        "noLinks": "No links saved yet.",
+        "kpiChartTitle": "{{kpi}} — Yearly Trend",
+        "kpiChartTitleMonth": "{{kpi}} — {{year}}",
+        "drillAll": "All Years",
+        "drillMonth": "Monthly",
+        "drillHint": "Click a bar for monthly breakdown",
+        "noHistory": "No historical data available.",
+        "acquisitionNotRecorded": "Property value not yet recorded in the general ledger.",
+        "recordAcquisitionEntry": "Record acquisition entry",
+        "acquisitionRecorded": "Acquisition recorded in GL, transaction",
+        "acquisitionPromptTitle": "Record Property Acquisition",
+        "acquisitionPromptHint": "This will post a journal entry for the full property value (land + building) to the asset account. Choose the source of funds (bank account, equity injection, etc.).",
+        "acquisitionAssetAccount": "Asset Account (Debit)",
+        "acquisitionSourceAccount": "Source of Funds (Credit)",
+        "acquisitionJournalDescription": "Property acquisition —",
+        "googleMapsLink": "📍 Google Maps"
+      },
+      "form": {
+        "titleAdd": "Add Property",
+        "titleEdit": "Edit Property",
+        "propertyTitle": "Property Name",
+        "address": "Address",
+        "canton": "Canton",
+        "propertyType": "Property Type",
+        "usagePurpose": "Usage Purpose",
+        "acquisitionDate": "Acquisition Date",
+        "landValue": "Land Value (CHF)",
+        "buildingValue": "Building Value (CHF)",
+        "landBuildingSplitNote": "Land is not depreciable. The building/land split is required for Swiss tax compliance (Art. 62 DBG).",
+        "depreciationMethod": "Depreciation Method",
+        "depreciationRatePercent": "Depreciation Rate (%)",
+        "vatOption": "VAT Option (Art. 22 MWSTG)",
+        "vatOptionNote": "Enabling the VAT option makes rental income subject to VAT but allows input tax deduction on building costs.",
+        "currency": "Currency",
+        "description": "Description",
+        "title": "Property Name",
+        "valueSplitNote": "Land is not depreciable. The building/land split is required for Swiss tax compliance (Art. 62 DBG).",
+        "depreciationRateHint": "Straight-line: 1.5–2 % (residential), 2–4 % (commercial). Degressive: typically 20 % of carrying value.",
+        "vatOptionHint": "Enabling the VAT option makes rental income subject to VAT but allows input tax deduction on building costs.",
+        "errorValueRequired": "At least one of land value or building value is required.",
+        "glAssetAccountId": "Asset Account (Balance Sheet)",
+        "addressPlaceholder": "Start typing an address…"
+      },
+      "propertyType": {
+        "residential": "Residential",
+        "commercial": "Commercial",
+        "mixed": "Mixed Use",
+        "land": "Land / Plot",
+        "industrial": "Industrial"
+      },
+      "usagePurpose": {
+        "owner-occupied": "Owner-Occupied",
+        "rental": "Rental",
+        "mixed": "Mixed",
+        "mixed-use": "Mixed Use",
+        "vacant": "Vacant"
+      },
+      "depreciationMethod": {
+        "linear": "Linear (Straight-line)",
+        "degressive": "Degressive (Declining balance)"
+      },
+      "costType": {
+        "acquisition-ancillary": "Acquisition Ancillary",
+        "maintenance-value-preserving": "Maintenance (Value-Preserving)",
+        "maintenance-value-enhancing": "Maintenance (Value-Enhancing)",
+        "other": "Other"
+      },
+      "detail": {
+        "tabs": {
+          "overview": "Overview",
+          "costs": "Costs",
+          "mortgages": "Mortgages",
+          "rentalIncome": "Rental Income",
+          "depreciation": "Depreciation",
+          "financing": "Financing",
+          "maintenance": "Maintenance & Management",
+          "capitalImprovements": "Capital Improvements"
+        }
+      },
+      "costs": {
+        "total": "Total costs",
+        "addCost": "Add Cost",
+        "emptyState": "No costs recorded yet.",
+        "formTitle": "Cost Entry",
+        "date": "Date",
+        "type": "Type",
+        "description": "Description",
+        "amount": "Amount"
+      },
+      "maintenance": {
+        "addRecord": "Add Record",
+        "addPayment": "Add Payment",
+        "emptyState": "No maintenance records yet.",
+        "noPayments": "No payments recorded.",
+        "totalPaid": "Total paid",
+        "recordFormTitle": "Maintenance Record",
+        "paymentFormTitle": "Payment",
+        "recordTitle": "Title",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "description": "Description",
+        "pending": "Pending",
+        "journalLinked": "Pending journal entry — will be matched on import",
+        "pendingNote": "A pending journal entry will be created automatically and can be matched during bank import.",
+        "expenseAccount": "Expense Account"
+      },
+      "capitalImprovements": {
+        "addRecord": "Add Project",
+        "addPayment": "Add Payment",
+        "emptyState": "No capital improvement projects yet.",
+        "noPayments": "No payments recorded.",
+        "totalPaid": "Total paid",
+        "recordFormTitle": "Capital Improvement Project",
+        "paymentFormTitle": "Payment",
+        "recordTitle": "Title",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "description": "Description",
+        "journalLinked": "Pending journal entry — will be matched on import",
+        "pendingNote": "A pending journal entry will be created automatically and can be matched during bank import.",
+        "assetAccount": "Asset Account"
+      },
+      "mortgages": {
+        "outstanding": "Outstanding balance",
+        "addMortgage": "Add Mortgage",
+        "emptyState": "No mortgages recorded yet.",
+        "formTitle": "Mortgage",
+        "lenderName": "Lender",
+        "initialAmount": "Initial Amount",
+        "currentBalance": "Current Balance",
+        "interestRatePercent": "Interest Rate (%)",
+        "startDate": "Start Date",
+        "renewalDate": "Renewal Date",
+        "renewalSoon": "Renewal in {{days}} days",
+        "propertyValue": "Property Value",
+        "equity": "Equity (Value − Mortgages)",
+        "interestType": {
+          "label": "Interest Type",
+          "fixed": "Fixed",
+          "variable-saron": "Variable (SARON)"
+        },
+        "amortizationType": {
+          "label": "Amortization Type",
+          "direct": "Direct",
+          "indirect-3a": "Indirect (Pillar 3a)"
+        },
+        "paymentSchedule": "Payment Schedule",
+        "paymentScheduleOption": {
+          "monthly": "Monthly",
+          "quarterly": "Quarterly",
+          "semi-annual": "Semi-Annual",
+          "annual": "Annual"
+        },
+        "contractEndDate": "Contract End Date",
+        "contractDuration": "Duration",
+        "glInterestExpenseAccountId": "Interest Expense Account",
+        "glMortgageLiabilityAccountId": "Mortgage Liability Account",
+        "glPaymentAccountId": "Payment Bank Account",
+        "generateSchedule": "Generate Payment Schedule",
+        "scheduleGenerated": "{{count}} pending entries created.",
+        "missingGlAccountsError": "Please set the payment schedule, contract end date, interest expense account, and payment account first.",
+        "scheduledPayments": "Scheduled Payments",
+        "noScheduledPayments": "No scheduled payments yet.",
+        "proposedPayments": "Proposed Payments",
+        "acceptSchedule": "Accept",
+        "scheduleUpToDate": "All payments are already scheduled.",
+        "columnDate": "Date",
+        "columnRate": "Rate",
+        "columnAmount": "Amount",
+        "status": {
+          "pending": "Pending",
+          "posted": "Posted",
+          "cleared": "Cleared",
+          "void": "Void"
+        }
+      },
+      "equity": {
+        "title": "Own Capital Invested",
+        "addEntry": "Add Entry",
+        "emptyState": "No equity entries recorded yet.",
+        "totalInvested": "Total Invested",
+        "date": "Date",
+        "amount": "Amount",
+        "description": "Description",
+        "sourceAccount": "Source Account",
+        "formTitle": "Equity Investment Entry",
+        "journalPromptTitle": "Generate Journal Entry",
+        "journalPromptHint": "Select accounts to post this equity contribution as a journal entry. Press ✕ to skip.",
+        "journalDebitAccount": "Debit Account (Bank / Receiving)",
+        "journalCreditAccount": "Credit Account (Owner's Equity)",
+        "journalDefaultDescription": "Equity contribution"
+      },
+      "rentalIncome": {
+        "ytd": "YTD {{year}}",
+        "total": "Total",
+        "addIncome": "Add Income",
+        "emptyState": "No rental income recorded yet.",
+        "formTitle": "Rental Income Entry",
+        "period": "Period",
+        "tenant": "Tenant",
+        "amount": "Amount",
+        "year": "Year",
+        "month": "Month",
+        "vatOptionNote": "This property has the VAT option enabled (Art. 22 MWSTG). Use the journal generator to post income with VAT breakdown."
+      },
+      "rentalUnits": {
+        "title": "Rental Units",
+        "addUnit": "Add Unit",
+        "emptyState": "No rental units configured yet.",
+        "expectedMonthly": "Expected monthly income",
+        "totalActive": "{{count}} active unit",
+        "totalActive_other": "{{count}} active units",
+        "active": "Active",
+        "inactive": "Inactive",
+        "formTitle": "Rental Unit",
+        "floor": "Floor",
+        "apartment": "Unit / Apt.",
+        "tenant": "Tenant",
+        "rentalAmount": "Rent amount",
+        "rentalPaymentPeriod": "Rent period",
+        "utilitiesAmount": "Utilities amount",
+        "utilitiesPaymentPeriod": "Utilities period",
+        "currency": "Currency",
+        "startDate": "Start date",
+        "endDate": "End date",
+        "glRentalIncomeAccount": "GL rental income account",
+        "glUtilitiesAccount": "GL utilities account",
+        "isActive": "Active",
+        "paymentHistory": "Payment history",
+        "generateSchedule": "Generate pending transactions",
+        "scheduleGenerated": "{{count}} pending transaction(s) created",
+        "missingGlAccountsError": "GL rental income account must be set to generate transactions",
+        "scheduledEntries": "Scheduled Rent Entries",
+        "proposedEntries": "Proposed Entries",
+        "acceptSchedule": "Accept",
+        "scheduleUpToDate": "All periods are already scheduled.",
+        "period": {
+          "monthly": "Monthly",
+          "quarterly": "Quarterly",
+          "semi-annual": "Semi-annual",
+          "annual": "Annual"
+        }
+      },
+      "depreciation": {
+        "buildingValue": "Building Value",
+        "landValue": "Land Value",
+        "landNotDepreciable": "not depreciable",
+        "method": "Method",
+        "rate": "Rate",
+        "estevHint": "ESTV guideline: 2% linear for residential",
+        "annualAmount": "Annual Depreciation",
+        "monthlyAmount": "Monthly Depreciation",
+        "postingDate": "Posting Date",
+        "periodType": {
+          "label": "Period",
+          "monthly": "Monthly",
+          "annual": "Annual"
+        },
+        "preview": "Will post",
+        "postButton": "Post Depreciation",
+        "journalDescription": "Depreciation {{title}} {{period}}",
+        "posted": "Posted {{amount}}",
+        "missingExpenseAccount": "Depreciation expense account not configured on property.",
+        "missingAccumulatedAccount": "Accumulated depreciation account not configured on property.",
+        "zeroBuildingValue": "Building value is 0 — land cannot be depreciated."
+      }
+    },
+    "linkPicker": {
+      "title": "Link to GL Transaction",
+      "search": "Search",
+      "searchPlaceholder": "Description or reference…",
+      "status": "Status",
+      "dateFrom": "From",
+      "dateTo": "To",
+      "amountMin": "Min amount",
+      "amountMax": "Max amount",
+      "noResults": "No matching transactions found.",
+      "resultsCount": "{{count}} transaction(s)",
+      "col": {
+        "date": "Date",
+        "description": "Description",
+        "reference": "Ref",
+        "accounts": "Accounts",
+        "amount": "Net amount",
+        "status": "Status",
+        "gl": "GL"
+      },
+      "actions": {
+        "link": "Link",
+        "linkExisting": "Link existing GL entry",
+        "unlink": "Unlink GL entry"
+      },
+      "confirmUnlink": "Remove the link to this GL transaction?",
+      "conflictTitle": "Replace existing GL link?",
+      "conflictMessage": "This record is already linked to transaction #{{txId}}. Replace the link?"
+    }
+  },
+  "vatCodes": {
+    "title": "VAT Codes (MWST)",
+    "addCode": "Add Code",
+    "emptyState": "No VAT codes yet. Add your first code or use the defaults.",
+    "systemBadge": "system",
+    "tabs": {
+      "codes": "Codes",
+      "periods": "Periods"
+    },
+    "columns": {
+      "code": "Code",
+      "label": "Label",
+      "rate": "Rate",
+      "direction": "Direction",
+      "estFormBox": "ESTV Box",
+      "validFrom": "Valid From",
+      "validTo": "Valid To",
+      "active": "Active"
+    },
+    "direction": {
+      "input": "Input (Vorsteuer)",
+      "output": "Output (Ausgangssteuer)",
+      "none": "None"
+    },
+    "confirmDelete": {
+      "title": "Delete VAT Code",
+      "message": "Delete {{code}} ({{label}})? This cannot be undone."
+    },
+    "form": {
+      "titleAdd": "Add VAT Code",
+      "titleEdit": "Edit VAT Code",
+      "code": "Code",
+      "codeLockedHint": "System code identifiers cannot be changed.",
+      "rate": "Rate (%)",
+      "label": "Label",
+      "labelPlaceholder": "e.g. Vorsteuer 8.1%",
+      "direction": "Direction",
+      "estFormBox": "ESTV Form Box",
+      "estFormBoxPlaceholder": "e.g. 400",
+      "validFrom": "Valid From",
+      "validTo": "Valid To",
+      "isActive": "Active",
+      "errorCodeRequired": "Code is required.",
+      "errorLabelRequired": "Label is required.",
+      "errorRateInvalid": "Rate must be 0 or greater."
+    }
+  },
+  "vatReport": {
+    "title": "VAT Periods & Report",
+    "newPeriod": "New Period",
+    "emptyState": "No VAT periods defined yet.",
+    "runReport": "Run VAT Report",
+    "usePeriod": "Use selected period",
+    "useManual": "Manual date range",
+    "computeButton": "Compute Report",
+    "reportFor": "Report: {{from}} – {{to}}",
+    "noLines": "No lines with VAT codes found in this period.",
+    "markFiled": "Mark Filed",
+    "confirmFiled": "Mark \"{{name}}\" as filed? This cannot be undone.",
+    "confirmDelete": "Delete period \"{{name}}\"?",
+    "deleteFiledError": "Filed periods cannot be deleted.",
+    "frequency": {
+      "quarterly": "Quarterly",
+      "semiAnnual": "Semi-annual"
+    },
+    "state": {
+      "open": "Open",
+      "filed": "Filed"
+    },
+    "section": {
+      "output": "Output Tax (Ausgangssteuer)",
+      "input": "Input Tax (Vorsteuer)",
+      "other": "Exempt / Out of Scope"
+    },
+    "summary": {
+      "outputVat": "Output VAT",
+      "inputVat": "Input VAT (deductible)",
+      "netVat": "Net VAT payable"
+    },
+    "columns": {
+      "periodName": "Period",
+      "startDate": "From",
+      "endDate": "To",
+      "frequency": "Frequency",
+      "state": "State",
+      "box": "Box",
+      "codes": "Codes",
+      "rate": "Rate",
+      "grossAmount": "Gross",
+      "vatBaseAmount": "Base",
+      "vatAmount": "VAT"
+    },
+    "form": {
+      "newTitle": "New VAT Period",
+      "editTitle": "Edit VAT Period",
+      "name": "Period name",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "frequency": "Filing frequency",
+      "nameRequired": "Period name is required.",
+      "datesRequired": "Start and end dates are required.",
+      "dateOrder": "Start date must be before end date."
+    }
+  },
+  "shell": {
+    "preparing": "Preparing secure workspace...",
+    "loading": "Loading workspace...",
+    "overviewEyebrow": "Overview",
+    "workspaceReady": "Your accounting workspace is ready for the next module.",
+    "apiContract": "API contract",
+    "notFoundTitle": "Page not found",
+    "notFoundDetail": "That workspace view does not exist.",
+    "returnToOverview": "Return to overview",
+    "appErrorTitle": "Something went wrong",
+    "appErrorDetail": "The application could not load this workspace.",
+    "reloadApplication": "Reload application",
+    "routeErrorEyebrow": "Route error",
+    "routeErrorTitle": "We could not open this view",
+    "routeErrorDetail": "This route could not be loaded.",
+    "routeNotFoundDetail": "The requested page was not found.",
+    "retry": "Retry",
+    "goHome": "Go home"
+  }
+}
