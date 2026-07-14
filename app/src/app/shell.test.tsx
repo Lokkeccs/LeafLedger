@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { QueryClientProvider } from '@tanstack/react-query'
+import { I18nextProvider } from 'react-i18next'
 import { render, screen } from '@testing-library/react'
 import { Component, type ReactNode } from 'react'
 import { createMemoryRouter, RouterProvider } from 'react-router-dom'
@@ -11,6 +12,7 @@ import { AppLayout } from './AppLayout'
 import { HomeRoute } from './HomeRoute'
 import { NotFoundRoute } from './NotFoundRoute'
 import { RouteErrorBoundary } from './RouteErrorBoundary'
+import { i18n } from '../i18n'
 
 vi.mock('../application/meta', () => ({ getMeta: vi.fn() }))
 
@@ -33,7 +35,7 @@ function renderRouter(initialEntry: string, routeElement: ReactNode = <HomeRoute
     },
   ], { initialEntries: [initialEntry] })
 
-  return render(<QueryRoot><RouterProvider router={router} /></QueryRoot>)
+  return render(<I18nextProvider i18n={i18n}><QueryRoot><RouterProvider router={router} /></QueryRoot></I18nextProvider>)
 }
 
 describe('app shell', () => {

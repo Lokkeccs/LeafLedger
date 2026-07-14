@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "npm run i18n:keys:check && tsc -b && vite build",
+    "i18n:keys:check": "node ../tools/check-i18n-duplicate-keys.cjs",
     "lint": "eslint .",
     "typecheck": "tsc -b",
     "test": "vitest run",
@@ -17,10 +18,12 @@
     "@azure/msal-browser": "^4.25.0",
     "@azure/msal-react": "^3.0.19",
     "@tanstack/react-query": "^5.101.2",
+    "i18next": "^25.7.0",
     "openapi-fetch": "^0.13.8",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "react-router-dom": "^7.18.1"
+    "react-router-dom": "^7.18.1",
+    "react-i18next": "^16.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
