@@ -1,7 +1,7 @@
 # P3-WP03 — i18n corpus import (EN + DE to start; FR/ES/IT deferred) + money/date/number formatting at the render edge
 
 - **Phase:** 3 (frontend re-platform)
-- **State:** verify — **all decisions approved by the user 2026-07-14** (D-P3-I18N-LIB / -PERSIST / -FORMAT / -CORPUS on their recommended routes; **plus D-P3-I18N-LOCALES: start with EN + DE only**, FR/ES/IT deferred to a follow-up).
+- **State:** done — **merged to main via PR #28 on 2026-07-14**. All decisions were approved by the user 2026-07-14 (D-P3-I18N-LIB / -PERSIST / -FORMAT / -CORPUS on their recommended routes; **plus D-P3-I18N-LOCALES: start with EN + DE only**, FR/ES/IT deferred to a follow-up).
 - **Owner (implementation):** LL Frontend Dev
 - **Depends on:**
   - **P3-WP01** (done) — the app-shell provider tree (`AppRoot`), the desktop-first `AppLayout`, and the documented **i18n provider slot** carry-forward. WP03 fills that slot and replaces WP01's temporary-English shell chrome.
@@ -175,3 +175,5 @@ WP03 respects the frontend layering (**features → application → api**) and a
 6. Repository-wide backend regression was attempted but could not execute its Testcontainers tier because Docker was unavailable; it produced **203 passed / 129 setup failures** from `Docker EndpointAuthConfig`. This is an environment limitation outside WP03 scope, not a WP03 finding; no backend files were changed.
 
 **State:** `done`
+
+**2026-07-14 — LL Git:** PR #28 was merged into `main`. WP03 is complete; the next rebuild action is P3-WP04 (shared UI primitives and design tokens).

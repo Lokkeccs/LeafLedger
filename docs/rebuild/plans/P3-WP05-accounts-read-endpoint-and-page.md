@@ -1,7 +1,7 @@
 # P3-WP05 — Accounts read endpoint (backend) + dev seed + read-only accounts page
 
 - **Phase:** 3 (frontend re-platform) — first backend read endpoint for ChartOfAccounts-owned data + first data-bound feature page.
-- **State:** verify — WP05a backend acceptance and WP05b frontend implementation are complete; QA re-review passed. All six decisions below **APPROVED by the user on their recommended routes (2026-07-14)**. B1 aligned-confirmation only; B2/B3 were not re-opened (they matched/contradicted merged Phase-2 work and the user withdrew them).
+- **State:** done — merged to `main` via PR #30 on 2026-07-14. WP05a backend acceptance and WP05b frontend implementation are complete; QA re-review passed. All six decisions below **APPROVED by the user on their recommended routes (2026-07-14)**. B1 aligned-confirmation only; B2/B3 were not re-opened (they matched/contradicted merged Phase-2 work and the user withdrew them).
 - **Owner (implementation):** LL Backend Dev (WP05a) → LL Frontend Dev (WP05b). Dual-deliverable; see the split seam.
 - **Depends on:**
   - **P3-WP01** (done) — app-shell router, TanStack Query provider + conventions (`qk` factory already reserves `accounts.list(spaceId)`), error boundaries, desktop-first `AppLayout`.
@@ -211,3 +211,4 @@ The implementation passes the executable frontend gates: full Vitest **46/46**, 
 - **LL QA Reviewer (2026-07-14):** **QA FAIL for WP05b.** Full frontend Vitest **46/46**, lint/typecheck/page-budget/build/duplicate-key/audit/diff gates pass. Findings: missing direct `useAccounts` query-wiring coverage; missing router-level `/accounts` resolution and `RouteErrorBoundary` coverage. State → `in-progress`; next LL Frontend Dev adds those focused tests.
 - **LL Frontend Dev (2026-07-14):** Closed the QA evidence findings with direct `useAccounts` query-key/query-function coverage and router-level lazy `/accounts` plus route-error-boundary tests. Full frontend Vitest **49/49**, lint/typecheck/page-budget/build/duplicate-key/audit/diff gates pass; generated contracts unchanged. State → `verify`; next LL QA Reviewer re-review.
 - **LL QA Reviewer (2026-07-14):** **QA re-review PASS for WP05b.** Both findings closed. Independently reproduced focused remediation **3/3** and full frontend Vitest **49/49**, lint/typecheck/page-budget/build/duplicate-key/audit/diff gates. State remains `verify`; next LL Git handling.
+- **LL Git (2026-07-14):** Rebased onto `origin/main`, committed as `14b545f`, pushed branch `P3-WP05-accounts-read-endpoint-and-page`, and opened PR #30. User confirmed PR #30 merged into `main`; WP05 is complete. Next: P3-WP06 planning/implementation.
