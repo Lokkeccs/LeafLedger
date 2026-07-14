@@ -124,6 +124,21 @@
     "workspace": "Workspace",
     "online": "Online"
   },
+  "accountsPage": {
+    "eyebrow": "Chart of accounts",
+    "title": "Accounts",
+    "description": "Review the accounts available in this space.",
+    "loading": "Loading accounts…",
+    "empty": "No accounts found.",
+    "tableLabel": "Accounts",
+    "columns": {
+      "code": "Code",
+      "name": "Name",
+      "currency": "Currency",
+      "kind": "Type",
+      "active": "Status"
+    }
+  },
   "layout": {
     "appName": "Accounting",
     "expandSidebar": "Expand sidebar",

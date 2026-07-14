@@ -1,5 +1,6 @@
 using LeafLedger.Modules.Ledger.Application.Posting;
 using LeafLedger.Modules.Ledger.Application.Reporting;
+using LeafLedger.Modules.Ledger.Application.Accounts;
 using System.Text;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
@@ -41,6 +42,13 @@ public static class LedgerEndpoints
 
         var reportGroup = endpoints.MapGroup("/api/v1/spaces/{spaceId:guid}")
             .WithTags("Ledger");
+        var accountsEndpoint = reportGroup.MapGet("/accounts", GetAccountsAsync)
+            .WithName("GetAccounts")
+            .WithTags("ChartOfAccounts")
+            .Produces<AccountCatalogReport>(StatusCodes.Status200OK)
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(accountsEndpoint, "ledger.read");
         MapReportEndpoint<TrialBalanceReport>(reportGroup.MapGet("/reports/trial-balance", GetTrialBalanceAsync), "GetTrialBalance");
         MapReportEndpoint<BalanceSheetReport>(reportGroup.MapGet("/reports/balance-sheet", GetBalanceSheetAsync), "GetBalanceSheet");
         MapReportEndpoint<IncomeStatementReport>(reportGroup.MapGet("/reports/income-statement", GetIncomeStatementAsync), "GetIncomeStatement");
@@ -61,6 +69,9 @@ public static class LedgerEndpoints
 
     private static Task<TrialBalanceReport> GetTrialBalanceAsync(Guid spaceId, [FromServices] ILedgerReportService service, CancellationToken cancellationToken) =>
         service.GetTrialBalanceAsync(spaceId, cancellationToken);
+
+    private static Task<AccountCatalogReport> GetAccountsAsync(Guid spaceId, [FromServices] IAccountCatalogService service, CancellationToken cancellationToken) =>
+        service.GetAccountsAsync(spaceId, cancellationToken);
 
     private static Task<BalanceSheetReport> GetBalanceSheetAsync(Guid spaceId, [FromServices] ILedgerReportService service, CancellationToken cancellationToken) =>
         service.GetBalanceSheetAsync(spaceId, cancellationToken);

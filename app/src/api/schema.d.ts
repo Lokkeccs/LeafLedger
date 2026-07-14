@@ -52,6 +52,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/spaces/{spaceId}/accounts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetAccounts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/spaces/{spaceId}/reports/trial-balance": {
         parameters: {
             query?: never;
@@ -184,6 +200,28 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        AccountCatalogReport: {
+            /** Format: uuid */
+            spaceId: string;
+            accounts: components["schemas"]["AccountView"][];
+        };
+        AccountView: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int32 */
+            code: number;
+            name: string;
+            currency: string;
+            kind: string;
+            isActive: boolean;
+            /** Format: uuid */
+            groupId: string;
+            /** Format: date */
+            validFrom: string | null;
+            /** Format: date */
+            validTo: string | null;
+            fxPolicy: string | null;
+        };
         BalanceSheetReport: {
             /** Format: uuid */
             spaceId: string;
@@ -524,6 +562,46 @@ export interface operations {
                 };
                 content: {
                     "application/problem+json": components["schemas"]["LedgerProblemDetails"];
+                };
+            };
+        };
+    };
+    GetAccounts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                spaceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountCatalogReport"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
         };

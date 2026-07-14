@@ -104,6 +104,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment() && !string.IsNullOrEmpty(connectionString))
 {
     await app.Services.MigrateLedgerAsync();
+    await app.Services.SeedAsync(builder.Configuration);
 }
 
 // Serve the OpenAPI document (GET /openapi/v1.json) in development; the
