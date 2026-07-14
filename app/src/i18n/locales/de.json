@@ -121,6 +121,21 @@
     "workspace": "Arbeitsbereich",
     "online": "Online"
   },
+  "accountsPage": {
+    "eyebrow": "Kontenplan",
+    "title": "Konten",
+    "description": "Konten in diesem Bereich anzeigen.",
+    "loading": "Konten werden geladen…",
+    "empty": "Keine Konten gefunden.",
+    "tableLabel": "Konten",
+    "columns": {
+      "code": "Code",
+      "name": "Name",
+      "currency": "Währung",
+      "kind": "Typ",
+      "active": "Status"
+    }
+  },
   "layout": {
     "appName": "Buchhaltung",
     "expandSidebar": "Seitenleiste ausklappen",

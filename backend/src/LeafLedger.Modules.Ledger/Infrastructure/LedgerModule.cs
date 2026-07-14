@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using LeafLedger.Modules.Ledger.Application.Posting;
 using LeafLedger.Modules.Ledger.Application.Reporting;
 using LeafLedger.Modules.Ledger.Application.Periods;
+using LeafLedger.Modules.Ledger.Application.Accounts;
 
 namespace LeafLedger.Modules.Ledger.Infrastructure;
 
@@ -23,6 +24,7 @@ public static class LedgerModule
         services.AddDbContext<LedgerDbContext>(options => options.UseNpgsql(connectionString));
         services.AddScoped<IJournalPostingService, JournalPostingService>();
         services.AddScoped<ILedgerReportService, LedgerReportService>();
+        services.AddScoped<IAccountCatalogService, AccountCatalogService>();
         services.AddScoped<IPeriodLifecycleService, PeriodLifecycleService>();
         services.AddScoped<ISpaceMembershipQuery, SpaceMembershipQuery>();
         services.AddScoped<IIdentityResolver, IdentityResolver>();
