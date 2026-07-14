@@ -33,4 +33,18 @@ describe('accounts route', () => {
     await waitFor(() => expect(screen.getByRole('heading', { name: 'We could not open this view' })).toBeTruthy())
     expect(screen.queryByText('request failed')).toBeNull()
   })
+
+  it('resolves the lazy new journal-entry route under the app shell', async () => {
+    useAccounts.mockReturnValue({ isPending: false, isError: false, data: [] })
+    renderRouter('/journal-entries/new')
+    expect(await screen.findByRole('heading', { name: 'New journal entry' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'New journal entry' })).toBeTruthy()
+  })
+
+  it('renders the route error boundary when journal-entry accounts fail', async () => {
+    useAccounts.mockReturnValue({ isPending: false, isError: true, error: new Error('accounts request failed') })
+    renderRouter('/journal-entries/new')
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'We could not open this view' })).toBeTruthy())
+    expect(screen.queryByText('accounts request failed')).toBeNull()
+  })
 })

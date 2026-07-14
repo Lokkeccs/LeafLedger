@@ -121,6 +121,7 @@
     "investmentPolicy": "Investments",
     "primary": "Primary navigation",
     "overview": "Overview",
+    "newJournalEntry": "New journal entry",
     "workspace": "Workspace",
     "online": "Online"
   },
@@ -137,6 +138,37 @@
       "currency": "Currency",
       "kind": "Type",
       "active": "Status"
+    }
+  },
+  "journalEntry": {
+    "eyebrow": "Ledger",
+    "title": "New journal entry",
+    "description": "Record a balanced entry in this space.",
+    "fieldDescription": "Description",
+    "details": "Entry details",
+    "date": "Date",
+    "descriptionPlaceholder": "Describe this entry",
+    "reference": "Reference",
+    "lines": "Lines",
+    "line": "Line",
+    "account": "Account",
+    "selectAccount": "Select account…",
+    "loadingAccounts": "Loading accounts…",
+    "debit": "Debit",
+    "credit": "Credit",
+    "removeLine": "Remove line",
+    "addLine": "Add line",
+    "submit": "Post journal entry",
+    "submitting": "Posting…",
+    "success": "Journal entry {{entryNo}} posted.",
+    "validation": {
+      "description": "Description is required.",
+      "lines": "At least two lines are required.",
+      "currency": "Select an account with a valid currency.",
+      "currency.account_required": "Select an account.",
+      "currency.invalid": "Enter a valid currency.",
+      "currency_policy.currency_not_allowed": "This currency is not allowed for the account.",
+      "entryUnbalanced": "The entry must balance to zero."
     }
   },
   "layout": {
