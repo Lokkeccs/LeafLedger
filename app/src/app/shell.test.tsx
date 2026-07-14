@@ -57,6 +57,7 @@ describe('app shell', () => {
     expect(screen.getByRole('complementary', { name: 'Primary navigation' }).getAttribute('tabindex')).toBe('0')
     expect(screen.getByRole('main').getAttribute('tabindex')).toBe('-1')
     expect(screen.getByRole('link', { name: 'Overview' })).toBeTruthy()
+    expect(screen.getByText('Sign-in not configured')).toBeTruthy()
   })
 
   it('shows the route fallback without exposing an error stack', async () => {
