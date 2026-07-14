@@ -1,14 +1,16 @@
+@import './shared/styles/tokens.css';
+
 :root {
-  --ink: #172126;
-  --muted: #66747a;
-  --paper: #f7f5ef;
-  --surface: #fffdf8;
-  --line: #d9ded9;
-  --accent: #d35f3f;
-  --focus: #2a7f76;
-  --shadow: 0 18px 50px rgba(23, 33, 38, 0.08);
-  --sans: 'Avenir Next', 'Trebuchet MS', sans-serif;
-  --heading: Georgia, 'Times New Roman', serif;
+  --ink: var(--color-ink);
+  --muted: var(--color-muted);
+  --paper: var(--color-paper);
+  --surface: var(--color-surface);
+  --line: var(--color-line);
+  --accent: var(--color-accent);
+  --focus: var(--color-focus);
+  --shadow: var(--shadow-md);
+  --sans: var(--font-sans);
+  --heading: var(--font-heading);
   font: 16px/1.5 var(--sans);
   color: var(--ink);
   background: var(--paper);

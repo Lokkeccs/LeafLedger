@@ -66,6 +66,17 @@ export default defineConfig([
       }],
     },
   },
+  {
+    files: ['src/shared/**/*.ts', 'src/shared/**/*.tsx'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [{
+          group: ['**/features/**', '**/app/**', '**/application/**', '**/api/**'],
+          message: 'Architecture enforcement: shared UI primitives must remain a presentation leaf.',
+        }],
+      }],
+    },
+  },
 
   // ── No direct fetch outside the generated client ──────────────────────────
   {
