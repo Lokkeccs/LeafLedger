@@ -118,6 +118,7 @@
     "investmentPolicy": "Investitionen",
     "primary": "Hauptnavigation",
     "overview": "\u00dcbersicht",
+    "newJournalEntry": "Neuer Buchungssatz",
     "workspace": "Arbeitsbereich",
     "online": "Online"
   },
@@ -134,6 +135,37 @@
       "currency": "Währung",
       "kind": "Typ",
       "active": "Status"
+    }
+  },
+  "journalEntry": {
+    "eyebrow": "Hauptbuch",
+    "title": "Neuer Buchungssatz",
+    "description": "Einen ausgeglichenen Buchungssatz in diesem Bereich erfassen.",
+    "fieldDescription": "Beschreibung",
+    "details": "Buchungsdetails",
+    "date": "Datum",
+    "descriptionPlaceholder": "Buchung beschreiben",
+    "reference": "Referenz",
+    "lines": "Buchungszeilen",
+    "line": "Zeile",
+    "account": "Konto",
+    "selectAccount": "Konto wählen…",
+    "loadingAccounts": "Konten werden geladen…",
+    "debit": "Soll",
+    "credit": "Haben",
+    "removeLine": "Zeile entfernen",
+    "addLine": "Zeile hinzufügen",
+    "submit": "Buchung erfassen",
+    "submitting": "Wird gebucht…",
+    "success": "Buchung {{entryNo}} erfasst.",
+    "validation": {
+      "description": "Eine Beschreibung ist erforderlich.",
+      "lines": "Mindestens zwei Zeilen sind erforderlich.",
+      "currency": "Ein Konto mit gültiger Währung auswählen.",
+      "currency.account_required": "Ein Konto auswählen.",
+      "currency.invalid": "Eine gültige Währung eingeben.",
+      "currency_policy.currency_not_allowed": "Diese Währung ist für das Konto nicht zulässig.",
+      "entryUnbalanced": "Die Buchung muss auf null ausgeglichen sein."
     }
   },
   "layout": {
