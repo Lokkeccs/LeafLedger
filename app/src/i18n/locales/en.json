@@ -122,6 +122,7 @@
     "primary": "Primary navigation",
     "overview": "Overview",
     "newJournalEntry": "New journal entry",
+    "trialBalance": "Trial balance",
     "workspace": "Workspace",
     "online": "Online"
   },
@@ -139,6 +140,18 @@
       "kind": "Type",
       "active": "Status"
     }
+  },
+  "trialBalancePage": {
+    "eyebrow": "Reports",
+    "title": "Trial balance",
+    "description": "Review the debit and credit balances for every account in this space.",
+    "loading": "Loading trial balance…",
+    "empty": "No posted balances found.",
+    "tableLabel": "Trial balance",
+    "columns": { "code": "Code", "name": "Name", "kind": "Type", "debit": "Debit", "credit": "Credit" },
+    "totals": { "debit": "Total debit", "credit": "Total credit", "net": "Net balance", "status": "Status" },
+    "balanced": "Balanced",
+    "unbalanced": "Unbalanced"
   },
   "journalEntry": {
     "eyebrow": "Ledger",

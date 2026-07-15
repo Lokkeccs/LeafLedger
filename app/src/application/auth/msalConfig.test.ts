@@ -6,12 +6,15 @@ describe('MSAL configuration', () => {
   })
 
   it('uses the common authority and session storage without a client secret', async () => {
+    vi.resetModules()
+    vi.stubEnv('VITE_MSAL_CLIENT_ID', '')
+    vi.stubEnv('VITE_API_SCOPE', '')
     const { apiScope, hasClientId, msalConfig } = await import('./msalConfig')
     expect(msalConfig.auth?.authority).toBe('https://login.microsoftonline.com/common')
     expect(msalConfig.cache?.cacheLocation).toBe('sessionStorage')
     expect(msalConfig.auth?.clientId).toBe('')
     expect(hasClientId()).toBe(false)
-    expect(apiScope).toBe('api://leafledger/ledger.write')
+    expect(apiScope).toBeUndefined()
     expect(JSON.stringify(msalConfig)).not.toContain('localStorage')
   })
 

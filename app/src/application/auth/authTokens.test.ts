@@ -17,6 +17,10 @@ const fetchMock = vi.hoisted(() => {
   return mock
 })
 
+vi.hoisted(() => {
+  vi.stubEnv('VITE_API_SCOPE', 'api://test/ledger.write')
+})
+
 const account = { homeAccountId: 'home', environment: 'login', tenantId: 'tenant', username: 'user@example.test', localAccountId: 'local' }
 
 vi.mock('@azure/msal-browser', async () => {

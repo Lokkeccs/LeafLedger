@@ -119,6 +119,7 @@
     "primary": "Hauptnavigation",
     "overview": "\u00dcbersicht",
     "newJournalEntry": "Neuer Buchungssatz",
+    "trialBalance": "Summen- und Saldenliste",
     "workspace": "Arbeitsbereich",
     "online": "Online"
   },
@@ -136,6 +137,18 @@
       "kind": "Typ",
       "active": "Status"
     }
+  },
+  "trialBalancePage": {
+    "eyebrow": "Berichte",
+    "title": "Summen- und Saldenliste",
+    "description": "Soll- und Habensalden für jedes Konto in diesem Bereich anzeigen.",
+    "loading": "Summen- und Saldenliste wird geladen…",
+    "empty": "Keine gebuchten Salden gefunden.",
+    "tableLabel": "Summen- und Saldenliste",
+    "columns": { "code": "Code", "name": "Name", "kind": "Typ", "debit": "Soll", "credit": "Haben" },
+    "totals": { "debit": "Soll gesamt", "credit": "Haben gesamt", "net": "Nettosaldo", "status": "Status" },
+    "balanced": "Ausgeglichen",
+    "unbalanced": "Nicht ausgeglichen"
   },
   "journalEntry": {
     "eyebrow": "Hauptbuch",

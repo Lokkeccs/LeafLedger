@@ -2,7 +2,9 @@ import { useMsal } from '@azure/msal-react'
 import { useState } from 'react'
 import { queryClient } from '../query/queryClient'
 import { hasClientId, loginScopes } from './msalConfig'
-import { msalInstance } from './msalInstance'
+import { msalInstance, rememberAuthenticatedAccount, runMsalInteraction } from './msalInstance'
+
+const popupFallbackErrorCodes = new Set(['popup_window_error', 'empty_window_error', 'monitor_window_timeout', 'block_iframes'])
 
 export function useAuth() {
   const { accounts } = useMsal()
@@ -13,13 +15,23 @@ export function useAuth() {
   async function signIn(): Promise<void> {
     setError(null)
     try {
-      const result = await msalInstance.loginPopup({ scopes: [...loginScopes] })
+      const result = await runMsalInteraction(() => msalInstance.loginPopup({ scopes: [...loginScopes] }))
       if (result.account) {
         msalInstance.setActiveAccount(result.account)
+        rememberAuthenticatedAccount(result.account)
         setSignedOut(false)
       }
     } catch (signInError) {
-      setError(signInError instanceof Error ? signInError.message : 'Sign-in failed. Please retry.')
+      const errorCode = signInError instanceof Error && 'errorCode' in signInError ? signInError.errorCode : undefined
+      if (typeof errorCode !== 'string' || !popupFallbackErrorCodes.has(errorCode)) {
+        setError(signInError instanceof Error ? signInError.message : 'Sign-in failed. Please retry.')
+        return
+      }
+      try {
+        await runMsalInteraction(() => msalInstance.loginRedirect({ scopes: [...loginScopes] }))
+      } catch (redirectError) {
+        setError(redirectError instanceof Error ? redirectError.message : signInError instanceof Error ? signInError.message : 'Sign-in failed. Please retry.')
+      }
     }
   }
 
@@ -27,6 +39,7 @@ export function useAuth() {
     setError(null)
     setSignedOut(true)
     msalInstance.setActiveAccount(null)
+    rememberAuthenticatedAccount(null)
     queryClient.clear()
     let signOutError: unknown
     try {

@@ -2,14 +2,14 @@ import { InteractionRequiredAuthError, type AccountInfo, type AuthenticationResu
 import type { Middleware } from 'openapi-fetch'
 import { apiClient } from '../../api/client'
 import { apiScope } from './msalConfig'
-import { msalInstance } from './msalInstance'
+import { getAuthenticatedAccount, msalInstance, runMsalInteraction } from './msalInstance'
 
 const fallbackThrottleMs = 10_000
 let fallbackAttemptAt = 0
 let middlewareInstalled = false
 
 export async function acquireApiToken(account: AccountInfo | null): Promise<string | undefined> {
-  if (!account) return undefined
+  if (!account || !apiScope) return undefined
 
   try {
     const result = await msalInstance.acquireTokenSilent({ account, scopes: [apiScope] })
@@ -24,7 +24,7 @@ export async function acquireApiToken(account: AccountInfo | null): Promise<stri
     }
     fallbackAttemptAt = now
     try {
-      const result: AuthenticationResult = await msalInstance.acquireTokenPopup({ scopes: [apiScope] })
+      const result: AuthenticationResult = await runMsalInteraction(() => msalInstance.acquireTokenPopup({ scopes: [apiScope] }))
       return result.accessToken
     } catch (popupError) {
       if (popupError instanceof Error) throw popupError
@@ -35,7 +35,7 @@ export async function acquireApiToken(account: AccountInfo | null): Promise<stri
 
 export const bearerMiddleware: Middleware = {
   onRequest: async ({ request }) => {
-  const account = msalInstance.getActiveAccount() ?? msalInstance.getAllAccounts()[0] ?? null
+  const account = getAuthenticatedAccount()
   const token = await acquireApiToken(account)
   if (!token) return request
   request.headers.set('Authorization', `Bearer ${token}`)
