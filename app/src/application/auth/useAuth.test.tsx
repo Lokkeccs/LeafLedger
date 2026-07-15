@@ -7,6 +7,10 @@ import { queryClient } from '../query/queryClient'
 import { msalInstance } from './msalInstance'
 import { useAuth } from './useAuth'
 
+vi.hoisted(() => {
+  vi.stubEnv('VITE_API_SCOPE', 'api://test/ledger.write')
+})
+
 const account = { homeAccountId: 'home', environment: 'login', tenantId: 'tenant', username: 'user@example.test', localAccountId: 'local', name: 'Test User' }
 
 vi.mock('@azure/msal-react', () => ({ useMsal: vi.fn(), MsalProvider: ({ children }: { children: ReactNode }) => children }))
@@ -19,6 +23,7 @@ vi.mock('@azure/msal-browser', () => ({
     getAllAccounts = vi.fn(() => [])
     initialize = vi.fn().mockResolvedValue(undefined)
     loginPopup = vi.fn()
+    loginRedirect = vi.fn().mockResolvedValue(undefined)
     logoutPopup = vi.fn()
     setActiveAccount = vi.fn()
   },
@@ -39,12 +44,22 @@ describe('useAuth', () => {
     queryClient.clear()
   })
 
-  it('signs in through loginPopup with the API scope', async () => {
+  it('signs in through loginPopup with the configured API scope', async () => {
     render(<AuthProbe />)
     fireEvent.click(screen.getByRole('button', { name: 'sign in' }))
 
-    await waitFor(() => expect(msalInstance.loginPopup).toHaveBeenCalledWith({ scopes: ['openid', 'profile', 'email', 'api://leafledger/ledger.write'] }))
+    await waitFor(() => expect(msalInstance.loginPopup).toHaveBeenCalledWith({ scopes: ['openid', 'profile', 'email', 'api://test/ledger.write'] }))
     expect(msalInstance.setActiveAccount).toHaveBeenCalledWith(account)
+  })
+
+  it('falls back to redirect when the host blocks the popup', async () => {
+    const popupError = Object.assign(new Error('Popup blocked'), { errorCode: 'popup_window_error' })
+    vi.mocked(msalInstance.loginPopup).mockRejectedValueOnce(popupError)
+    render(<AuthProbe />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'sign in' }))
+
+    await waitFor(() => expect(msalInstance.loginRedirect).toHaveBeenCalledWith({ scopes: ['openid', 'profile', 'email', 'api://test/ledger.write'] }))
   })
 
   it('clears the query cache and MSAL cache when logoutPopup fails', async () => {
