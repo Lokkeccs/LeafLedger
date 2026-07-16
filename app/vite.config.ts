@@ -9,6 +9,10 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       '/api': 'http://localhost:8080',
+      '/hubs': {
+        target: 'http://localhost:8080',
+        ws: true,
+      },
     },
   },
   preview: {
@@ -16,6 +20,10 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       '/api': 'http://localhost:8080',
+      '/hubs': {
+        target: 'http://localhost:8080',
+        ws: true,
+      },
     },
   },
 })

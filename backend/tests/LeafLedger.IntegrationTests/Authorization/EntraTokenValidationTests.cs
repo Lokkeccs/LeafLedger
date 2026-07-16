@@ -44,6 +44,7 @@ public sealed class EntraTokenValidationTests : IAsyncLifetime
             builder.UseTestServer();
             builder.UseEnvironment("Production");
             builder.UseSetting("ConnectionStrings:Postgres", _fixture.ConnectionString);
+            builder.UseSetting("Authentication:Audiences:0", Audience);
             var tenants = tenantAllowlist?.ToArray() ?? [];
             for (var index = 0; index < tenants.Length; index++)
             {

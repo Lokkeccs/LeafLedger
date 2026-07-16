@@ -31,11 +31,14 @@ public static class LedgerModule
         services.AddSingleton<IdempotencyMetrics>();
         services.AddSingleton<IReportRefreshQueue, ReportRefreshQueue>();
         services.AddSingleton<ReportingRefreshMetrics>();
+        services.AddSingleton<ISpaceInvalidationQueue, SpaceInvalidationQueue>();
+        services.AddSingleton<SpaceInvalidationMetrics>();
         services.AddSingleton<IHostedService>(_ => new IdempotencyCleanupService(connectionString));
         services.AddSingleton<IHostedService>(serviceProvider => new RefreshCoalescingService(
             connectionString,
             serviceProvider.GetRequiredService<IReportRefreshQueue>(),
             serviceProvider.GetRequiredService<ReportingRefreshMetrics>()));
+        services.AddHostedService<InvalidationBroadcastService>();
         return services;
     }
 

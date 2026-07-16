@@ -22,6 +22,13 @@ builder.Services
         builder.Configuration,
         builder.Environment.IsDevelopment()));
 builder.Services.AddAuthorization();
+var signalR = builder.Services.AddSignalR();
+var azureSignalRConnectionString = builder.Configuration["ConnectionStrings:AzureSignalR"]
+    ?? builder.Configuration["Azure:SignalR:ConnectionString"];
+if (!string.IsNullOrWhiteSpace(azureSignalRConnectionString))
+{
+    signalR.AddAzureSignalR(azureSignalRConnectionString);
+}
 
 // OpenAPI: the "v1" document is the single client contract (P1-WP04).
 builder.Services.AddOpenApi("v1", options =>
@@ -130,6 +137,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 var requiredScope = AuthenticationConfiguration.GetRequiredScope(builder.Configuration);
+app.MapHub<SpaceInvalidationHub>("/hubs/space");
 app.MapLedgerEndpoints((endpoint, permission) => endpoint.RequireSpacePermission(permission, requiredScope));
 
 app.Run();
