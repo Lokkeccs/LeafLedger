@@ -17,12 +17,18 @@ internal sealed class JournalPostingService : IJournalPostingService
     private readonly LedgerDbContext _db;
     private readonly IdempotencyMetrics _metrics;
     private readonly IReportRefreshQueue _refreshQueue;
+    private readonly ISpaceInvalidationQueue _invalidationQueue;
 
-    public JournalPostingService(LedgerDbContext db, IdempotencyMetrics metrics, IReportRefreshQueue refreshQueue)
+    public JournalPostingService(
+        LedgerDbContext db,
+        IdempotencyMetrics metrics,
+        IReportRefreshQueue refreshQueue,
+        ISpaceInvalidationQueue invalidationQueue)
     {
         _db = db;
         _metrics = metrics;
         _refreshQueue = refreshQueue;
+        _invalidationQueue = invalidationQueue;
     }
 
     public Task<PostingOutcome> PostAsync(PostJournalEntryCommand command, CancellationToken cancellationToken = default) =>
@@ -106,6 +112,7 @@ internal sealed class JournalPostingService : IJournalPostingService
 
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         _refreshQueue.TryEnqueue(spaceId);
+        _invalidationQueue.TryEnqueue(spaceId, InvalidationTopics.PostingTopics);
 
         return outcome;
     }

@@ -17,13 +17,14 @@
   "dependencies": {
     "@azure/msal-browser": "^4.25.0",
     "@azure/msal-react": "^3.0.19",
+    "@microsoft/signalr": "^10.0.0",
     "@tanstack/react-query": "^5.101.2",
     "i18next": "^25.7.0",
     "openapi-fetch": "^0.13.8",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "react-router-dom": "^7.18.1",
-    "react-i18next": "^16.3.0"
+    "react-i18next": "^16.3.0",
+    "react-router-dom": "^7.18.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

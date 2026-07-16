@@ -17,7 +17,6 @@ public interface ICurrentUser
 
 public sealed class HttpContextCurrentUser : ICurrentUser
 {
-    private static readonly Guid ConsumersTenantId = Guid.Parse("9188040d-6c67-4c5b-b112-36a304b66dad");
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public HttpContextCurrentUser(IHttpContextAccessor httpContextAccessor) =>
@@ -31,11 +30,10 @@ public sealed class HttpContextCurrentUser : ICurrentUser
         get
         {
             var principal = _httpContextAccessor.HttpContext?.User;
-            var oid = principal?.FindFirstValue("oid");
-            var sub = principal?.FindFirstValue("sub");
-            var subject = TenantId is { } tenant && Guid.TryParse(tenant, out var tenantId) && tenantId == ConsumersTenantId
-                ? sub
-                : oid ?? sub;
+            // The immutable object id (oid) is a GUID for both organizational and
+            // personal Microsoft accounts, whereas the personal-account `sub` is a
+            // non-GUID pairwise identifier. Prefer `oid`, falling back to `sub`.
+            var subject = principal?.FindFirstValue("oid") ?? principal?.FindFirstValue("sub");
             return Guid.TryParse(subject, out var id) ? id : null;
         }
     }

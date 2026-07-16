@@ -25,6 +25,17 @@ public static class DevSeed
             : DefaultSpaceId;
         await using var connection = new NpgsqlConnection(connectionString);
         await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+
+        await EnsureSpaceAsync(connection, spaceId, devUserId, cancellationToken).ConfigureAwait(false);
+        await EnsureRealUserMembershipAsync(connection, configuration, spaceId, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task EnsureSpaceAsync(
+        NpgsqlConnection connection,
+        Guid spaceId,
+        Guid devUserId,
+        CancellationToken cancellationToken)
+    {
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
         await using (var exists = new NpgsqlCommand("SELECT EXISTS (SELECT 1 FROM spaces WHERE id = @space);", connection, transaction))
@@ -68,5 +79,55 @@ public static class DevSeed
         command.Parameters.AddWithValue("user", devUserId);
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    // Grants the interactively signed-in developer account access to the demo space.
+    // The real Entra identity (subject/oid + tenant) resolves to an internal user id via
+    // resolve_identity_link; that id is what memberships are keyed by. Without this, a real
+    // sign-in resolves to a fresh internal user with no membership and every request 403s.
+    private static async Task EnsureRealUserMembershipAsync(
+        NpgsqlConnection connection,
+        IConfiguration configuration,
+        Guid spaceId,
+        CancellationToken cancellationToken)
+    {
+        if (!Guid.TryParse(configuration["Seed:DevUserSubject"], out var subject) ||
+            !Guid.TryParse(configuration["Seed:DevUserTenant"], out var tenantId))
+        {
+            return;
+        }
+
+        Guid internalUserId;
+        await using (var linkTransaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false))
+        {
+            await using var resolve = new NpgsqlCommand(
+                "SET LOCAL ROLE leafledger_app; SELECT resolve_identity_link(@subject, @tenant);",
+                connection,
+                linkTransaction);
+            resolve.Parameters.AddWithValue("subject", subject);
+            resolve.Parameters.AddWithValue("tenant", tenantId);
+            var resolved = await resolve.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+            if (resolved is not Guid userId)
+            {
+                await linkTransaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+                return;
+            }
+
+            internalUserId = userId;
+            await linkTransaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        await using var membershipTransaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+        await using var membership = new NpgsqlCommand(
+            "INSERT INTO memberships (id, space_id, user_id, role, created_at) " +
+            "SELECT @membership, @space, @user, 'Owner', now() " +
+            "WHERE NOT EXISTS (SELECT 1 FROM memberships WHERE space_id = @space AND user_id = @user);",
+            connection,
+            membershipTransaction);
+        membership.Parameters.AddWithValue("membership", Guid.NewGuid());
+        membership.Parameters.AddWithValue("space", spaceId);
+        membership.Parameters.AddWithValue("user", internalUserId);
+        await membership.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        await membershipTransaction.CommitAsync(cancellationToken).ConfigureAwait(false);
     }
 }

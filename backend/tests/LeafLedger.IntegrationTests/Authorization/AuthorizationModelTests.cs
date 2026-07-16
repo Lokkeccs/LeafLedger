@@ -171,14 +171,16 @@ public sealed class AuthorizationModelTests
     }
 
     [Fact]
-    public void Prefers_sub_for_the_consumers_tenant()
+    public void Uses_oid_for_the_consumers_tenant_because_the_personal_account_sub_is_not_a_guid()
     {
+        // Real personal Microsoft account (consumers tenant) tokens carry a non-GUID
+        // pairwise `sub` and a GUID `oid`. The stable GUID identity must come from `oid`.
         var user = CreateUser(
             ("oid", "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-            ("sub", "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+            ("sub", "AAAAAAAAAAAAAAAAAAAAAINCyGVXH3sXAr9DcJThgg"),
             ("tid", "9188040d-6c67-4c5b-b112-36a304b66dad"));
 
-        Assert.Equal(Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), user.SubjectId);
+        Assert.Equal(Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), user.SubjectId);
     }
 
     [Fact]
