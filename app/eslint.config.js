@@ -93,4 +93,18 @@ export default defineConfig([
       ],
     },
   },
+
+  // ── Playwright E2E (P3-WP09) ──────────────────────────────────────────────
+  // Specs and config run under Node, live outside src/, and are not app modules,
+  // so relax React-oriented rules and provide Node globals.
+  {
+    files: ['e2e/**/*.ts', 'playwright.config.ts'],
+    languageOptions: {
+      globals: globals.node,
+    },
+    rules: {
+      'react-refresh/only-export-components': 'off',
+      'react-hooks/rules-of-hooks': 'off',
+    },
+  },
 ])

@@ -1,6 +1,7 @@
 import { InteractionRequiredAuthError, type AccountInfo, type AuthenticationResult } from '@azure/msal-browser'
 import type { Middleware } from 'openapi-fetch'
 import { apiClient } from '../../api/client'
+import { e2eBearerToken, isE2EAuthEnabled } from './e2eAuth'
 import { apiScope } from './msalConfig'
 import { getAuthenticatedAccount, msalInstance, runMsalInteraction } from './msalInstance'
 
@@ -9,6 +10,7 @@ let fallbackAttemptAt = 0
 let middlewareInstalled = false
 
 export async function acquireApiToken(account: AccountInfo | null): Promise<string | undefined> {
+  if (isE2EAuthEnabled()) return e2eBearerToken()
   if (!account || !apiScope) return undefined
 
   try {
