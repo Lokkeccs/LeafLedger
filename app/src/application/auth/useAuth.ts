@@ -1,6 +1,7 @@
 import { useMsal } from '@azure/msal-react'
 import { useState } from 'react'
 import { queryClient } from '../query/queryClient'
+import { e2eAccount, isE2EAuthEnabled } from './e2eAuth'
 import { hasClientId, loginScopes } from './msalConfig'
 import { msalInstance, rememberAuthenticatedAccount, runMsalInteraction } from './msalInstance'
 
@@ -55,6 +56,10 @@ export function useAuth() {
     if (signOutError) {
       setError(signOutError instanceof Error ? signOutError.message : 'Sign-out failed. Please retry.')
     }
+  }
+
+  if (isE2EAuthEnabled()) {
+    return { account: e2eAccount(), error: null, isConfigured: true, isSignedIn: true, signIn, signOut }
   }
 
   return { account, error, isConfigured: hasClientId(), isSignedIn: account !== null, signIn, signOut }

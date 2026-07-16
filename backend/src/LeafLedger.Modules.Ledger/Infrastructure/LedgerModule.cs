@@ -34,10 +34,13 @@ public static class LedgerModule
         services.AddSingleton<ISpaceInvalidationQueue, SpaceInvalidationQueue>();
         services.AddSingleton<SpaceInvalidationMetrics>();
         services.AddSingleton<IHostedService>(_ => new IdempotencyCleanupService(connectionString));
-        services.AddSingleton<IHostedService>(serviceProvider => new RefreshCoalescingService(
+        services.AddSingleton(serviceProvider => new RefreshCoalescingService(
             connectionString,
             serviceProvider.GetRequiredService<IReportRefreshQueue>(),
+            serviceProvider.GetRequiredService<ISpaceInvalidationQueue>(),
             serviceProvider.GetRequiredService<ReportingRefreshMetrics>()));
+        services.AddHostedService(serviceProvider =>
+            serviceProvider.GetRequiredService<RefreshCoalescingService>());
         services.AddHostedService<InvalidationBroadcastService>();
         return services;
     }

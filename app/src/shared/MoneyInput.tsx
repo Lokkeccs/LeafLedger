@@ -34,6 +34,6 @@ export function MoneyInput({ value, currency, onChange, label, id, onFocus, onBl
   const formatMoney = useMoneyFormat()
   const [raw, setRaw] = useState<string | null>(null)
   const inputId = id ?? 'money-input'
-  const input = <input {...props} id={inputId} type="text" inputMode="decimal" value={raw ?? formatMoney(value, currency)} onFocus={(event) => { setRaw(minorUnitsToInput(value, currency)); onFocus?.(event) }} onChange={(event) => setRaw(event.target.value)} onBlur={(event) => { const parsed = parseMinorUnits(event.target.value, currency); if (parsed !== null) onChange(parsed); setRaw(null); onBlur?.(event) }} />
+  const input = <input {...props} id={inputId} type="text" inputMode="decimal" value={raw ?? formatMoney(value, currency)} onFocus={(event) => { setRaw(minorUnitsToInput(value, currency)); onFocus?.(event) }} onChange={(event) => { const next = event.target.value; setRaw(next); const parsed = parseMinorUnits(next, currency); if (parsed !== null) onChange(parsed) }} onBlur={(event) => { setRaw(null); onBlur?.(event) }} />
   return label ? <label htmlFor={inputId} style={{ display: 'grid', gap: 'var(--space-1)' }}><span style={{ fontWeight: 700, fontSize: 13 }}>{label}</span>{input}</label> : input
 }

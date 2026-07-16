@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { fireEvent, render, screen } from '@testing-library/react'
 import { I18nextProvider } from 'react-i18next'
+import { useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { i18n } from '../i18n'
 import { DataTable } from './DataTable'
@@ -13,6 +14,11 @@ import { ToggleSwitch } from './ToggleSwitch'
 
 function renderMoneyInput(value: number, currency: string, onChange = vi.fn()) {
   return render(<I18nextProvider i18n={i18n}><MoneyInput id="amount" label="Amount" value={value} currency={currency} onChange={onChange} /></I18nextProvider>)
+}
+
+function TwoMoneyInputs() {
+  const [amounts, setAmounts] = useState({ first: 0, second: 0 })
+  return <I18nextProvider i18n={i18n}><MoneyInput id="first" label="First" value={amounts.first} currency="CHF" onChange={(first) => setAmounts((current) => ({ ...current, first }))} /><MoneyInput id="second" label="Second" value={amounts.second} currency="CHF" onChange={(second) => setAmounts((current) => ({ ...current, second }))} /></I18nextProvider>
 }
 
 describe('shared UI primitives', () => {
@@ -79,14 +85,38 @@ describe('shared UI primitives', () => {
     expect(onChange).toHaveBeenCalledWith(expected)
   })
 
+  it('synchronizes valid edits before blur', () => {
+    const onChange = vi.fn()
+    renderMoneyInput(0, 'CHF', onChange)
+    const input = screen.getByLabelText('Amount')
+
+    fireEvent.focus(input)
+    fireEvent.change(input, { target: { value: '25.00' } })
+
+    expect(onChange).toHaveBeenCalledWith(2500)
+  })
+
   it('preserves large safe integer amounts without float parsing', () => {
     const onChange = vi.fn()
     renderMoneyInput(9007199254740991, 'USD', onChange)
     const input = screen.getByLabelText('Amount')
     fireEvent.focus(input)
     expect((input as HTMLInputElement).value).toBe('90071992547409.91')
-    fireEvent.change(input, { target: { value: '90071992547409.91' } })
-    fireEvent.blur(input)
-    expect(onChange).toHaveBeenCalledWith(9007199254740991)
+    fireEvent.change(input, { target: { value: '90071992547409.90' } })
+    expect(onChange).toHaveBeenCalledWith(9007199254740990)
+  })
+
+  it('keeps an edited value when a sibling money field rerenders the parent', () => {
+    render(<TwoMoneyInputs />)
+    const first = screen.getByLabelText('First')
+    const second = screen.getByLabelText('Second')
+
+    fireEvent.focus(first)
+    fireEvent.change(first, { target: { value: '25.00' } })
+    fireEvent.focus(second)
+    fireEvent.change(second, { target: { value: '10.00' } })
+
+    expect((first as HTMLInputElement).value).toBe('25.00')
+    expect((second as HTMLInputElement).value).toBe('10.00')
   })
 })

@@ -1,26 +1,39 @@
 using LeafLedger.Host.Authorization;
 using LeafLedger.Modules.Ledger.Infrastructure;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 
 #pragma warning disable CA1861
 
 var builder = WebApplication.CreateBuilder(args);
+var e2eAuthenticationEnabled = builder.Environment.IsDevelopment() &&
+    builder.Configuration.GetValue<bool>("Authentication:E2E:Enabled");
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddMetrics();
 builder.Services.AddScoped<ICurrentUser, HttpContextCurrentUser>();
 builder.Services.AddScoped<ILicenseEntitlement, AllowAllLicenseEntitlement>();
-builder.Services
+var authentication = builder.Services
     .AddAuthentication(options =>
     {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultAuthenticateScheme = e2eAuthenticationEnabled
+            ? E2ETestAuthenticationHandler.AuthenticationScheme
+            : JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = e2eAuthenticationEnabled
+            ? E2ETestAuthenticationHandler.AuthenticationScheme
+            : JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(options => AuthenticationConfiguration.ConfigureJwtBearer(
         options,
         builder.Configuration,
         builder.Environment.IsDevelopment()));
+if (e2eAuthenticationEnabled)
+{
+    authentication.AddScheme<AuthenticationSchemeOptions, E2ETestAuthenticationHandler>(
+        E2ETestAuthenticationHandler.AuthenticationScheme,
+        _ => { });
+}
 builder.Services.AddAuthorization();
 var signalR = builder.Services.AddSignalR();
 var azureSignalRConnectionString = builder.Configuration["ConnectionStrings:AzureSignalR"]

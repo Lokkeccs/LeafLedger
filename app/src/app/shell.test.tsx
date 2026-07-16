@@ -7,6 +7,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getMeta } from '../application/meta'
 import { createQueryClient } from '../application/query/queryClient'
+import { hasClientId } from '../application/auth/msalConfig'
 import { AppErrorBoundary } from './AppErrorBoundary'
 import { AppLayout } from './AppLayout'
 import { HomeRoute } from './HomeRoute'
@@ -59,7 +60,11 @@ describe('app shell', () => {
     expect(screen.getByRole('complementary', { name: 'Primary navigation' }).getAttribute('tabindex')).toBe('0')
     expect(screen.getByRole('main').getAttribute('tabindex')).toBe('-1')
     expect(screen.getByRole('link', { name: 'Overview' })).toBeTruthy()
-    expect(screen.getByText('Sign-in not configured')).toBeTruthy()
+    if (hasClientId()) {
+      expect(screen.getByRole('button', { name: 'Sign in with Microsoft' })).toBeTruthy()
+    } else {
+      expect(screen.getByText('Sign-in not configured')).toBeTruthy()
+    }
   })
 
   it('shows the route fallback without exposing an error stack', async () => {

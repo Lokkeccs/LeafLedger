@@ -28,6 +28,20 @@ public static class DevSeed
 
         await EnsureSpaceAsync(connection, spaceId, devUserId, cancellationToken).ConfigureAwait(false);
         await EnsureRealUserMembershipAsync(connection, configuration, spaceId, cancellationToken).ConfigureAwait(false);
+        await EnsureE2EMemberMembershipAsync(
+            connection,
+            configuration,
+            spaceId,
+            "Seed:E2EMemberASubject",
+            "Seed:E2EMemberATenant",
+            cancellationToken).ConfigureAwait(false);
+        await EnsureE2EMemberMembershipAsync(
+            connection,
+            configuration,
+            spaceId,
+            "Seed:E2EMemberBSubject",
+            "Seed:E2EMemberBTenant",
+            cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task EnsureSpaceAsync(
@@ -93,6 +107,54 @@ public static class DevSeed
     {
         if (!Guid.TryParse(configuration["Seed:DevUserSubject"], out var subject) ||
             !Guid.TryParse(configuration["Seed:DevUserTenant"], out var tenantId))
+        {
+            return;
+        }
+
+        Guid internalUserId;
+        await using (var linkTransaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false))
+        {
+            await using var resolve = new NpgsqlCommand(
+                "SET LOCAL ROLE leafledger_app; SELECT resolve_identity_link(@subject, @tenant);",
+                connection,
+                linkTransaction);
+            resolve.Parameters.AddWithValue("subject", subject);
+            resolve.Parameters.AddWithValue("tenant", tenantId);
+            var resolved = await resolve.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+            if (resolved is not Guid userId)
+            {
+                await linkTransaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+                return;
+            }
+
+            internalUserId = userId;
+            await linkTransaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        await using var membershipTransaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+        await using var membership = new NpgsqlCommand(
+            "INSERT INTO memberships (id, space_id, user_id, role, created_at) " +
+            "SELECT @membership, @space, @user, 'Owner', now() " +
+            "WHERE NOT EXISTS (SELECT 1 FROM memberships WHERE space_id = @space AND user_id = @user);",
+            connection,
+            membershipTransaction);
+        membership.Parameters.AddWithValue("membership", Guid.NewGuid());
+        membership.Parameters.AddWithValue("space", spaceId);
+        membership.Parameters.AddWithValue("user", internalUserId);
+        await membership.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        await membershipTransaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task EnsureE2EMemberMembershipAsync(
+        NpgsqlConnection connection,
+        IConfiguration configuration,
+        Guid spaceId,
+        string subjectKey,
+        string tenantKey,
+        CancellationToken cancellationToken)
+    {
+        if (!Guid.TryParse(configuration[subjectKey], out var subject) ||
+            !Guid.TryParse(configuration[tenantKey], out var tenantId))
         {
             return;
         }

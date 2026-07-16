@@ -1,0 +1,5 @@
+services:
+  api:
+    environment:
+      Authentication__E2E__Enabled: "true"
+      Seed__Enabled: "true"
