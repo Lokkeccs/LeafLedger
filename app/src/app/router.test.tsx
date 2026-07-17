@@ -56,6 +56,13 @@ describe('accounts route', () => {
     expect(screen.getByRole('link', { name: 'Trial balance' })).toBeTruthy()
   })
 
+  it('resolves the lazy design-system route under the app shell', async () => {
+    renderRouter('/design')
+    expect(await screen.findByRole('heading', { name: 'Design system' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Shared primitives' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Open modal' })).toBeTruthy()
+  })
+
   it('renders the route error boundary when the trial-balance query fails', async () => {
     useTrialBalance.mockReturnValue({ isPending: false, isError: true, error: new Error('report request failed') })
     renderRouter('/reports/trial-balance')

@@ -9,6 +9,7 @@ import { queryClient } from '../application/query/queryClient'
 import { AppErrorBoundary } from './AppErrorBoundary'
 import { appRouter } from './router'
 import { i18n } from '../i18n'
+import { ThemeProvider } from './theme/ThemeProvider'
 
 export function AppRoot() {
   const [initialized, setInitialized] = useState(false)
@@ -22,9 +23,9 @@ export function AppRoot() {
     return () => { mounted = false }
   }, [])
 
-  return <I18nextProvider i18n={i18n}><MsalProvider instance={msalInstance}>
+  return <I18nextProvider i18n={i18n}><ThemeProvider><MsalProvider instance={msalInstance}>
     {initialized
       ? <QueryClientProvider client={queryClient}><AppErrorBoundary><RouterProvider router={appRouter} /></AppErrorBoundary></QueryClientProvider>
         : <div className="app-splash" role="status">{i18n.t('shell.preparing')}</div>}
-      </MsalProvider></I18nextProvider>
+      </MsalProvider></ThemeProvider></I18nextProvider>
 }

@@ -124,7 +124,8 @@
     "newJournalEntry": "New journal entry",
     "trialBalance": "Trial balance",
     "workspace": "Workspace",
-    "online": "Online"
+    "online": "Online",
+    "design": "Design system"
   },
   "accountsPage": {
     "eyebrow": "Chart of accounts",
@@ -1906,6 +1907,8 @@
     "diagnosticsCopied": "Attachment diagnostics copied to clipboard.",
     "copyDiagnosticsFailed": "Could not copy diagnostics to clipboard."
   },
+  "theme": { "toggle": "Switch theme" },
+  "designGallery": { "colors": "Color roles", "type": "Type scale", "spacing": "Spacing and shape", "primitives": "Shared primitives", "light": "Light theme", "dark": "Dark theme", "previewSurface": "Preview surface", "typeExample": "Ledger clarity", "typeDescription": "Dense, legible accounting workflows.", "formSection": "Form section", "example": "Example", "date": "Date", "amount": "Amount", "openModal": "Open modal", "modalTitle": "Modal surface", "modalBody": "This modal demonstrates the shared dialog treatment.", "label": "Label", "sampleRow": "Operating balance", "sampleAmount": "CHF 1,240.00", "tokens": { "primary": "Primary", "surface": "Surface", "surface-raised": "Raised surface", "border": "Border", "text": "Text", "success": "Success", "warning": "Warning", "danger": "Danger", "info": "Info" } },
   "auth": {
     "title": "Sign in to unlock all features",
     "subtitle": "Connect your Microsoft account to sync your data across devices.",

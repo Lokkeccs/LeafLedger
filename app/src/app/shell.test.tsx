@@ -65,6 +65,10 @@ describe('app shell', () => {
     } else {
       expect(screen.getByText('Sign-in not configured')).toBeTruthy()
     }
+      const themeToggle = screen.getByRole('button', { name: 'Switch theme' })
+      expect(themeToggle).toBeTruthy()
+      themeToggle.click()
+      expect(document.documentElement.dataset.theme).toBe('dark')
   })
 
   it('shows the route fallback without exposing an error stack', async () => {

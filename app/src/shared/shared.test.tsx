@@ -42,6 +42,13 @@ describe('shared UI primitives', () => {
     expect(screen.getByRole('button', { name: 'Open' })).toBeTruthy()
   })
 
+  it('styles right-aligned amounts with the mono tabular treatment', () => {
+    render(<DataTable data={[{ id: '1', amount: 'CHF 1.00' }]} rows={[{ id: '1', amount: 'CHF 1.00' }]} rowKey={(row) => row.id} emptyState="empty" noMatchState="none" columns={[{ header: 'Amount', align: 'right', render: (row) => row.amount }]} />)
+    const amountCell = screen.getByRole('cell', { name: 'CHF 1.00' })
+    expect(amountCell.style.fontFamily).toBe('var(--font-mono)')
+    expect(amountCell.style.fontVariantNumeric).toBe('tabular-nums')
+  })
+
   it('renders ModalShell in a portal and closes from the backdrop and button', () => {
     const onClose = vi.fn()
     render(<ModalShell title="Edit entry" titleId="edit-entry" closeLabel="Close" onClose={onClose}>Body</ModalShell>)

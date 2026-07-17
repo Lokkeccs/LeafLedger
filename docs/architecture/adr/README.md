@@ -27,6 +27,7 @@ itself, its consequences, and the alternatives rejected.
 | ADR-0004 | *(reserved)* Single migration `DbContext` for the Phase-2 baseline; per-module split deferred | reserved | — | P2-WP02 (N-D1) |
 | [ADR-0005](./ADR-0005-posting-requires-open-period.md) | Posting requires a defined, open period — deliberate divergence from old "no period ⇒ allowed" | accepted | 2026-07-11 | P2-WP04 (A1) |
 | [ADR-0006](./ADR-0006-materialized-view-tenancy-wall.md) | Preserve report tenancy with a GUC-filtered wrapper over materialized data | accepted | 2026-07-12 | P2-WP12 (D-WP12-TENANCY) |
+| [ADR-0008](./ADR-0008-frontend-design-token-architecture.md) | Frontend design-token architecture — CSS custom properties with light/dark themes | accepted | 2026-07-17 | P4-WP01 |
 
 > **ADR-0004 is reserved, not skipped:** the single-context-baseline decision (P2-WP02 N-D1) was
 > earmarked as ADR-0004 before ADR-0005 was written. It stays reserved until LL Docs Editor drafts it;

@@ -1,7 +1,7 @@
 # P3-WP09 — Playwright E2E harness + browser-level two-browser live-update smoke
 
 - **Phase:** 3 (frontend re-platform) — the **browser-level certification of the Phase-3 exit criterion**. WP06 built "post a balanced entry", WP07 built "…see it in the trial-balance report", and WP08 delivered the *live* half (a data-free SignalR invalidation ping so a second client refetches) — **proven deterministically at the integration + component level**. WP09 delivers the **greenfield Playwright harness** and the **§05 main-blocking two-browser smoke journey** that certifies the same exit criterion *in real browsers*: browser A posts → browser B's trial-balance page live-updates via the SignalR ping, with no manual reload.
-- **State:** **verify — QA PASS (2026-07-16 re-review).** The live smoke and backend suite pass, AC3 now requires a report request that starts after browser A's successful post, the shell test is environment-independent, and WP08 dependency files are explicitly owned by the WP08 plan.
+- **State:** **done — QA PASS (2026-07-16 re-review), merged via PR #35.** The live smoke and backend suite pass, AC3 now requires a report request that starts after browser A's successful post, the shell test is environment-independent, and WP08 dependency files are explicitly owned by the WP08 plan.
 - **Owner (implementation):** LL Frontend Dev (harness + journey + the frontend E2E-auth seam). The small backend Development-only test-auth handler + `DevSeed` second-member extension are backend edits the frontend WP will need routed to LL Backend Dev, or done under explicit user authorization within the same session (flagged in the file list).
 - **Depends on:**
   - **P3-WP08** (done) — the SignalR hub (`/hubs/space`), the membership-gated group join, the post-commit coalesced ping, and the client `useSpaceInvalidation` hook + N6 invalidation map. WP09 exercises exactly this path end-to-end through two real browsers. The Vite dev/preview `/hubs` WebSocket proxy that WP08b added is the local transport this journey rides.
@@ -192,6 +192,8 @@ The Playwright specs live in `app/e2e/**` (outside `src/**`) so they respect the
 - **Multi-space / space-picker journeys (later).** The journey uses `VITE_DEMO_SPACE_ID`; real `GET /spaces` + a picker land in Phase 4 and bring their own E2E coverage.
 
 ## Implementation log
+
+- **LL Git (merge, 2026-07-16):** PR **#35** merged to `main`. WP09 is complete; Phase 3 browser-level exit certification is closed. Next phase: Phase 4 feature porting.
 
 - **LL QA Reviewer (remediation, 2026-07-16):** Closed the re-review findings. The live-update spec now requires a trial-balance GET that starts after browser A's successful post; `shell.test.tsx` accepts either configured or unconfigured MSAL state and full Vitest is **97/97**; WP08 refresh-orchestration files are explicitly owned by the WP08 plan. Post-remediation Playwright smoke passes **5/5**, backend Release passes **351/351**, and frontend lint/typecheck/page-budget/build/audit pass. State -> `verify`; QA PASS.
 
