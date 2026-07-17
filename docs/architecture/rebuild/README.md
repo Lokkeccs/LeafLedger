@@ -11,6 +11,7 @@ Complete architectural analysis and rebuild specification, produced 2026-07-03 f
 | 5 | [Quality & Maintainability Strategy](./05-quality-and-maintainability.md) | Testing pyramid, CI/CD, review/docs/versioning strategy, long-term boundary enforcement, monitoring |
 | 6 | [Feature Roadmap](./06-feature-roadmap.md) | MVP (M1) vs fast-follow (M2) vs post-launch (M3) feature tiers; switch-over readiness model; dropped features |
 | 7 | [Vibe-Coding Playbook](./07-vibe-coding-playbook.md) | How to execute the rebuild with agents: per-phase workflow, custom agent definitions, model selection, general instructions, status tracking |
+| UI | [UI Design Guidelines](./ui-design-guidelines.md) | Token catalog, theme rules, accessibility targets, and the live `/design` reference |
 
 **Decision records:** foundational and per-WP decisions are logged as ADRs — see the [ADR log](../adr/README.md) (ADR-0001 online-first + PostgreSQL, ADR-0002 ID storage, ADR-0003 API contract pipeline).
 

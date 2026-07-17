@@ -17,7 +17,7 @@ export function JournalEntryForm({ spaceId, accounts }: JournalEntryFormProps) {
   const formIssue = form.issues.find((issue) => issue.line === null)
   const baseCurrency = accounts[0]?.currency ?? 'CHF'
   return <form onSubmit={(event) => { event.preventDefault(); if (form.isValid) mutation.mutate(createJournalEntrySubmission(form.input)) }} style={{ display: 'grid', gap: 'var(--space-4)', maxWidth: 1100 }}>
-    <FormSection title={t('journalEntry.details')} style={{ display: 'grid', gridTemplateColumns: '180px 1fr 1fr', gap: 'var(--space-3)' }}>
+    <FormSection title={t('journalEntry.details')} style={{ display: 'grid', gridTemplateColumns: 'var(--layout-form-label) 1fr 1fr', gap: 'var(--space-3)' }}>
       <DateField id="journal-date" label={t('journalEntry.date')} value={form.state.date} onChange={(event) => form.setField('date', event.target.value)} />
       <FormField id="journal-description" label={t('journalEntry.fieldDescription')} value={form.state.description} placeholder={t('journalEntry.descriptionPlaceholder')} onChange={(event) => form.setField('description', event.target.value)} error={formIssue?.code === 'request.invalid.description' ? issueMessage(formIssue.code) : undefined} />
       <FormField id="journal-reference" label={t('journalEntry.reference')} value={form.state.reference} onChange={(event) => form.setField('reference', event.target.value)} />

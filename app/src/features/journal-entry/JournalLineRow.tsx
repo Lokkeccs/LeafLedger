@@ -10,7 +10,7 @@ export function JournalLineRow({ accounts, line, index, currency, onChange, onRe
   const { t } = useTranslation()
   const debit = line.amountMinor > 0 ? line.amountMinor : 0
   const credit = line.amountMinor < 0 ? Math.abs(line.amountMinor) : 0
-  return <div style={{ display: 'grid', gridTemplateColumns: 'minmax(240px, 1fr) 160px 160px auto', gap: 'var(--space-2)', alignItems: 'end' }}>
+  return <div style={{ display: 'grid', gridTemplateColumns: 'minmax(var(--layout-journal-account), 1fr) var(--layout-journal-amount) var(--layout-journal-amount) auto', gap: 'var(--space-2)', alignItems: 'end' }}>
     <label htmlFor={`journal-line-${index}-account`} style={{ display: 'grid', gap: 'var(--space-1)' }}><span style={{ fontWeight: 700, fontSize: 13 }}>{t('journalEntry.account')}</span><AccountPicker id={`journal-line-${index}-account`} accounts={accounts} value={line.accountId} onChange={(accountId, accountCurrency) => onChange({ accountId, currency: accountCurrency })} error={issue} />{issue && <span role="alert" style={{ color: 'var(--color-danger)', fontSize: 13 }}>{t(`journalEntry.validation.${issue}`)}</span>}</label>
     <MoneyInput id={`journal-line-${index}-debit`} label={t('journalEntry.debit')} value={debit} currency={currency} onChange={(value) => onChange({ amountMinor: value })} />
     <MoneyInput id={`journal-line-${index}-credit`} label={t('journalEntry.credit')} value={credit} currency={currency} onChange={(value) => onChange({ amountMinor: -value })} />

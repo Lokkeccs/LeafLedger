@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run i18n:keys:check && tsc -b && vite build",
+    "build": "npm run i18n:keys:check && npm run design:tokens:check && tsc -b && vite build",
     "i18n:keys:check": "node ../tools/check-i18n-duplicate-keys.cjs",
+    "design:tokens:check": "node ../tools/check-design-tokens.cjs",
     "lint": "eslint .",
     "typecheck": "tsc -b",
     "test": "vitest run",

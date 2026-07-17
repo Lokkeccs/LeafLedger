@@ -5,11 +5,27 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
+const designTokenRules = {
+  rules: {
+    'no-inline-colors': {
+      meta: { type: 'problem', messages: { literal: 'Use a design color token instead of an inline color literal.' } },
+      create: (context) => ({
+        JSXAttribute: (node) => {
+          if (node.name.name !== 'style') return
+          const value = node.value ? context.sourceCode.getText(node.value) : ''
+          if (/#[0-9a-f]{3,8}\b|\b(?:rgb|rgba|hsl|hsla)\s*\(/i.test(value)) context.report({ node, messageId: 'literal' })
+        },
+      }),
+    },
+  },
+}
+
 export default defineConfig([
   // src/api is the GENERATED OpenAPI client (P1-WP04) — never hand-edited, never linted.
   globalIgnores(['dist', 'src/api/**']),
   {
     files: ['**/*.{ts,tsx}'],
+    plugins: { 'design-tokens': designTokenRules },
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,
@@ -21,6 +37,7 @@ export default defineConfig([
       globals: globals.browser,
     },
     rules: {
+      'design-tokens/no-inline-colors': 'error',
       '@typescript-eslint/no-unused-vars': ['error', {
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_',

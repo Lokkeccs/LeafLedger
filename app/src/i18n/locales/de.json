@@ -121,7 +121,8 @@
     "newJournalEntry": "Neuer Buchungssatz",
     "trialBalance": "Summen- und Saldenliste",
     "workspace": "Arbeitsbereich",
-    "online": "Online"
+    "online": "Online",
+    "design": "Designsystem"
   },
   "accountsPage": {
     "eyebrow": "Kontenplan",
@@ -1427,6 +1428,8 @@
     "diagnosticsCopied": "Diagnoseinformationen des Anhangs wurden in die Zwischenablage kopiert.",
     "copyDiagnosticsFailed": "Diagnoseinformationen konnten nicht in die Zwischenablage kopiert werden."
   },
+  "theme": { "toggle": "Darstellung wechseln" },
+  "designGallery": { "colors": "Farben", "type": "Typografie", "spacing": "Abstände und Formen", "primitives": "Gemeinsame UI-Elemente", "light": "Helles Design", "dark": "Dunkles Design", "previewSurface": "Vorschaufläche", "typeExample": "Klarheit im Hauptbuch", "typeDescription": "Dichte, gut lesbare Buchhaltungsabläufe.", "formSection": "Formularbereich", "example": "Beispiel", "date": "Datum", "amount": "Betrag", "openModal": "Modal öffnen", "modalTitle": "Modalfläche", "modalBody": "Dieses Modal zeigt die gemeinsame Dialoggestaltung.", "label": "Bezeichnung", "sampleRow": "Betriebssaldo", "sampleAmount": "CHF 1.240,00", "tokens": { "primary": "Primär", "surface": "Fläche", "surface-raised": "Erhöhte Fläche", "border": "Rand", "text": "Text", "success": "Erfolg", "warning": "Warnung", "danger": "Gefahr", "info": "Info" } },
   "auth": {
     "title": "Anmelden, um alle Funktionen freizuschalten",
     "subtitle": "Verbinde dein Microsoft-Konto, um Daten geräteübergreifend zu synchronisieren.",

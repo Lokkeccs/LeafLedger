@@ -40,7 +40,7 @@ export function DataTable<T>({ data, rows, columns, rowKey, emptyState, noMatchS
 
   const hasColgroup = columns.some((column) => column.width !== undefined)
   const baseRowStyle: CSSProperties = {
-    borderBottom: '1px solid var(--color-line)',
+    borderBottom: '1px solid var(--color-border)',
     cursor: onRowClick ? 'pointer' : undefined,
   }
 
@@ -53,7 +53,7 @@ export function DataTable<T>({ data, rows, columns, rowKey, emptyState, noMatchS
       <tbody>{rows.map((row) => <tr key={rowKey(row)} style={rowStyle ? { ...baseRowStyle, ...rowStyle(row) } : baseRowStyle} onClick={onRowClick ? (event) => onRowClick(row, event) : undefined}>
         {columns.map((column, index) => column.type === 'actions'
           ? <ActionCell key={index}>{column.render(row)}</ActionCell>
-          : <td key={column.header || index} style={{ ...(column.verticalAlign ?? cellAlign) === 'top' ? tdStyle : tdStyleMiddle, ...(column.align ? { textAlign: column.align } : undefined), ...column.cellStyle }}>{column.render(row)}</td>)}
+          : <td key={column.header || index} style={{ ...(column.verticalAlign ?? cellAlign) === 'top' ? tdStyle : tdStyleMiddle, ...(column.align ? { textAlign: column.align } : undefined), ...(column.align === 'right' ? { fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' } : undefined), ...column.cellStyle }}>{column.render(row)}</td>)}
       </tr>)}</tbody>
     </table>
   </div>
