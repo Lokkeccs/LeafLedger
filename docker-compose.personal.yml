@@ -1,0 +1,7 @@
+services:
+  api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Seed__Enabled: "true"
+      Seed__DevUserSubject: "00000000-0000-0000-1629-c39a9f8f1161"
+      Seed__DevUserTenant: "9188040d-6c67-4c5b-b112-36a304b66dad"

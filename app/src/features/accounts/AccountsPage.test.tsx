@@ -2,6 +2,7 @@
 import { QueryClientProvider } from '@tanstack/react-query'
 import { I18nextProvider } from 'react-i18next'
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createQueryClient } from '../../application/query/queryClient'
 import { i18n } from '../../i18n'
@@ -17,7 +18,7 @@ const account: Account = {
 }
 
 function renderPage() {
-  return render(<I18nextProvider i18n={i18n}><QueryClientProvider client={createQueryClient()}><AccountsPage /></QueryClientProvider></I18nextProvider>)
+  return render(<I18nextProvider i18n={i18n}><MemoryRouter><QueryClientProvider client={createQueryClient()}><AccountsPage /></QueryClientProvider></MemoryRouter></I18nextProvider>)
 }
 
 describe('AccountsPage', () => {
@@ -41,6 +42,7 @@ describe('AccountsPage', () => {
     expect(screen.getByRole('table', { name: 'Accounts' })).toBeTruthy()
     expect(screen.getByText('Cash')).toBeTruthy()
     expect(screen.getByText('Active')).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Cash' }).getAttribute('href')).toBe('/reports/account/acc-1')
   })
 
   it('throws query errors for the route boundary', () => {

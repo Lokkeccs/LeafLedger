@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { useAccounts } from '../../application/query/useAccounts'
 import type { Account } from '../../application/accounts'
 import { DataTable, type DataColumn } from '../../shared'
@@ -15,7 +16,7 @@ export function AccountsPage() {
   const accounts = accountsQuery.data
   const columns: DataColumn<Account>[] = [
     { header: t('accountsPage.columns.code'), render: (account) => account.code, width: 100 },
-    { header: t('accountsPage.columns.name'), render: (account) => account.name, width: 280 },
+    { header: t('accountsPage.columns.name'), render: (account) => <Link to={`/reports/account/${account.id}`}>{account.name}</Link>, width: 280 },
     { header: t('accountsPage.columns.currency'), render: (account) => account.currency, width: 120 },
     { header: t('accountsPage.columns.kind'), render: (account) => account.kind, width: 160 },
     { header: t('accountsPage.columns.active'), render: (account) => account.isActive ? t('common.active') : t('common.inactive'), width: 120 },

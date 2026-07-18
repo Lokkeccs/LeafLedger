@@ -35,6 +35,30 @@ export interface IncomeStatement {
   netResultMinor: number
 }
 
+export interface AccountLedgerLine {
+  entryId: string
+  entryNo: number
+  date: string
+  description: string | null
+  reference: string | null
+  amountMinor: number
+  baseAmountMinor: number
+  lineCurrency: string
+  runningBalanceMinor: number
+}
+
+export interface AccountLedger {
+  spaceId: string
+  accountId: string
+  accountCode: number
+  accountName: string
+  accountKind: string
+  accountCurrency: string
+  openingBalanceMinor: number
+  closingBalanceMinor: number
+  lines: AccountLedgerLine[]
+}
+
 export async function getTrialBalance(spaceId: string, client: ApiClient = apiClient): Promise<TrialBalance> {
   const { data } = await client.GET('/api/v1/spaces/{spaceId}/reports/trial-balance', {
     params: { path: { spaceId } },
@@ -61,4 +85,31 @@ export async function getIncomeStatement(spaceId: string, client: ApiClient = ap
   })
   if (data === undefined) throw new Error('Failed to fetch income statement')
   return { spaceId: data.spaceId, lines: data.lines.map((line) => ({ ...line })), netResultMinor: data.netResultMinor }
+}
+
+export async function getAccountLedger(
+  spaceId: string,
+  accountId: string,
+  range: { from?: string; to?: string } = {},
+  client: ApiClient = apiClient,
+): Promise<AccountLedger> {
+  const query = {
+    ...(range.from ? { from: range.from } : {}),
+    ...(range.to ? { to: range.to } : {}),
+  }
+  const { data } = await client.GET('/api/v1/spaces/{spaceId}/reports/account-ledger/{accountId}', {
+    params: { path: { spaceId, accountId }, query },
+  })
+  if (data === undefined) throw new Error('Failed to fetch account ledger')
+  return {
+    spaceId: data.spaceId,
+    accountId: data.accountId,
+    accountCode: data.accountCode,
+    accountName: data.accountName,
+    accountKind: data.accountKind,
+    accountCurrency: data.accountCurrency,
+    openingBalanceMinor: data.openingBalanceMinor,
+    closingBalanceMinor: data.closingBalanceMinor,
+    lines: data.lines.map((line) => ({ ...line })),
+  }
 }

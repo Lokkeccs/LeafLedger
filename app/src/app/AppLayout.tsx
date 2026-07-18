@@ -1,10 +1,15 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink as RouterNavLink, Outlet, type NavLinkProps } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../application/auth/useAuth'
 import { useSpaceInvalidation } from '../application/query/useSpaceInvalidation'
 import { useTheme } from './theme/useTheme'
 
 const demoSpaceId = import.meta.env.VITE_DEMO_SPACE_ID?.trim() ?? ''
+
+function NavLink(props: NavLinkProps) {
+  const { t } = useTranslation()
+  return <>{<RouterNavLink {...props} />}{props.to === '/accounts' && <RouterNavLink to="/reports/account">{t('nav.accountLedger')}</RouterNavLink>}</>
+}
 
 export function AppLayout() {
   const { t } = useTranslation()

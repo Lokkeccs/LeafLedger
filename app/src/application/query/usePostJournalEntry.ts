@@ -13,6 +13,7 @@ export function usePostJournalEntry(spaceId: string) {
         queryClient.invalidateQueries({ queryKey: qk.reports.trialBalance(spaceId) }),
         queryClient.invalidateQueries({ queryKey: qk.reports.balanceSheet(spaceId) }),
         queryClient.invalidateQueries({ queryKey: qk.reports.incomeStatement(spaceId) }),
+        queryClient.invalidateQueries({ queryKey: ['reports', 'accountLedger', spaceId] }),
       ])
     },
   })

@@ -68,6 +68,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/spaces/{spaceId}/reports/account-ledger/{accountId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetAccountLedger"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/spaces/{spaceId}/reports/trial-balance": {
         parameters: {
             query?: never;
@@ -204,6 +220,39 @@ export interface components {
             /** Format: uuid */
             spaceId: string;
             accounts: components["schemas"]["AccountView"][];
+        };
+        AccountLedgerLine: {
+            /** Format: uuid */
+            entryId: string;
+            /** Format: int64 */
+            entryNo: number;
+            /** Format: date */
+            date: string;
+            description: string | null;
+            reference: string | null;
+            /** Format: int64 */
+            amountMinor: number;
+            /** Format: int64 */
+            baseAmountMinor: number;
+            lineCurrency: string;
+            /** Format: int64 */
+            runningBalanceMinor: number;
+        };
+        AccountLedgerReport: {
+            /** Format: uuid */
+            spaceId: string;
+            /** Format: uuid */
+            accountId: string;
+            /** Format: int32 */
+            accountCode: number;
+            accountName: string;
+            accountKind: string;
+            accountCurrency: string;
+            /** Format: int64 */
+            openingBalanceMinor: number;
+            /** Format: int64 */
+            closingBalanceMinor: number;
+            lines: components["schemas"]["AccountLedgerLine"][];
         };
         AccountView: {
             /** Format: uuid */
@@ -584,6 +633,50 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AccountCatalogReport"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    GetAccountLedger: {
+        parameters: {
+            query?: {
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path: {
+                spaceId: string;
+                accountId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountLedgerReport"];
                 };
             };
             /** @description Unauthorized */

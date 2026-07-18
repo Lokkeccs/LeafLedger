@@ -7,6 +7,7 @@ describe('realtime invalidation map', () => {
       ['reports', 'trialBalance', 'space-1'],
       ['reports', 'balanceSheet', 'space-1'],
       ['reports', 'incomeStatement', 'space-1'],
+      ['reports', 'accountLedger', 'space-1'],
     ])
     expect(invalidationMap['journalEntries.list']('space-1')).toEqual([['journalEntries', 'list', 'space-1']])
   })

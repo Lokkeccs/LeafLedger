@@ -1,7 +1,7 @@
 # P4-WP02 — Balance-sheet & income-statement report pages (M1 Reports triad completion)
 
 - **Phase:** 4 (feature porting), **Stage A** (complete M1 — launch scope). An early Phase-4 feature WP (the first follows the P4-WP01 design-system foundation): completes the M1 Reports **core-statements triad** — P3-WP07 delivered the trial balance; this WP adds the balance sheet and the income statement (P&L), the two primary OR 959/959a/959b statements a business/personal space needs day-to-day.
-- **State:** verify — QA PASS; all acceptance-test evidence is present. The six front-loaded, **non-accounting** decisions are approved (see Decisions). No accounting consult or golden fixtures required.
+- **State:** done — QA PASS; all acceptance-test evidence is present and PR #37 is merged to `main`. The six front-loaded, **non-accounting** decisions are approved (see Decisions). No accounting consult or golden fixtures required.
 - **Owner (implementation):** LL Frontend Dev. Single-agent, **frontend-only**. **No backend change** — the two endpoints, their `ledger.read` authorization, the `security_invoker` presentation views (with the C1 sign convention already applied server-side), and the `BalanceSheetReport` / `IncomeStatementReport` / `ReportLine` contracts already exist and are merged (P2-WP07, PR #17) and are present in `app/src/api/schema.d.ts`.
 - **Estimated size:** ≤ 2 days, single agent. Two read wrappers + two query hooks + two pages (through `DataTable`) + two routes + nav + i18n + a small invalidation extension + tests. Each page is structurally identical to the P3-WP07 `TrialBalancePage`; together they stay well within the ≤2-day ceiling.
 - **Depends on:**
@@ -149,3 +149,7 @@ All 12 acceptance criteria pass; state → `verify`; LL QA Reviewer acceptance r
 The AC8 finding was remediated by adding route-level failure tests for both `/reports/balance-sheet` and `/reports/income-statement`, asserting the real `RouteErrorBoundary` renders and the underlying error is not exposed. Focused router coverage is **10/10**.
 
 Independent QA gates: full frontend Vitest **119/119**, typecheck, lint, strict page budget, i18n duplicate-key check, design-token check, production build, and `npm audit --omit=dev` (**0 vulnerabilities**) pass. Generated API/OpenAPI artifacts are unchanged. Build emits existing non-blocking dependency annotation and large-chunk warnings. No accounting, security, layering, scope, or contract-drift findings remain.
+
+## Merge record
+
+- **2026-07-18 — LL Git:** Commit `9f4f702` was rebased onto `origin/main`, pushed with lease protection, and merged as **PR #37** into `main`. P4-WP02 is complete. Next: P4-WP03 account detail / drill-down report page planning and implementation.
