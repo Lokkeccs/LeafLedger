@@ -165,3 +165,7 @@ All six findings are addressed:
 - Scope note: unrelated P3-WP09, P7-WP01, P4-WP02, and ADR-0008 worktree entries remain assigned to their own plans; they were not counted as WP01 defects or reverted.
 
 Residual non-blocking build output: existing SignalR pure-annotation warnings from the dependency and the existing large-main-chunk warning.
+
+## Merge closure — 2026-07-17
+
+**PR #36 merged to `main`.** P4-WP01 is closed on the default branch. The next implementation step is P4-WP02 (balance-sheet and income-statement report pages), which consumes this WP's token and guideline contract as a soft dependency.

@@ -2,8 +2,12 @@ import { describe, expect, it } from 'vitest'
 import { invalidationMap, queryKeysForTopic } from './invalidationMap'
 
 describe('realtime invalidation map', () => {
-  it('maps every Phase-3 topic to its exact space query key', () => {
-    expect(invalidationMap['reports.trialBalance']('space-1')).toEqual([['reports', 'trialBalance', 'space-1']])
+  it('maps report changes to every affected report query key', () => {
+    expect(invalidationMap['reports.trialBalance']('space-1')).toEqual([
+      ['reports', 'trialBalance', 'space-1'],
+      ['reports', 'balanceSheet', 'space-1'],
+      ['reports', 'incomeStatement', 'space-1'],
+    ])
     expect(invalidationMap['journalEntries.list']('space-1')).toEqual([['journalEntries', 'list', 'space-1']])
   })
 

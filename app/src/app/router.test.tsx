@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { QueryClientProvider } from '@tanstack/react-query'
-import { render, screen, waitFor } from '@testing-library/react'
+import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import { I18nextProvider } from 'react-i18next'
 import { RouterProvider } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -8,9 +8,11 @@ import { createQueryClient } from '../application/query/queryClient'
 import { i18n } from '../i18n'
 import { createAppRouter } from './router'
 
-const { useAccounts, useTrialBalance } = vi.hoisted(() => ({ useAccounts: vi.fn(), useTrialBalance: vi.fn() }))
+const { useAccounts, useTrialBalance, useBalanceSheet, useIncomeStatement } = vi.hoisted(() => ({ useAccounts: vi.fn(), useTrialBalance: vi.fn(), useBalanceSheet: vi.fn(), useIncomeStatement: vi.fn() }))
 vi.mock('../application/query/useAccounts', () => ({ useAccounts }))
 vi.mock('../application/query/useTrialBalance', () => ({ useTrialBalance }))
+vi.mock('../application/query/useBalanceSheet', () => ({ useBalanceSheet }))
+vi.mock('../application/query/useIncomeStatement', () => ({ useIncomeStatement }))
 vi.mock('../application/auth/useAuth', () => ({
   useAuth: () => ({ account: undefined, error: undefined, isConfigured: false, isSignedIn: false, signIn: vi.fn(), signOut: vi.fn() }),
 }))
@@ -20,7 +22,7 @@ function renderRouter(initialEntry: string) {
 }
 
 describe('accounts route', () => {
-  beforeEach(() => { useAccounts.mockReset(); useTrialBalance.mockReset() })
+  beforeEach(() => { useAccounts.mockReset(); useTrialBalance.mockReset(); useBalanceSheet.mockReset(); useIncomeStatement.mockReset() })
 
   it('resolves the lazy accounts route and renders the page', async () => {
     useAccounts.mockReturnValue({ isPending: false, isError: false, data: [] })
@@ -54,6 +56,33 @@ describe('accounts route', () => {
     renderRouter('/reports/trial-balance')
     expect(await screen.findByRole('heading', { name: 'Trial balance' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'Trial balance' })).toBeTruthy()
+  })
+
+  it('resolves both core-statement routes under the app shell', async () => {
+    useBalanceSheet.mockReturnValue({ isPending: false, isError: false, data: { spaceId: 'space-1', lines: [], currentResultMinor: 0 } })
+    renderRouter('/reports/balance-sheet')
+    expect(await screen.findByRole('heading', { name: 'Balance sheet' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Balance sheet' })).toBeTruthy()
+
+    cleanup()
+    useIncomeStatement.mockReturnValue({ isPending: false, isError: false, data: { spaceId: 'space-1', lines: [], netResultMinor: 0 } })
+    renderRouter('/reports/income-statement')
+    expect(await screen.findByRole('heading', { name: 'Income statement' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Income statement' })).toBeTruthy()
+  })
+
+  it('renders the route error boundary when the balance-sheet query fails', async () => {
+    useBalanceSheet.mockReturnValue({ isPending: false, isError: true, error: new Error('balance-sheet request failed') })
+    renderRouter('/reports/balance-sheet')
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'We could not open this view' })).toBeTruthy())
+    expect(screen.queryByText('balance-sheet request failed')).toBeNull()
+  })
+
+  it('renders the route error boundary when the income-statement query fails', async () => {
+    useIncomeStatement.mockReturnValue({ isPending: false, isError: true, error: new Error('income-statement request failed') })
+    renderRouter('/reports/income-statement')
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'We could not open this view' })).toBeTruthy())
+    expect(screen.queryByText('income-statement request failed')).toBeNull()
   })
 
   it('resolves the lazy design-system route under the app shell', async () => {

@@ -14,7 +14,7 @@ const testIdempotencyKey = 'synthetic-test-idempotency-key'
 describe('usePostJournalEntry', () => {
   beforeEach(() => postJournalEntry.mockReset())
 
-  it('invalidates journal and trial-balance queries after posting', async () => {
+  it('invalidates journal and all statement queries after posting', async () => {
     const posted: PostedEntry = { id: 'je-1', entryNo: 1, date: input.date }
     postJournalEntry.mockResolvedValue(posted)
     const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } })
@@ -26,6 +26,8 @@ describe('usePostJournalEntry', () => {
 
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['journalEntries', 'list', 'space-1'] })
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['reports', 'trialBalance', 'space-1'] })
+    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['reports', 'balanceSheet', 'space-1'] })
+    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['reports', 'incomeStatement', 'space-1'] })
   })
 
   it('reuses a submission key for retries and creates a fresh key for a new submission', async () => {

@@ -13,6 +13,6 @@ The shell owns one authenticated SignalR connection. It receives data-free `spac
 | Module | Topic | Query keys |
 | --- | --- | --- |
 | Ledger posting | `journalEntries.list` | `qk.journalEntries.list(spaceId)` |
-| Trial-balance reporting | `reports.trialBalance` | `qk.reports.trialBalance(spaceId)` |
+| Statement reporting | `reports.trialBalance` | `qk.reports.trialBalance(spaceId)`, `qk.reports.balanceSheet(spaceId)`, `qk.reports.incomeStatement(spaceId)` |
 
 This map covers the Phase-3 post and reverse mutations. Unknown topics are ignored and never cause broad cache invalidation.

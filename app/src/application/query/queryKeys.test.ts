@@ -6,6 +6,8 @@ describe('query key factory', () => {
     expect(qk.meta()).toEqual(['meta'])
     expect(qk.accounts.list('sp_1')).toEqual(['accounts', 'list', 'sp_1'])
     expect(qk.reports.trialBalance('sp_1')).toEqual(['reports', 'trialBalance', 'sp_1'])
+    expect(qk.reports.balanceSheet('sp_1')).toEqual(['reports', 'balanceSheet', 'sp_1'])
+    expect(qk.reports.incomeStatement('sp_1')).toEqual(['reports', 'incomeStatement', 'sp_1'])
   })
 
   it('keeps module keys distinct', () => {

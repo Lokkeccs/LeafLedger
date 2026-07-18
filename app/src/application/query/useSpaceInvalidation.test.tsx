@@ -76,8 +76,10 @@ describe('useSpaceInvalidation', () => {
       vi.advanceTimersByTime(50)
     })
 
-    expect(invalidateQueries).toHaveBeenCalledOnce()
+    expect(invalidateQueries).toHaveBeenCalledTimes(3)
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['reports', 'trialBalance', 'space-1'] })
+    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['reports', 'balanceSheet', 'space-1'] })
+    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['reports', 'incomeStatement', 'space-1'] })
     unmount()
     vi.useRealTimers()
   })

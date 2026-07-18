@@ -123,6 +123,8 @@
     "overview": "Overview",
     "newJournalEntry": "New journal entry",
     "trialBalance": "Trial balance",
+    "balanceSheet": "Balance sheet",
+    "incomeStatement": "Income statement",
     "workspace": "Workspace",
     "online": "Online",
     "design": "Design system"
@@ -153,6 +155,28 @@
     "totals": { "debit": "Total debit", "credit": "Total credit", "net": "Net balance", "status": "Status" },
     "balanced": "Balanced",
     "unbalanced": "Unbalanced"
+  },
+  "statementReport": {
+    "columns": { "code": "Code", "name": "Name", "kind": "Type", "amount": "Amount" },
+    "kinds": { "Asset": "Assets", "Liability": "Liabilities", "Equity": "Equity", "Income": "Income", "Expense": "Expenses", "NetResult": "Result" }
+  },
+  "balanceSheetPage": {
+    "eyebrow": "Reports",
+    "title": "Balance sheet",
+    "description": "Review the assets, liabilities, and equity in this space.",
+    "loading": "Loading balance sheet…",
+    "empty": "No balance-sheet lines found.",
+    "tableLabel": "Balance sheet",
+    "result": "Current result"
+  },
+  "incomeStatementPage": {
+    "eyebrow": "Reports",
+    "title": "Income statement",
+    "description": "Review income and expenses for this space.",
+    "loading": "Loading income statement…",
+    "empty": "No income-statement lines found.",
+    "tableLabel": "Income statement",
+    "result": "Net result"
   },
   "journalEntry": {
     "eyebrow": "Ledger",
