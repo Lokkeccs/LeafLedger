@@ -35,19 +35,6 @@ export interface IncomeStatement {
   netResultMinor: number
 }
 
-export interface DashboardSummary {
-  spaceId: string
-  totalAssetsMinor: number
-  totalLiabilitiesMinor: number
-  totalEquityMinor: number
-  totalIncomeMinor: number
-  totalExpensesMinor: number
-  netResultMinor: number
-  netWorthMinor: number
-  accountCount: number
-  balanced: boolean
-}
-
 export interface AccountLedgerLine {
   entryId: string
   entryNo: number
