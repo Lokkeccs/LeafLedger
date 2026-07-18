@@ -24,7 +24,6 @@ public static class LedgerModule
         services.AddDbContext<LedgerDbContext>(options => options.UseNpgsql(connectionString));
         services.AddScoped<IJournalPostingService, JournalPostingService>();
         services.AddScoped<ILedgerReportService, LedgerReportService>();
-        services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IAccountLedgerService, AccountLedgerService>();
         services.AddScoped<IAccountCatalogService, AccountCatalogService>();
         services.AddScoped<IPeriodLifecycleService, PeriodLifecycleService>();
