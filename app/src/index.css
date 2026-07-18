@@ -56,6 +56,10 @@ dd { margin: 6px 0 0; font-family: ui-monospace, Consolas, monospace; }
 .error-shell p:not(.eyebrow) { margin-top: 16px; color: var(--muted); }
 .error-shell code { display: block; margin-top: 18px; color: var(--accent); }
 .error-actions { display: flex; gap: 12px; align-items: center; }
+.account-ledger-filters { display: grid; grid-template-columns: minmax(260px, 1fr) 180px 180px; gap: var(--space-3); margin-bottom: var(--space-4); }
+.account-ledger-account-field { display: grid; gap: var(--space-1); }
+.account-ledger-account-field span { font-weight: 700; font-size: var(--text-sm); }
+.account-ledger-account-field select { padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); color: var(--color-text); }
 .design-gallery { max-width: 980px; }
 .design-gallery h1 { font-size: 48px; }
 .design-section { margin-top: var(--space-7); padding-top: var(--space-5); border-top: 1px solid var(--color-border); }

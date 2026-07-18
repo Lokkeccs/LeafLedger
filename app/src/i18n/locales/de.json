@@ -122,6 +122,7 @@
     "trialBalance": "Summen- und Saldenliste",
     "balanceSheet": "Bilanz",
     "incomeStatement": "Erfolgsrechnung",
+    "accountLedger": "Kontoblatt",
     "workspace": "Arbeitsbereich",
     "online": "Online",
     "design": "Designsystem"
@@ -152,6 +153,21 @@
     "totals": { "debit": "Soll gesamt", "credit": "Haben gesamt", "net": "Nettosaldo", "status": "Status" },
     "balanced": "Ausgeglichen",
     "unbalanced": "Nicht ausgeglichen"
+  },
+  "accountLedgerPage": {
+    "eyebrow": "Berichte",
+    "title": "Kontoblatt",
+    "description": "Gebuchte Zeilen und laufenden Saldo für dieses Konto anzeigen.",
+    "loading": "Kontoblatt wird geladen…",
+    "empty": "Keine gebuchten Zeilen für dieses Konto gefunden.",
+    "tableLabel": "Kontoblattzeilen",
+    "account": "Konto",
+    "selectAccount": "Konto wählen…",
+    "from": "Von",
+    "to": "Bis",
+    "opening": "Eröffnungssaldo",
+    "closing": "Schlusssaldo",
+    "columns": { "date": "Datum", "entryNo": "Buchung #", "description": "Beschreibung / Referenz", "amount": "Betrag", "baseAmount": "Basisbetrag", "runningBalance": "Laufender Saldo" }
   },
   "statementReport": {
     "columns": { "code": "Code", "name": "Name", "kind": "Typ", "amount": "Betrag" },

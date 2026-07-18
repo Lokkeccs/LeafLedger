@@ -8,6 +8,7 @@ export const invalidationMap: Record<InvalidationTopic, (spaceId: string) => Que
     qk.reports.trialBalance(spaceId),
     qk.reports.balanceSheet(spaceId),
     qk.reports.incomeStatement(spaceId),
+    ['reports', 'accountLedger', spaceId],
   ],
   'journalEntries.list': (spaceId) => [qk.journalEntries.list(spaceId)],
 }

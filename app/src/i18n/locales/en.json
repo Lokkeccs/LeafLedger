@@ -125,6 +125,7 @@
     "trialBalance": "Trial balance",
     "balanceSheet": "Balance sheet",
     "incomeStatement": "Income statement",
+    "accountLedger": "Account ledger",
     "workspace": "Workspace",
     "online": "Online",
     "design": "Design system"
@@ -155,6 +156,21 @@
     "totals": { "debit": "Total debit", "credit": "Total credit", "net": "Net balance", "status": "Status" },
     "balanced": "Balanced",
     "unbalanced": "Unbalanced"
+  },
+  "accountLedgerPage": {
+    "eyebrow": "Reports",
+    "title": "Account ledger",
+    "description": "Review the posted lines and running balance for this account.",
+    "loading": "Loading account ledger…",
+    "empty": "No posted lines found for this account.",
+    "tableLabel": "Account ledger lines",
+    "account": "Account",
+    "selectAccount": "Select account…",
+    "from": "From",
+    "to": "To",
+    "opening": "Opening balance",
+    "closing": "Closing balance",
+    "columns": { "date": "Date", "entryNo": "Entry #", "description": "Description / reference", "amount": "Amount", "baseAmount": "Base amount", "runningBalance": "Running balance" }
   },
   "statementReport": {
     "columns": { "code": "Code", "name": "Name", "kind": "Type", "amount": "Amount" },

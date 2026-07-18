@@ -2,6 +2,7 @@
 import { QueryClientProvider } from '@tanstack/react-query'
 import { I18nextProvider } from 'react-i18next'
 import { cleanup, render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createQueryClient } from '../../application/query/queryClient'
 import type { TrialBalance } from '../../application/reports'
@@ -23,7 +24,7 @@ const report: TrialBalance = {
 }
 
 function renderPage() {
-  return render(<I18nextProvider i18n={i18n}><QueryClientProvider client={createQueryClient()}><TrialBalancePage /></QueryClientProvider></I18nextProvider>)
+  return render(<I18nextProvider i18n={i18n}><MemoryRouter><QueryClientProvider client={createQueryClient()}><TrialBalancePage /></QueryClientProvider></MemoryRouter></I18nextProvider>)
 }
 
 describe('TrialBalancePage', () => {
@@ -45,6 +46,7 @@ describe('TrialBalancePage', () => {
     renderPage()
 
     expect(screen.getByRole('table', { name: 'Trial balance' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Cash' }).getAttribute('href')).toBe('/reports/account/acc-1')
     expect(screen.getAllByText((content) => content.replace(/\u00a0/g, ' ') === formatMoney(12345, 'CHF', i18n.language).replace(/\u00a0/g, ' '))).toHaveLength(4)
     expect(screen.getAllByText('-')).toHaveLength(4)
     expect(screen.getByText('Balanced')).toBeTruthy()

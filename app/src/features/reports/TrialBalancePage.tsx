@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { useTrialBalance } from '../../application/query/useTrialBalance'
 import type { TrialBalanceRow } from '../../application/reports'
 import { formatMoney } from '../../i18n/format/money'
@@ -19,7 +20,7 @@ export function TrialBalancePage() {
   const creditTotal = report.rows.reduce((total, row) => total + (row.baseBalanceMinor < 0 ? -row.baseBalanceMinor : 0), 0)
   const columns: DataColumn<TrialBalanceRow>[] = [
     { header: t('trialBalancePage.columns.code'), render: (row) => row.accountCode, width: 100 },
-    { header: t('trialBalancePage.columns.name'), render: (row) => row.accountName, width: 280 },
+    { header: t('trialBalancePage.columns.name'), render: (row) => <Link to={`/reports/account/${row.accountId}`}>{row.accountName}</Link>, width: 280 },
     { header: t('trialBalancePage.columns.kind'), render: (row) => row.accountKind, width: 160 },
     { header: t('trialBalancePage.columns.debit'), render: (row) => row.baseBalanceMinor > 0 ? formatMoney(row.baseBalanceMinor, baseCurrency, i18n.language) : '-', align: 'right', width: 160 },
     { header: t('trialBalancePage.columns.credit'), render: (row) => row.baseBalanceMinor < 0 ? formatMoney(-row.baseBalanceMinor, baseCurrency, i18n.language) : '-', align: 'right', width: 160 },

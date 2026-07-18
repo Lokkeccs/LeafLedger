@@ -308,6 +308,87 @@
         ]
       }
     },
+    "/api/v1/spaces/{spaceId}/reports/account-ledger/{accountId}": {
+      "get": {
+        "tags": [
+          "Ledger"
+        ],
+        "operationId": "GetAccountLedger",
+        "parameters": [
+          {
+            "name": "spaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountLedgerReport"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [ ]
+          }
+        ]
+      }
+    },
     "/api/v1/spaces/{spaceId}/reports/trial-balance": {
       "get": {
         "tags": [
@@ -970,6 +1051,108 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AccountView"
+            }
+          }
+        }
+      },
+      "AccountLedgerLine": {
+        "required": [
+          "entryId",
+          "entryNo",
+          "date",
+          "description",
+          "reference",
+          "amountMinor",
+          "baseAmountMinor",
+          "lineCurrency",
+          "runningBalanceMinor"
+        ],
+        "type": "object",
+        "properties": {
+          "entryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "entryNo": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "reference": {
+            "type": "string",
+            "nullable": true
+          },
+          "amountMinor": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "baseAmountMinor": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lineCurrency": {
+            "type": "string"
+          },
+          "runningBalanceMinor": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AccountLedgerReport": {
+        "required": [
+          "spaceId",
+          "accountId",
+          "accountCode",
+          "accountName",
+          "accountKind",
+          "accountCurrency",
+          "openingBalanceMinor",
+          "closingBalanceMinor",
+          "lines"
+        ],
+        "type": "object",
+        "properties": {
+          "spaceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "accountCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "accountName": {
+            "type": "string"
+          },
+          "accountKind": {
+            "type": "string"
+          },
+          "accountCurrency": {
+            "type": "string"
+          },
+          "openingBalanceMinor": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "closingBalanceMinor": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountLedgerLine"
             }
           }
         }

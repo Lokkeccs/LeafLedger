@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { QueryClientProvider } from '@tanstack/react-query'
-import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { I18nextProvider } from 'react-i18next'
 import { RouterProvider } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -8,11 +8,12 @@ import { createQueryClient } from '../application/query/queryClient'
 import { i18n } from '../i18n'
 import { createAppRouter } from './router'
 
-const { useAccounts, useTrialBalance, useBalanceSheet, useIncomeStatement } = vi.hoisted(() => ({ useAccounts: vi.fn(), useTrialBalance: vi.fn(), useBalanceSheet: vi.fn(), useIncomeStatement: vi.fn() }))
+const { useAccounts, useTrialBalance, useBalanceSheet, useIncomeStatement, useAccountLedger } = vi.hoisted(() => ({ useAccounts: vi.fn(), useTrialBalance: vi.fn(), useBalanceSheet: vi.fn(), useIncomeStatement: vi.fn(), useAccountLedger: vi.fn() }))
 vi.mock('../application/query/useAccounts', () => ({ useAccounts }))
 vi.mock('../application/query/useTrialBalance', () => ({ useTrialBalance }))
 vi.mock('../application/query/useBalanceSheet', () => ({ useBalanceSheet }))
 vi.mock('../application/query/useIncomeStatement', () => ({ useIncomeStatement }))
+vi.mock('../application/query/useAccountLedger', () => ({ useAccountLedger }))
 vi.mock('../application/auth/useAuth', () => ({
   useAuth: () => ({ account: undefined, error: undefined, isConfigured: false, isSignedIn: false, signIn: vi.fn(), signOut: vi.fn() }),
 }))
@@ -22,7 +23,7 @@ function renderRouter(initialEntry: string) {
 }
 
 describe('accounts route', () => {
-  beforeEach(() => { useAccounts.mockReset(); useTrialBalance.mockReset(); useBalanceSheet.mockReset(); useIncomeStatement.mockReset() })
+  beforeEach(() => { useAccounts.mockReset(); useTrialBalance.mockReset(); useBalanceSheet.mockReset(); useIncomeStatement.mockReset(); useAccountLedger.mockReset() })
 
   it('resolves the lazy accounts route and renders the page', async () => {
     useAccounts.mockReturnValue({ isPending: false, isError: false, data: [] })
@@ -97,5 +98,37 @@ describe('accounts route', () => {
     renderRouter('/reports/trial-balance')
     await waitFor(() => expect(screen.getByRole('heading', { name: 'We could not open this view' })).toBeTruthy())
     expect(screen.queryByText('report request failed')).toBeNull()
+  })
+
+  it('resolves the account-ledger route under the app shell', async () => {
+    useAccounts.mockReturnValue({ isPending: false, isError: false, data: [] })
+    useAccountLedger.mockReturnValue({ isPending: false, isError: false, data: { spaceId: 'space-1', accountId: 'account-1', accountCode: 2000, accountName: 'Cash', accountKind: 'asset', accountCurrency: 'CHF', openingBalanceMinor: 0, closingBalanceMinor: 0, lines: [] } })
+    renderRouter('/reports/account/account-1')
+    expect(await screen.findByRole('heading', { name: 'Cash' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Account ledger' })).toBeTruthy()
+  })
+
+  it('resolves the selector-only account-ledger route without an account query', async () => {
+    useAccounts.mockReturnValue({ isPending: false, isError: false, data: [] })
+    useAccountLedger.mockReturnValue({ isPending: false, isError: false, data: undefined })
+    renderRouter('/reports/account')
+    expect(await screen.findByRole('heading', { name: 'Account ledger' })).toBeTruthy()
+    expect(useAccountLedger).toHaveBeenCalledWith(expect.any(String), undefined, {})
+  })
+
+  it('navigates from the shell account-ledger link to the selector route', async () => {
+    useAccounts.mockReturnValue({ isPending: false, isError: false, data: [] })
+    useAccountLedger.mockReturnValue({ isPending: false, isError: false, data: undefined })
+    renderRouter('/accounts')
+    fireEvent.click(await screen.findByRole('link', { name: 'Account ledger' }))
+    expect(await screen.findByRole('heading', { name: 'Account ledger' })).toBeTruthy()
+  })
+
+  it('renders the route error boundary when the account-ledger query fails', async () => {
+    useAccounts.mockReturnValue({ isPending: false, isError: false, data: [] })
+    useAccountLedger.mockReturnValue({ isPending: false, isError: true, error: new Error('ledger request failed') })
+    renderRouter('/reports/account/account-1')
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'We could not open this view' })).toBeTruthy())
+    expect(screen.queryByText('ledger request failed')).toBeNull()
   })
 })
