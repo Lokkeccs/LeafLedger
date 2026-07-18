@@ -120,6 +120,8 @@
     "overview": "\u00dcbersicht",
     "newJournalEntry": "Neuer Buchungssatz",
     "trialBalance": "Summen- und Saldenliste",
+    "balanceSheet": "Bilanz",
+    "incomeStatement": "Erfolgsrechnung",
     "workspace": "Arbeitsbereich",
     "online": "Online",
     "design": "Designsystem"
@@ -150,6 +152,28 @@
     "totals": { "debit": "Soll gesamt", "credit": "Haben gesamt", "net": "Nettosaldo", "status": "Status" },
     "balanced": "Ausgeglichen",
     "unbalanced": "Nicht ausgeglichen"
+  },
+  "statementReport": {
+    "columns": { "code": "Code", "name": "Name", "kind": "Typ", "amount": "Betrag" },
+    "kinds": { "Asset": "Vermögen", "Liability": "Verbindlichkeiten", "Equity": "Eigenkapital", "Income": "Erträge", "Expense": "Aufwendungen", "NetResult": "Ergebnis" }
+  },
+  "balanceSheetPage": {
+    "eyebrow": "Berichte",
+    "title": "Bilanz",
+    "description": "Vermögen, Verbindlichkeiten und Eigenkapital dieses Bereichs anzeigen.",
+    "loading": "Bilanz wird geladen…",
+    "empty": "Keine Bilanzzeilen gefunden.",
+    "tableLabel": "Bilanz",
+    "result": "Periodenergebnis"
+  },
+  "incomeStatementPage": {
+    "eyebrow": "Berichte",
+    "title": "Erfolgsrechnung",
+    "description": "Erträge und Aufwendungen dieses Bereichs anzeigen.",
+    "loading": "Erfolgsrechnung wird geladen…",
+    "empty": "Keine Erfolgsrechnungszeilen gefunden.",
+    "tableLabel": "Erfolgsrechnung",
+    "result": "Nettoergebnis"
   },
   "journalEntry": {
     "eyebrow": "Hauptbuch",

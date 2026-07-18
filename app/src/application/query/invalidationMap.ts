@@ -4,7 +4,11 @@ import { qk } from './queryKeys'
 export type InvalidationTopic = 'reports.trialBalance' | 'journalEntries.list'
 
 export const invalidationMap: Record<InvalidationTopic, (spaceId: string) => QueryKey[]> = {
-  'reports.trialBalance': (spaceId) => [qk.reports.trialBalance(spaceId)],
+  'reports.trialBalance': (spaceId) => [
+    qk.reports.trialBalance(spaceId),
+    qk.reports.balanceSheet(spaceId),
+    qk.reports.incomeStatement(spaceId),
+  ],
   'journalEntries.list': (spaceId) => [qk.journalEntries.list(spaceId)],
 }
 

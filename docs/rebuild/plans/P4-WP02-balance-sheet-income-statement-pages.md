@@ -1,7 +1,7 @@
 # P4-WP02 — Balance-sheet & income-statement report pages (M1 Reports triad completion)
 
 - **Phase:** 4 (feature porting), **Stage A** (complete M1 — launch scope). An early Phase-4 feature WP (the first follows the P4-WP01 design-system foundation): completes the M1 Reports **core-statements triad** — P3-WP07 delivered the trial balance; this WP adds the balance sheet and the income statement (P&L), the two primary OR 959/959a/959b statements a business/personal space needs day-to-day.
-- **State:** planned — awaiting user approval of six front-loaded, **non-accounting** decisions (see Decisions). Unblocked otherwise (no dependency gap, no accounting consult, no golden fixtures).
+- **State:** verify — QA PASS; all acceptance-test evidence is present. The six front-loaded, **non-accounting** decisions are approved (see Decisions). No accounting consult or golden fixtures required.
 - **Owner (implementation):** LL Frontend Dev. Single-agent, **frontend-only**. **No backend change** — the two endpoints, their `ledger.read` authorization, the `security_invoker` presentation views (with the C1 sign convention already applied server-side), and the `BalanceSheetReport` / `IncomeStatementReport` / `ReportLine` contracts already exist and are merged (P2-WP07, PR #17) and are present in `app/src/api/schema.d.ts`.
 - **Estimated size:** ≤ 2 days, single agent. Two read wrappers + two query hooks + two pages (through `DataTable`) + two routes + nav + i18n + a small invalidation extension + tests. Each page is structurally identical to the P3-WP07 `TrialBalancePage`; together they stay well within the ≤2-day ceiling.
 - **Depends on:**
@@ -137,3 +137,15 @@ Pinned OLD repo: `Lokkeccs/Accounting` @ `085bedba467e3d46d3889db3bc80ea023e6975
 ## Definition of done
 
 All 12 acceptance criteria pass; state → `verify`; LL QA Reviewer acceptance review; then LL Git. No backend / OpenAPI / migration change; no golden fixtures; no accounting consult; layering (features → application → api) and page budgets intact.
+
+## Implementation log
+
+- **2026-07-17 — LL Frontend Dev:** Implemented application wrappers, query hooks/keys, statement pages through `DataTable`, server-kind grouping, derived-row styling, render-edge money formatting, lazy routes, shell navigation, EN/DE copy, local and SignalR invalidation, and focused coverage. Frontend gates pass: focused WP02 tests **26/26**, full Vitest **117/117**, typecheck, lint, strict page budget, i18n/design-token checks, production build, and `npm audit --omit=dev` (**0 vulnerabilities**). `app/src/api/schema.d.ts` and `backend/openapi/leafledger-v1.json` are unchanged. Next: LL QA Reviewer acceptance review.
+
+## QA verdict
+
+**PASS — 2026-07-18, LL QA Reviewer**
+
+The AC8 finding was remediated by adding route-level failure tests for both `/reports/balance-sheet` and `/reports/income-statement`, asserting the real `RouteErrorBoundary` renders and the underlying error is not exposed. Focused router coverage is **10/10**.
+
+Independent QA gates: full frontend Vitest **119/119**, typecheck, lint, strict page budget, i18n duplicate-key check, design-token check, production build, and `npm audit --omit=dev` (**0 vulnerabilities**) pass. Generated API/OpenAPI artifacts are unchanged. Build emits existing non-blocking dependency annotation and large-chunk warnings. No accounting, security, layering, scope, or contract-drift findings remain.

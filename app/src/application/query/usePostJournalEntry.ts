@@ -11,6 +11,8 @@ export function usePostJournalEntry(spaceId: string) {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: qk.journalEntries.list(spaceId) }),
         queryClient.invalidateQueries({ queryKey: qk.reports.trialBalance(spaceId) }),
+        queryClient.invalidateQueries({ queryKey: qk.reports.balanceSheet(spaceId) }),
+        queryClient.invalidateQueries({ queryKey: qk.reports.incomeStatement(spaceId) }),
       ])
     },
   })
