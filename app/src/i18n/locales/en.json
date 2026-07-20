@@ -194,6 +194,27 @@
     "tableLabel": "Income statement",
     "result": "Net result"
   },
+  "dashboardPage": {
+    "eyebrow": "Financial overview",
+    "title": "Dashboard",
+    "description": "A server-computed view of the key figures in this space.",
+    "loading": "Loading dashboard…",
+    "empty": "No posted activity yet. Your overview will appear here after the first entry.",
+    "periodLabel": "View",
+    "periodValue": "All posted activity",
+    "balanced": "Ledger balanced",
+    "unbalanced": "Ledger needs attention",
+    "metrics": {
+      "assets": "Total assets",
+      "liabilities": "Total liabilities",
+      "equity": "Equity",
+      "income": "Income",
+      "expenses": "Expenses",
+      "netResult": "Net result",
+      "netWorth": "Net worth",
+      "accountCount": "Active ledger accounts"
+    }
+  },
   "journalEntry": {
     "eyebrow": "Ledger",
     "title": "New journal entry",

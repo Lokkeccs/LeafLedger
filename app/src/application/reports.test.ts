@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import type { ApiClient } from '../api/client'
-import { getAccountLedger, getBalanceSheet, getIncomeStatement, getTrialBalance } from './reports'
+import { getAccountLedger, getBalanceSheet, getDashboardSummary, getIncomeStatement, getTrialBalance } from './reports'
 
 function fakeClient(result: unknown): ApiClient {
   return { GET: vi.fn().mockResolvedValue(result) } as unknown as ApiClient
@@ -47,5 +47,19 @@ describe('getAccountLedger', () => {
 
   it('throws when the generated client returns no data', async () => {
     await expect(getAccountLedger('space-1', 'account-1', {}, fakeClient({ error: {} }))).rejects.toThrow('Failed to fetch account ledger')
+  })
+})
+
+describe('getDashboardSummary', () => {
+  it('maps the server-computed summary without changing minor units', async () => {
+    const summary = { spaceId: 'space-1', totalAssetsMinor: 100, totalLiabilitiesMinor: 40, totalEquityMinor: 10, totalIncomeMinor: 80, totalExpensesMinor: 30, netResultMinor: 50, netWorthMinor: 60, accountCount: 5, balanced: true }
+    const client = fakeClient({ data: summary })
+
+    await expect(getDashboardSummary('space-1', client)).resolves.toEqual(summary)
+    expect(client.GET).toHaveBeenCalledWith('/api/v1/spaces/{spaceId}/reports/dashboard', { params: { path: { spaceId: 'space-1' } } })
+  })
+
+  it('throws when the generated client returns no data', async () => {
+    await expect(getDashboardSummary('space-1', fakeClient({ error: {} }))).rejects.toThrow('Failed to fetch dashboard summary')
   })
 })

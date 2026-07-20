@@ -60,6 +60,7 @@ public static class LedgerEndpoints
         MapReportEndpoint<TrialBalanceReport>(reportGroup.MapGet("/reports/trial-balance", GetTrialBalanceAsync), "GetTrialBalance");
         MapReportEndpoint<BalanceSheetReport>(reportGroup.MapGet("/reports/balance-sheet", GetBalanceSheetAsync), "GetBalanceSheet");
         MapReportEndpoint<IncomeStatementReport>(reportGroup.MapGet("/reports/income-statement", GetIncomeStatementAsync), "GetIncomeStatement");
+        MapReportEndpoint<DashboardSummaryReport>(reportGroup.MapGet("/reports/dashboard", GetDashboardSummaryAsync), "GetDashboardSummary");
         MapReportEndpoint<IntegrityReport>(reportGroup.MapGet("/integrity", GetIntegrityAsync), "GetIntegrity");
         endpoints.MapPeriodEndpoints(configureAuthorization);
 
@@ -95,6 +96,9 @@ public static class LedgerEndpoints
 
     private static Task<IncomeStatementReport> GetIncomeStatementAsync(Guid spaceId, [FromServices] ILedgerReportService service, CancellationToken cancellationToken) =>
         service.GetIncomeStatementAsync(spaceId, cancellationToken);
+
+    private static Task<DashboardSummaryReport> GetDashboardSummaryAsync(Guid spaceId, [FromServices] IDashboardService service, CancellationToken cancellationToken) =>
+        service.GetDashboardSummaryAsync(spaceId, cancellationToken);
 
     private static Task<IntegrityReport> GetIntegrityAsync(Guid spaceId, [FromServices] ILedgerReportService service, CancellationToken cancellationToken) =>
         service.GetIntegrityAsync(spaceId, cancellationToken);

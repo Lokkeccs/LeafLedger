@@ -28,6 +28,7 @@ describe('usePostJournalEntry', () => {
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['reports', 'trialBalance', 'space-1'] })
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['reports', 'balanceSheet', 'space-1'] })
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['reports', 'incomeStatement', 'space-1'] })
+    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['reports', 'dashboard', 'space-1'] })
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['reports', 'accountLedger', 'space-1'] })
   })
 
