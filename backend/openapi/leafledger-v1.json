@@ -557,6 +557,62 @@
         ]
       }
     },
+    "/api/v1/spaces/{spaceId}/reports/dashboard": {
+      "get": {
+        "tags": [
+          "Ledger"
+        ],
+        "operationId": "GetDashboardSummary",
+        "parameters": [
+          {
+            "name": "spaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardSummaryReport"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [ ]
+          }
+        ]
+      }
+    },
     "/api/v1/spaces/{spaceId}/integrity": {
       "get": {
         "tags": [
@@ -1254,6 +1310,62 @@
           "endExclusive": {
             "type": "string",
             "format": "date"
+          }
+        }
+      },
+      "DashboardSummaryReport": {
+        "required": [
+          "spaceId",
+          "totalAssetsMinor",
+          "totalLiabilitiesMinor",
+          "totalEquityMinor",
+          "totalIncomeMinor",
+          "totalExpensesMinor",
+          "netResultMinor",
+          "netWorthMinor",
+          "accountCount",
+          "balanced"
+        ],
+        "type": "object",
+        "properties": {
+          "spaceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "totalAssetsMinor": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalLiabilitiesMinor": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalEquityMinor": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalIncomeMinor": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalExpensesMinor": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "netResultMinor": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "netWorthMinor": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "accountCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "balanced": {
+            "type": "boolean"
           }
         }
       },

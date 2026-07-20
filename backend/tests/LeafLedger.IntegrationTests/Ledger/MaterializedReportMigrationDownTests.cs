@@ -32,6 +32,11 @@ public sealed class MaterializedReportMigrationDownTests : IAsyncLifetime
         await using (var context = new LedgerDbContext(options))
         {
             await context.Database.MigrateAsync();
+            await using var migratedConnection = new NpgsqlConnection(_container.GetConnectionString());
+            await migratedConnection.OpenAsync();
+            Assert.True(await ExistsAsync(
+                migratedConnection,
+                "SELECT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'dashboard_summary' AND relkind = 'v');"));
             await context.Database.MigrateAsync(PreviousMigration);
         }
 
@@ -44,6 +49,7 @@ public sealed class MaterializedReportMigrationDownTests : IAsyncLifetime
         Assert.False(await ExistsAsync(connection, "SELECT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'trial_balance_mat');"));
         Assert.False(await ExistsAsync(connection, "SELECT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'ux_trial_balance_mat');"));
         Assert.False(await ExistsAsync(connection, "SELECT EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'refresh_trial_balance_mat');"));
+        Assert.False(await ExistsAsync(connection, "SELECT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'dashboard_summary');"));
 
         var viewDefinition = (string?)await ScalarAsync(
             connection,

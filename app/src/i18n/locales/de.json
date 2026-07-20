@@ -191,6 +191,27 @@
     "tableLabel": "Erfolgsrechnung",
     "result": "Nettoergebnis"
   },
+  "dashboardPage": {
+    "eyebrow": "Finanzübersicht",
+    "title": "Dashboard",
+    "description": "Serverberechnete Kennzahlen für diesen Bereich.",
+    "loading": "Dashboard wird geladen…",
+    "empty": "Noch keine gebuchten Aktivitäten. Die Übersicht erscheint nach der ersten Buchung.",
+    "periodLabel": "Ansicht",
+    "periodValue": "Alle gebuchten Aktivitäten",
+    "balanced": "Hauptbuch ausgeglichen",
+    "unbalanced": "Hauptbuch benötigt Aufmerksamkeit",
+    "metrics": {
+      "assets": "Vermögen gesamt",
+      "liabilities": "Verbindlichkeiten gesamt",
+      "equity": "Eigenkapital",
+      "income": "Erträge",
+      "expenses": "Aufwendungen",
+      "netResult": "Nettoergebnis",
+      "netWorth": "Nettovermögen",
+      "accountCount": "Aktive Hauptbuchkonten"
+    }
+  },
   "journalEntry": {
     "eyebrow": "Hauptbuch",
     "title": "Neuer Buchungssatz",

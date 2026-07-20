@@ -67,6 +67,7 @@ public sealed class LedgerReportTests : IAsyncLifetime
             $"/api/v1/spaces/{space.SpaceId}/reports/trial-balance",
             $"/api/v1/spaces/{space.SpaceId}/reports/balance-sheet",
             $"/api/v1/spaces/{space.SpaceId}/reports/income-statement",
+            $"/api/v1/spaces/{space.SpaceId}/reports/dashboard",
             $"/api/v1/spaces/{space.SpaceId}/integrity",
         })
         {
@@ -111,6 +112,102 @@ public sealed class LedgerReportTests : IAsyncLifetime
             income.GetProperty("lines").EnumerateArray().Select(line => line.GetProperty("amountMinor").GetInt64()).ToArray());
         Assert.Equal("Net result", income.GetProperty("lines")[2].GetProperty("name").GetString());
         Assert.Equal(accounts.IncomeId, income.GetProperty("lines")[0].GetProperty("accountId").GetGuid());
+
+        using var dashboardResponse = await GetAsync($"/api/v1/spaces/{space.SpaceId}/reports/dashboard", viewer);
+        var dashboard = await dashboardResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(100, dashboard.GetProperty("totalAssetsMinor").GetInt64());
+        Assert.Equal(40, dashboard.GetProperty("totalLiabilitiesMinor").GetInt64());
+        Assert.Equal(10, dashboard.GetProperty("totalEquityMinor").GetInt64());
+        Assert.Equal(80, dashboard.GetProperty("totalIncomeMinor").GetInt64());
+        Assert.Equal(30, dashboard.GetProperty("totalExpensesMinor").GetInt64());
+        Assert.Equal(50, dashboard.GetProperty("netResultMinor").GetInt64());
+        Assert.Equal(60, dashboard.GetProperty("netWorthMinor").GetInt64());
+        Assert.Equal(5, dashboard.GetProperty("accountCount").GetInt32());
+        Assert.True(dashboard.GetProperty("balanced").GetBoolean());
+        Assert.Equal(
+            income.GetProperty("netResultMinor").GetInt64(),
+            dashboard.GetProperty("netResultMinor").GetInt64());
+        Assert.Equal(
+            balance.GetProperty("currentResultMinor").GetInt64(),
+            dashboard.GetProperty("netResultMinor").GetInt64());
+        Assert.Equal(
+            dashboard.GetProperty("totalAssetsMinor").GetInt64(),
+            dashboard.GetProperty("totalLiabilitiesMinor").GetInt64()
+                + dashboard.GetProperty("totalEquityMinor").GetInt64()
+                + dashboard.GetProperty("netResultMinor").GetInt64());
+    }
+
+    [Fact]
+    public async Task Empty_space_dashboard_returns_zero_totals_and_balanced_true()
+    {
+        var viewer = Guid.NewGuid();
+        var space = await _fixture.SeedSpaceAsync();
+        await _fixture.SeedMembershipAsync(space.SpaceId, viewer, "Viewer");
+
+        using var response = await GetAsync($"/api/v1/spaces/{space.SpaceId}/reports/dashboard", viewer);
+        var dashboard = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(0, dashboard.GetProperty("totalAssetsMinor").GetInt64());
+        Assert.Equal(0, dashboard.GetProperty("totalLiabilitiesMinor").GetInt64());
+        Assert.Equal(0, dashboard.GetProperty("totalEquityMinor").GetInt64());
+        Assert.Equal(0, dashboard.GetProperty("totalIncomeMinor").GetInt64());
+        Assert.Equal(0, dashboard.GetProperty("totalExpensesMinor").GetInt64());
+        Assert.Equal(0, dashboard.GetProperty("netResultMinor").GetInt64());
+        Assert.Equal(0, dashboard.GetProperty("netWorthMinor").GetInt64());
+        Assert.Equal(0, dashboard.GetProperty("accountCount").GetInt32());
+        Assert.True(dashboard.GetProperty("balanced").GetBoolean());
+    }
+
+    [Fact]
+    public async Task Dashboard_reversal_nets_the_server_computed_totals()
+    {
+        var viewer = Guid.NewGuid();
+        var space = await _fixture.SeedSpaceAsync();
+        await _fixture.SeedMembershipAsync(space.SpaceId, viewer, "Viewer");
+        var accounts = await SeedReportLedgerAsync(space.SpaceId);
+
+        using var beforeResponse = await GetAsync($"/api/v1/spaces/{space.SpaceId}/reports/dashboard", viewer);
+        var before = await beforeResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(100, before.GetProperty("totalAssetsMinor").GetInt64());
+        Assert.Equal(50, before.GetProperty("netResultMinor").GetInt64());
+
+        await InsertReversalAsync(space.SpaceId, accounts);
+
+        using var afterResponse = await GetAsync($"/api/v1/spaces/{space.SpaceId}/reports/dashboard", viewer);
+        var after = await afterResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(0, after.GetProperty("totalAssetsMinor").GetInt64());
+        Assert.Equal(0, after.GetProperty("totalLiabilitiesMinor").GetInt64());
+        Assert.Equal(0, after.GetProperty("totalEquityMinor").GetInt64());
+        Assert.Equal(0, after.GetProperty("totalIncomeMinor").GetInt64());
+        Assert.Equal(0, after.GetProperty("totalExpensesMinor").GetInt64());
+        Assert.Equal(0, after.GetProperty("netResultMinor").GetInt64());
+        Assert.Equal(0, after.GetProperty("netWorthMinor").GetInt64());
+        Assert.Equal(5, after.GetProperty("accountCount").GetInt32());
+        Assert.True(after.GetProperty("balanced").GetBoolean());
+    }
+
+    [Fact]
+    public async Task Dashboard_is_tenant_isolated_between_spaces()
+    {
+        var viewer = Guid.NewGuid();
+        var firstSpace = await _fixture.SeedSpaceAsync();
+        var secondSpace = await _fixture.SeedSpaceAsync(3000, 4000, 3000);
+        await _fixture.SeedMembershipAsync(firstSpace.SpaceId, viewer, "Viewer");
+        await _fixture.SeedMembershipAsync(secondSpace.SpaceId, viewer, "Viewer");
+        await SeedReportLedgerAsync(firstSpace.SpaceId);
+        await SeedReportLedgerAsync(secondSpace.SpaceId);
+        await InsertAdditionalAssetEntryAsync(secondSpace.SpaceId);
+
+        using var firstResponse = await GetAsync($"/api/v1/spaces/{firstSpace.SpaceId}/reports/dashboard", viewer);
+        using var secondResponse = await GetAsync($"/api/v1/spaces/{secondSpace.SpaceId}/reports/dashboard", viewer);
+        var first = await firstResponse.Content.ReadFromJsonAsync<JsonElement>();
+        var second = await secondResponse.Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(firstSpace.SpaceId, first.GetProperty("spaceId").GetGuid());
+        Assert.Equal(secondSpace.SpaceId, second.GetProperty("spaceId").GetGuid());
+        Assert.Equal(100, first.GetProperty("totalAssetsMinor").GetInt64());
+        Assert.Equal(150, second.GetProperty("totalAssetsMinor").GetInt64());
+        Assert.NotEqual(first.GetProperty("spaceId").GetGuid(), second.GetProperty("spaceId").GetGuid());
     }
 
     [Fact]
@@ -137,6 +234,21 @@ public sealed class LedgerReportTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, crossSpace.StatusCode);
         var crossSpaceProblem = await crossSpace.Content.ReadFromJsonAsync<JsonElement>();
         Assert.Equal("auth.not_a_member", crossSpaceProblem.GetProperty("code").GetString());
+
+        var dashboardRoute = $"/api/v1/spaces/{firstSpace.SpaceId}/reports/dashboard";
+        using var dashboardUnauthenticated = await _client.GetAsync(dashboardRoute);
+        Assert.Equal(HttpStatusCode.Unauthorized, dashboardUnauthenticated.StatusCode);
+
+        using var dashboardNonMember = await GetWithoutExpectedStatusAsync(dashboardRoute, Guid.NewGuid());
+        Assert.Equal(HttpStatusCode.Forbidden, dashboardNonMember.StatusCode);
+
+        using var dashboardMissingScope = await GetWithScopeWithoutExpectedStatusAsync(
+            dashboardRoute, member, "ledger.post");
+        Assert.Equal(HttpStatusCode.Forbidden, dashboardMissingScope.StatusCode);
+
+        using var dashboardCrossSpace = await GetWithoutExpectedStatusAsync(
+            $"/api/v1/spaces/{secondSpace.SpaceId}/reports/dashboard", member);
+        Assert.Equal(HttpStatusCode.Forbidden, dashboardCrossSpace.StatusCode);
     }
 
     [Fact]
@@ -147,7 +259,7 @@ public sealed class LedgerReportTests : IAsyncLifetime
 
         await using var connection = await _fixture.OpenAppNoContextAsync();
         await using var command = new NpgsqlCommand(
-            "SELECT count(*) FROM trial_balance; SELECT count(*) FROM balance_sheet_lines; SELECT count(*) FROM income_statement_lines;",
+            "SELECT count(*) FROM trial_balance; SELECT count(*) FROM balance_sheet_lines; SELECT count(*) FROM income_statement_lines; SELECT count(*) FROM dashboard_summary;",
             connection);
         await using var reader = await command.ExecuteReaderAsync();
         Assert.True(await reader.ReadAsync());
@@ -158,6 +270,9 @@ public sealed class LedgerReportTests : IAsyncLifetime
         Assert.True(await reader.NextResultAsync());
         Assert.True(await reader.ReadAsync());
         Assert.Equal(0, reader.GetInt64(0));
+        Assert.True(await reader.NextResultAsync());
+        Assert.True(await reader.ReadAsync());
+        Assert.Equal(1, reader.GetInt64(0));
     }
 
     [Fact]
@@ -187,6 +302,12 @@ public sealed class LedgerReportTests : IAsyncLifetime
         var integrity = await response.Content.ReadFromJsonAsync<JsonElement>();
         Assert.False(integrity.GetProperty("balanced").GetBoolean());
         Assert.False(string.IsNullOrWhiteSpace(integrity.GetProperty("trialBalanceHash").GetString()));
+
+        using var dashboardResponse = await GetAsync($"/api/v1/spaces/{space.SpaceId}/reports/dashboard", member);
+        var dashboard = await dashboardResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(80, dashboard.GetProperty("totalIncomeMinor").GetInt64());
+        Assert.Equal(5, dashboard.GetProperty("accountCount").GetInt32());
+        Assert.False(dashboard.GetProperty("balanced").GetBoolean());
     }
 
     private async Task<ReportAccounts> SeedReportLedgerAsync(Guid spaceId)
@@ -231,15 +352,62 @@ public sealed class LedgerReportTests : IAsyncLifetime
         await command.ExecuteNonQueryAsync();
         await using var refresh = new NpgsqlCommand("SELECT refresh_trial_balance_mat();", connection);
         await refresh.ExecuteNonQueryAsync();
-
         return new ReportAccounts(incomeId, entryId);
+    }
+
+
+    private async Task InsertAdditionalAssetEntryAsync(Guid spaceId)
+    {
+        await using var connection = await _fixture.OpenSuperuserAsync();
+        await using var command = new NpgsqlCommand(
+            "INSERT INTO journal_entries (id, space_id, entry_no, date, status, description, created_by, created_at) " +
+            "VALUES (@entry, @space, 2, DATE '2026-07-02', 'posted', 'Dashboard tenant distinction', @actor, now()); " +
+            "INSERT INTO journal_lines (id, entry_id, space_id, account_id, amount_minor, currency, base_amount_minor) " +
+            "SELECT gen_random_uuid(), @entry, @space, " +
+            "(SELECT id FROM accounts WHERE space_id = @space AND kind = 'asset' LIMIT 1), 50, 'CHF', 50 " +
+            "UNION ALL SELECT gen_random_uuid(), @entry, @space, " +
+            "(SELECT id FROM accounts WHERE space_id = @space AND kind = 'expense' LIMIT 1), -50, 'CHF', -50;",
+            connection);
+        command.Parameters.AddWithValue("entry", Guid.NewGuid());
+        command.Parameters.AddWithValue("space", spaceId);
+        command.Parameters.AddWithValue("actor", Guid.NewGuid());
+        await command.ExecuteNonQueryAsync();
+        await using var refresh = new NpgsqlCommand("SELECT refresh_trial_balance_mat();", connection);
+        await refresh.ExecuteNonQueryAsync();
+    }
+
+    private async Task InsertReversalAsync(Guid spaceId, ReportAccounts accounts)
+    {
+        await using var connection = await _fixture.OpenSuperuserAsync();
+        await using var command = new NpgsqlCommand(
+            "INSERT INTO journal_entries (id, space_id, entry_no, date, status, description, created_by, created_at, reverses_entry_id) " +
+            "VALUES (@entry, @space, 2, DATE '2026-07-01', 'posted', 'Dashboard reversal', @actor, now(), @source); " +
+            "INSERT INTO journal_lines (id, entry_id, space_id, account_id, amount_minor, currency, base_amount_minor) " +
+            "SELECT gen_random_uuid(), @entry, space_id, account_id, -amount_minor, currency, -base_amount_minor " +
+            "FROM journal_lines WHERE entry_id = @source;",
+            connection);
+        command.Parameters.AddWithValue("entry", Guid.NewGuid());
+        command.Parameters.AddWithValue("space", spaceId);
+        command.Parameters.AddWithValue("actor", Guid.NewGuid());
+        command.Parameters.AddWithValue("source", accounts.EntryId);
+        await command.ExecuteNonQueryAsync();
+        await using var refresh = new NpgsqlCommand("SELECT refresh_trial_balance_mat();", connection);
+        await refresh.ExecuteNonQueryAsync();
     }
 
     private async Task<HttpResponseMessage> GetWithoutExpectedStatusAsync(string route, Guid subject)
     {
+        return await GetWithScopeWithoutExpectedStatusAsync(route, subject, "ledger.write");
+    }
+
+    private async Task<HttpResponseMessage> GetWithScopeWithoutExpectedStatusAsync(
+        string route,
+        Guid subject,
+        string scope)
+    {
         using var request = new HttpRequestMessage(HttpMethod.Get, route);
         request.Headers.Add("X-Test-Subject", subject.ToString());
-        request.Headers.Add("X-Test-Scope", "ledger.write");
+        request.Headers.Add("X-Test-Scope", scope);
         return await _client!.SendAsync(request);
     }
 

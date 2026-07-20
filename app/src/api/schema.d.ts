@@ -132,6 +132,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/spaces/{spaceId}/reports/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetDashboardSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/spaces/{spaceId}/integrity": {
         parameters: {
             query?: never;
@@ -284,6 +300,27 @@ export interface components {
             startDate: string;
             /** Format: date */
             endExclusive: string;
+        };
+        DashboardSummaryReport: {
+            /** Format: uuid */
+            spaceId: string;
+            /** Format: int64 */
+            totalAssetsMinor: number;
+            /** Format: int64 */
+            totalLiabilitiesMinor: number;
+            /** Format: int64 */
+            totalEquityMinor: number;
+            /** Format: int64 */
+            totalIncomeMinor: number;
+            /** Format: int64 */
+            totalExpensesMinor: number;
+            /** Format: int64 */
+            netResultMinor: number;
+            /** Format: int64 */
+            netWorthMinor: number;
+            /** Format: int32 */
+            accountCount: number;
+            balanced: boolean;
         };
         IncomeStatementReport: {
             /** Format: uuid */
@@ -797,6 +834,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["IncomeStatementReport"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    GetDashboardSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                spaceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DashboardSummaryReport"];
                 };
             };
             /** @description Unauthorized */
