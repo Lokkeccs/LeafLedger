@@ -35,6 +35,19 @@ export interface IncomeStatement {
   netResultMinor: number
 }
 
+export interface DashboardSummary {
+  spaceId: string
+  totalAssetsMinor: number
+  totalLiabilitiesMinor: number
+  totalEquityMinor: number
+  totalIncomeMinor: number
+  totalExpensesMinor: number
+  netResultMinor: number
+  netWorthMinor: number
+  accountCount: number
+  balanced: boolean
+}
+
 export interface AccountLedgerLine {
   entryId: string
   entryNo: number
@@ -85,6 +98,14 @@ export async function getIncomeStatement(spaceId: string, client: ApiClient = ap
   })
   if (data === undefined) throw new Error('Failed to fetch income statement')
   return { spaceId: data.spaceId, lines: data.lines.map((line) => ({ ...line })), netResultMinor: data.netResultMinor }
+}
+
+export async function getDashboardSummary(spaceId: string, client: ApiClient = apiClient): Promise<DashboardSummary> {
+  const { data } = await client.GET('/api/v1/spaces/{spaceId}/reports/dashboard', {
+    params: { path: { spaceId } },
+  })
+  if (data === undefined) throw new Error('Failed to fetch dashboard summary')
+  return { ...data }
 }
 
 export async function getAccountLedger(
