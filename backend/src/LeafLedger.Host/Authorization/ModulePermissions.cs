@@ -8,6 +8,7 @@ public static class ModulePermissions
     public const string ClosePeriod = "period.close";
     public const string ManagePeriods = "period.manage";
     public const string ManageMembers = "members.manage";
+    public const string ManageAccounts = "accounts.manage";
 
     public static bool Allows(SpaceRole role, string permission) =>
         role switch
@@ -19,5 +20,5 @@ public static class ModulePermissions
         };
 
     private static bool IsKnownPermission(string permission) =>
-        permission is PostLedger or ReverseLedger or ReadLedger or ClosePeriod or ManagePeriods or ManageMembers;
+        permission is PostLedger or ReverseLedger or ReadLedger or ClosePeriod or ManagePeriods or ManageMembers or ManageAccounts;
 }

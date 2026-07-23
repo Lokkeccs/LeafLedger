@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text.Json;
+using LeafLedger.Modules.Ledger.Application.Accounts;
 using LeafLedger.Modules.Ledger.Application.Posting;
 using LeafLedger.Modules.Ledger.Application.Periods;
 using LeafLedger.SharedKernel;
@@ -36,9 +37,7 @@ public static class IdempotencyStore
             reader.GetString(0),
             (byte[])reader[1],
             reader.GetInt32(2),
-            reader.GetString(0).StartsWith("period.", StringComparison.Ordinal)
-                ? SerializeResponse(JsonSerializer.Deserialize<PeriodResponse>(reader.GetString(3), JsonOptions)!)
-                : SerializeResponse(JsonSerializer.Deserialize<PostingResponse>(reader.GetString(3), JsonOptions)!));
+            SerializeStoredResponse(reader.GetString(0), reader.GetString(3)));
     }
 
     public static async Task InsertAsync(
@@ -114,6 +113,26 @@ public static class IdempotencyStore
     public static byte[] HashPeriod(string target, object payload) => HashCanonical(target, payload);
 
     public static string SerializeResponse(object response) => JsonSerializer.Serialize(response, JsonOptions);
+
+    private static string SerializeStoredResponse(string target, string responseBody)
+    {
+        using var document = JsonDocument.Parse(responseBody);
+        var value = document.RootElement;
+        object response = target switch
+        {
+            "post" => value.Deserialize<PostingResponse>(JsonOptions)!,
+            _ when target.StartsWith("reverse:", StringComparison.Ordinal) => value.Deserialize<PostingResponse>(JsonOptions)!,
+            _ when target.StartsWith("period.", StringComparison.Ordinal) => value.Deserialize<PeriodResponse>(JsonOptions)!,
+            "account.create" => value.Deserialize<AccountView>(JsonOptions)!,
+            _ when target.StartsWith("account.update:", StringComparison.Ordinal) => value.Deserialize<AccountView>(JsonOptions)!,
+            _ when target.StartsWith("account.activate:", StringComparison.Ordinal) => value.Deserialize<AccountView>(JsonOptions)!,
+            _ when target.StartsWith("account.deactivate:", StringComparison.Ordinal) => value.Deserialize<AccountView>(JsonOptions)!,
+            "group.create" => value.Deserialize<GroupView>(JsonOptions)!,
+            _ when target.StartsWith("group.update:", StringComparison.Ordinal) => value.Deserialize<GroupView>(JsonOptions)!,
+            _ => value,
+        };
+        return SerializeResponse(response);
+    }
 
     private static string CanonicalLine(PostJournalLineRequest line) =>
         JsonSerializer.Serialize(new

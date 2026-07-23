@@ -5,6 +5,7 @@ describe('query key factory', () => {
   it('creates stable hierarchical keys', () => {
     expect(qk.meta()).toEqual(['meta'])
     expect(qk.accounts.list('sp_1')).toEqual(['accounts', 'list', 'sp_1'])
+    expect(qk.accountGroups.list('sp_1')).toEqual(['accountGroups', 'list', 'sp_1'])
     expect(qk.reports.trialBalance('sp_1')).toEqual(['reports', 'trialBalance', 'sp_1'])
     expect(qk.reports.balanceSheet('sp_1')).toEqual(['reports', 'balanceSheet', 'sp_1'])
     expect(qk.reports.incomeStatement('sp_1')).toEqual(['reports', 'incomeStatement', 'sp_1'])

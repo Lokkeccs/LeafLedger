@@ -13,6 +13,8 @@ describe('realtime invalidation map', () => {
   })
 
   it('ignores unknown topics without broad cache invalidation', () => {
-    expect(queryKeysForTopic('accounts.list', 'space-1')).toEqual([])
+    expect(queryKeysForTopic('accounts.list', 'space-1')).toEqual([['accounts', 'list', 'space-1']])
+    expect(queryKeysForTopic('accountGroups.list', 'space-1')).toEqual([['accountGroups', 'list', 'space-1']])
+    expect(queryKeysForTopic('unknown.topic', 'space-1')).toEqual([])
   })
 })

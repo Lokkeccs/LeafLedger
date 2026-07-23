@@ -8,12 +8,14 @@ import { createQueryClient } from '../application/query/queryClient'
 import { i18n } from '../i18n'
 import { createAppRouter } from './router'
 
-const { useAccounts, useTrialBalance, useBalanceSheet, useIncomeStatement, useAccountLedger } = vi.hoisted(() => ({ useAccounts: vi.fn(), useTrialBalance: vi.fn(), useBalanceSheet: vi.fn(), useIncomeStatement: vi.fn(), useAccountLedger: vi.fn() }))
+const { useAccounts, useAccountGroups, useTrialBalance, useBalanceSheet, useIncomeStatement, useAccountLedger, useDashboardSummary } = vi.hoisted(() => ({ useAccounts: vi.fn(), useAccountGroups: vi.fn(), useTrialBalance: vi.fn(), useBalanceSheet: vi.fn(), useIncomeStatement: vi.fn(), useAccountLedger: vi.fn(), useDashboardSummary: vi.fn() }))
 vi.mock('../application/query/useAccounts', () => ({ useAccounts }))
+vi.mock('../application/query/useAccountGroups', () => ({ useAccountGroups }))
 vi.mock('../application/query/useTrialBalance', () => ({ useTrialBalance }))
 vi.mock('../application/query/useBalanceSheet', () => ({ useBalanceSheet }))
 vi.mock('../application/query/useIncomeStatement', () => ({ useIncomeStatement }))
 vi.mock('../application/query/useAccountLedger', () => ({ useAccountLedger }))
+vi.mock('../application/query/useDashboardSummary', () => ({ useDashboardSummary }))
 vi.mock('../application/auth/useAuth', () => ({
   useAuth: () => ({ account: undefined, error: undefined, isConfigured: false, isSignedIn: false, signIn: vi.fn(), signOut: vi.fn() }),
 }))
@@ -23,7 +25,21 @@ function renderRouter(initialEntry: string) {
 }
 
 describe('accounts route', () => {
-  beforeEach(() => { useAccounts.mockReset(); useTrialBalance.mockReset(); useBalanceSheet.mockReset(); useIncomeStatement.mockReset(); useAccountLedger.mockReset() })
+  beforeEach(() => { useAccounts.mockReset(); useAccountGroups.mockReset(); useTrialBalance.mockReset(); useBalanceSheet.mockReset(); useIncomeStatement.mockReset(); useAccountLedger.mockReset(); useDashboardSummary.mockReset(); useAccountGroups.mockReturnValue({ isPending: false, isError: false, data: [] }) })
+
+  it('resolves the overview route and renders the dashboard', async () => {
+    useDashboardSummary.mockReturnValue({ isPending: false, isError: false, data: { spaceId: 'space-1', totalAssetsMinor: 0, totalLiabilitiesMinor: 0, totalEquityMinor: 0, totalIncomeMinor: 0, totalExpensesMinor: 0, netResultMinor: 0, netWorthMinor: 0, accountCount: 0, balanced: true } })
+    renderRouter('/')
+    expect(await screen.findByRole('heading', { name: 'Dashboard' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Overview' })).toBeTruthy()
+  })
+
+  it('renders the route error boundary when the dashboard query fails', async () => {
+    useDashboardSummary.mockReturnValue({ isPending: false, isError: true, error: new Error('dashboard request failed') })
+    renderRouter('/')
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'We could not open this view' })).toBeTruthy())
+    expect(screen.queryByText('dashboard request failed')).toBeNull()
+  })
 
   it('resolves the lazy accounts route and renders the page', async () => {
     useAccounts.mockReturnValue({ isPending: false, isError: false, data: [] })
