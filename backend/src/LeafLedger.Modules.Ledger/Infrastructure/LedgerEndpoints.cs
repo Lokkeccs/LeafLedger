@@ -49,6 +49,75 @@ public static class LedgerEndpoints
             .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
             .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
         configureAuthorization?.Invoke(accountsEndpoint, "ledger.read");
+        var groupsEndpoint = reportGroup.MapGet("/groups", GetGroupsAsync)
+            .WithName("GetGroups")
+            .WithTags("ChartOfAccounts")
+            .Produces<GroupCatalogReport>(StatusCodes.Status200OK)
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(groupsEndpoint, "ledger.read");
+
+        var accountWriteGroup = reportGroup.MapGroup("/accounts")
+            .WithTags("ChartOfAccounts");
+        var createAccountEndpoint = accountWriteGroup.MapPost("/", CreateAccountAsync)
+            .WithName("CreateAccount")
+            .Produces<AccountView>(StatusCodes.Status201Created)
+            .Produces<LedgerProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status409Conflict, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status422UnprocessableEntity, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(createAccountEndpoint, "accounts.manage");
+        var updateAccountEndpoint = accountWriteGroup.MapPatch("/{accountId:guid}", UpdateAccountAsync)
+            .WithName("UpdateAccount")
+            .Produces<AccountView>(StatusCodes.Status200OK)
+            .Produces<LedgerProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status409Conflict, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status422UnprocessableEntity, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(updateAccountEndpoint, "accounts.manage");
+        var activateAccountEndpoint = accountWriteGroup.MapPost("/{accountId:guid}/activate", ActivateAccountAsync)
+            .WithName("ActivateAccount")
+            .Produces<AccountView>(StatusCodes.Status200OK)
+            .Produces<LedgerProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status422UnprocessableEntity, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(activateAccountEndpoint, "accounts.manage");
+        var deactivateAccountEndpoint = accountWriteGroup.MapPost("/{accountId:guid}/deactivate", DeactivateAccountAsync)
+            .WithName("DeactivateAccount")
+            .Produces<AccountView>(StatusCodes.Status200OK)
+            .Produces<LedgerProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status422UnprocessableEntity, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(deactivateAccountEndpoint, "accounts.manage");
+
+        var groupWriteGroup = reportGroup.MapGroup("/groups")
+            .WithTags("ChartOfAccounts");
+        var createGroupEndpoint = groupWriteGroup.MapPost("/", CreateGroupAsync)
+            .WithName("CreateAccountGroup")
+            .Produces<GroupView>(StatusCodes.Status201Created)
+            .Produces<LedgerProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status409Conflict, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status422UnprocessableEntity)
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(createGroupEndpoint, "accounts.manage");
+        var updateGroupEndpoint = groupWriteGroup.MapPatch("/{groupId:guid}", UpdateGroupAsync)
+            .WithName("UpdateAccountGroup")
+            .Produces<GroupView>(StatusCodes.Status200OK)
+            .Produces<LedgerProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status409Conflict, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status422UnprocessableEntity)
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(updateGroupEndpoint, "accounts.manage");
         var accountLedgerEndpoint = reportGroup.MapGet(
                 "/reports/account-ledger/{accountId:guid}",
                 GetAccountLedgerAsync)
@@ -81,6 +150,82 @@ public static class LedgerEndpoints
 
     private static Task<AccountCatalogReport> GetAccountsAsync(Guid spaceId, [FromServices] IAccountCatalogService service, CancellationToken cancellationToken) =>
         service.GetAccountsAsync(spaceId, cancellationToken);
+
+    private static Task<GroupCatalogReport> GetGroupsAsync(Guid spaceId, [FromServices] IGroupCatalogService service, CancellationToken cancellationToken) =>
+        service.GetGroupsAsync(spaceId, cancellationToken);
+
+    private static async Task<IResult> CreateAccountAsync(Guid spaceId, CreateAccountCommand request, [FromServices] IAccountManagementService service, HttpRequest httpRequest, CancellationToken cancellationToken)
+    {
+        if (!TryGetActor(httpRequest.HttpContext, out var actorId)) return AuthorizationFailure();
+        if (!TryGetIdempotencyKey(httpRequest, out var idempotencyKey, out var keyError)) return keyError!;
+        var outcome = await service.CreateAccountAsync(spaceId, actorId, idempotencyKey!, request, cancellationToken);
+        return ToAccountManagementResult(spaceId, outcome, httpRequest.HttpContext.Response, "accounts");
+    }
+
+    private static async Task<IResult> UpdateAccountAsync(Guid spaceId, Guid accountId, UpdateAccountCommand request, [FromServices] IAccountManagementService service, HttpRequest httpRequest, CancellationToken cancellationToken)
+    {
+        if (!TryGetActor(httpRequest.HttpContext, out var actorId)) return AuthorizationFailure();
+        if (!TryGetIdempotencyKey(httpRequest, out var idempotencyKey, out var keyError)) return keyError!;
+        var outcome = await service.UpdateAccountAsync(spaceId, actorId, accountId, idempotencyKey!, request, cancellationToken);
+        return ToAccountManagementResult(spaceId, outcome, httpRequest.HttpContext.Response, "accounts");
+    }
+
+    private static Task<IResult> ActivateAccountAsync(Guid spaceId, Guid accountId, [FromServices] IAccountManagementService service, HttpRequest httpRequest, CancellationToken cancellationToken) =>
+        ExecuteAccountActiveWriteAsync(spaceId, accountId, true, service, httpRequest, cancellationToken);
+
+    private static Task<IResult> DeactivateAccountAsync(Guid spaceId, Guid accountId, [FromServices] IAccountManagementService service, HttpRequest httpRequest, CancellationToken cancellationToken) =>
+        ExecuteAccountActiveWriteAsync(spaceId, accountId, false, service, httpRequest, cancellationToken);
+
+    private static async Task<IResult> CreateGroupAsync(Guid spaceId, CreateGroupCommand request, [FromServices] IAccountManagementService service, HttpRequest httpRequest, CancellationToken cancellationToken)
+    {
+        if (!TryGetActor(httpRequest.HttpContext, out var actorId)) return AuthorizationFailure();
+        if (!TryGetIdempotencyKey(httpRequest, out var idempotencyKey, out var keyError)) return keyError!;
+        var outcome = await service.CreateAccountGroupAsync(spaceId, actorId, idempotencyKey!, request, cancellationToken);
+        return ToAccountManagementResult(spaceId, outcome, httpRequest.HttpContext.Response, "groups");
+    }
+
+    private static async Task<IResult> UpdateGroupAsync(Guid spaceId, Guid groupId, UpdateGroupCommand request, [FromServices] IAccountManagementService service, HttpRequest httpRequest, CancellationToken cancellationToken)
+    {
+        if (!TryGetActor(httpRequest.HttpContext, out var actorId)) return AuthorizationFailure();
+        if (!TryGetIdempotencyKey(httpRequest, out var idempotencyKey, out var keyError)) return keyError!;
+        var outcome = await service.UpdateAccountGroupAsync(spaceId, actorId, groupId, idempotencyKey!, request, cancellationToken);
+        return ToAccountManagementResult(spaceId, outcome, httpRequest.HttpContext.Response, "groups");
+    }
+
+    private static async Task<IResult> ExecuteAccountActiveWriteAsync(Guid spaceId, Guid accountId, bool active, IAccountManagementService service, HttpRequest httpRequest, CancellationToken cancellationToken)
+    {
+        if (!TryGetActor(httpRequest.HttpContext, out var actorId)) return AuthorizationFailure();
+        if (!TryGetIdempotencyKey(httpRequest, out var idempotencyKey, out var keyError)) return keyError!;
+        var outcome = await service.SetAccountActiveAsync(spaceId, actorId, accountId, active, idempotencyKey!, cancellationToken);
+        return ToAccountManagementResult(spaceId, outcome, httpRequest.HttpContext.Response, "accounts");
+    }
+
+    private static IResult ToAccountManagementResult<T>(Guid spaceId, AccountManagementOutcome<T> outcome, HttpResponse response, string resourceName)
+        where T : class
+    {
+        if (outcome.IsReplay)
+        {
+            response.Headers["Idempotent-Replayed"] = "true";
+            return Results.Content(outcome.Replay!.Body, "application/json", Encoding.UTF8, outcome.Replay.Status);
+        }
+        if (outcome.IsSuccess)
+        {
+            var status = outcome.SuccessStatus;
+            return status == StatusCodes.Status201Created
+                ? Results.Created($"/api/v1/spaces/{spaceId}/{resourceName}/{outcome.Value!.GetType().GetProperty("Id")!.GetValue(outcome.Value)}", outcome.Value)
+                : Results.Ok(outcome.Value);
+        }
+        var failure = outcome.Failure!;
+        var problem = new ProblemDetails
+        {
+            Status = failure.Status,
+            Title = "The account management request could not be completed.",
+            Type = "https://leafledger.dev/problems/account-management",
+        };
+        problem.Extensions["errors"] = failure.Issues;
+        problem.Extensions["issues"] = failure.Issues;
+        return Results.Problem(problem);
+    }
 
     private static Task<AccountLedgerReport> GetAccountLedgerAsync(
         Guid spaceId,

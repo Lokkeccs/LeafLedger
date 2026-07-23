@@ -8,8 +8,9 @@ import { createQueryClient } from '../application/query/queryClient'
 import { i18n } from '../i18n'
 import { createAppRouter } from './router'
 
-const { useAccounts, useTrialBalance, useBalanceSheet, useIncomeStatement, useAccountLedger, useDashboardSummary } = vi.hoisted(() => ({ useAccounts: vi.fn(), useTrialBalance: vi.fn(), useBalanceSheet: vi.fn(), useIncomeStatement: vi.fn(), useAccountLedger: vi.fn(), useDashboardSummary: vi.fn() }))
+const { useAccounts, useAccountGroups, useTrialBalance, useBalanceSheet, useIncomeStatement, useAccountLedger, useDashboardSummary } = vi.hoisted(() => ({ useAccounts: vi.fn(), useAccountGroups: vi.fn(), useTrialBalance: vi.fn(), useBalanceSheet: vi.fn(), useIncomeStatement: vi.fn(), useAccountLedger: vi.fn(), useDashboardSummary: vi.fn() }))
 vi.mock('../application/query/useAccounts', () => ({ useAccounts }))
+vi.mock('../application/query/useAccountGroups', () => ({ useAccountGroups }))
 vi.mock('../application/query/useTrialBalance', () => ({ useTrialBalance }))
 vi.mock('../application/query/useBalanceSheet', () => ({ useBalanceSheet }))
 vi.mock('../application/query/useIncomeStatement', () => ({ useIncomeStatement }))
@@ -24,7 +25,7 @@ function renderRouter(initialEntry: string) {
 }
 
 describe('accounts route', () => {
-  beforeEach(() => { useAccounts.mockReset(); useTrialBalance.mockReset(); useBalanceSheet.mockReset(); useIncomeStatement.mockReset(); useAccountLedger.mockReset(); useDashboardSummary.mockReset() })
+  beforeEach(() => { useAccounts.mockReset(); useAccountGroups.mockReset(); useTrialBalance.mockReset(); useBalanceSheet.mockReset(); useIncomeStatement.mockReset(); useAccountLedger.mockReset(); useDashboardSummary.mockReset(); useAccountGroups.mockReturnValue({ isPending: false, isError: false, data: [] }) })
 
   it('resolves the overview route and renders the dashboard', async () => {
     useDashboardSummary.mockReturnValue({ isPending: false, isError: false, data: { spaceId: 'space-1', totalAssetsMinor: 0, totalLiabilitiesMinor: 0, totalEquityMinor: 0, totalIncomeMinor: 0, totalExpensesMinor: 0, netResultMinor: 0, netWorthMinor: 0, accountCount: 0, balanced: true } })

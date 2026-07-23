@@ -100,6 +100,14 @@ export async function getIncomeStatement(spaceId: string, client: ApiClient = ap
   return { spaceId: data.spaceId, lines: data.lines.map((line) => ({ ...line })), netResultMinor: data.netResultMinor }
 }
 
+export async function getDashboardSummary(spaceId: string, client: ApiClient = apiClient): Promise<DashboardSummary> {
+  const { data } = await client.GET('/api/v1/spaces/{spaceId}/reports/dashboard', {
+    params: { path: { spaceId } },
+  })
+  if (data === undefined) throw new Error('Failed to fetch dashboard summary')
+  return { ...data }
+}
+
 export async function getAccountLedger(
   spaceId: string,
   accountId: string,
@@ -125,12 +133,4 @@ export async function getAccountLedger(
     closingBalanceMinor: data.closingBalanceMinor,
     lines: data.lines.map((line) => ({ ...line })),
   }
-}
-
-export async function getDashboardSummary(spaceId: string, client: ApiClient = apiClient): Promise<DashboardSummary> {
-  const { data } = await client.GET('/api/v1/spaces/{spaceId}/reports/dashboard', {
-    params: { path: { spaceId } },
-  })
-  if (data === undefined) throw new Error('Failed to fetch dashboard summary')
-  return { ...data }
 }

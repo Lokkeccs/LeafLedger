@@ -1,7 +1,7 @@
 import type { QueryKey } from '@tanstack/react-query'
 import { qk } from './queryKeys'
 
-export type InvalidationTopic = 'reports.trialBalance' | 'journalEntries.list'
+export type InvalidationTopic = 'reports.trialBalance' | 'journalEntries.list' | 'accounts.list' | 'accountGroups.list'
 
 export const invalidationMap: Record<InvalidationTopic, (spaceId: string) => QueryKey[]> = {
   'reports.trialBalance': (spaceId) => [
@@ -12,6 +12,8 @@ export const invalidationMap: Record<InvalidationTopic, (spaceId: string) => Que
     ['reports', 'accountLedger', spaceId],
   ],
   'journalEntries.list': (spaceId) => [qk.journalEntries.list(spaceId)],
+  'accounts.list': (spaceId) => [qk.accounts.list(spaceId)],
+  'accountGroups.list': (spaceId) => [qk.accountGroups.list(spaceId)],
 }
 
 export function queryKeysForTopic(topic: string, spaceId: string): QueryKey[] {
