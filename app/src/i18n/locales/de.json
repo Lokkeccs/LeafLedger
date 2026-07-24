@@ -139,6 +139,8 @@
     "newAccount": "Neues Konto",
     "editAccount": "Konto bearbeiten",
     "newGroup": "Neue Gruppe",
+    "import": { "title": "Kontenplan importieren", "open": "CSV importieren", "file": "CSV-Datei", "kind": "Katalogtyp", "accounts": "Konten", "groups": "Kontengruppen", "submit": "Importieren", "emptyFile": "Bitte wählen Sie eine CSV-Datei aus.", "invalidHeader": "Die CSV-Kopfzeile fehlt oder ist ungültig.", "serverError": "Der Server konnte diese Datei nicht importieren.", "report": "Importbericht", "summary": "{{total}} Zeilen: {{created}} erstellt, {{updated}} aktualisiert, {{failed}} fehlgeschlagen.", "row": "Zeile", "outcome": "Ergebnis", "errors": "Fehler", "warnings": "Warnungen" },
+    "export": { "accounts": "Konten exportieren", "groups": "Gruppen exportieren" },
     "editGroup": "Gruppe bearbeiten",
     "createAccount": "Konto erstellen",
     "createGroup": "Gruppe erstellen",

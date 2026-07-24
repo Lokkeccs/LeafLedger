@@ -75,7 +75,7 @@ builder.Services.AddOpenApi("v1", options =>
                     }] = Array.Empty<string>(),
                 });
 
-                if (operation.OperationId is "PostJournalEntry" or "ReverseJournalEntry" or "CreatePeriod" or "ClosePeriod" or "ReopenPeriod" or "LockPeriod" or "CreateAccount" or "UpdateAccount" or "ActivateAccount" or "DeactivateAccount" or "CreateAccountGroup" or "UpdateAccountGroup")
+                if (operation.OperationId is "PostJournalEntry" or "ReverseJournalEntry" or "CreatePeriod" or "ClosePeriod" or "ReopenPeriod" or "LockPeriod" or "CreateAccount" or "UpdateAccount" or "ActivateAccount" or "DeactivateAccount" or "CreateAccountGroup" or "UpdateAccountGroup" or "ImportAccounts" or "ImportAccountGroups")
                 {
                     operation.Parameters ??= new List<OpenApiParameter>();
                     operation.Parameters.Add(new OpenApiParameter
@@ -86,8 +86,101 @@ builder.Services.AddOpenApi("v1", options =>
                         Schema = new OpenApiSchema { Type = "string" },
                     });
                 }
+
+                if (operation.OperationId is "ImportAccounts" or "ImportAccountGroups")
+                {
+                    operation.RequestBody ??= new OpenApiRequestBody();
+                    operation.RequestBody.Required = true;
+                    var requestSchemaName = operation.OperationId == "ImportAccounts"
+                        ? "AccountImportRequest"
+                        : "GroupImportRequest";
+                    operation.RequestBody.Content["application/json"] = new OpenApiMediaType
+                    {
+                        Schema = new OpenApiSchema
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.Schema,
+                                Id = requestSchemaName,
+                            },
+                        },
+                    };
+                    operation.RequestBody.Content["text/csv"] = new OpenApiMediaType
+                    {
+                        Schema = new OpenApiSchema { Type = "string" },
+                    };
+                }
+
+                if (operation.OperationId is "ImportAccounts")
+                {
+                    document.Components.Schemas["AccountImportRequest"] = new OpenApiSchema
+                    {
+                        Type = "object",
+                        Required = new HashSet<string> { "rows" },
+                        Properties = new Dictionary<string, OpenApiSchema>
+                        {
+                            ["rows"] = SchemaReferenceArray("AccountImportRow"),
+                        },
+                    };
+                    document.Components.Schemas["AccountImportRow"] = new OpenApiSchema
+                    {
+                        Type = "object",
+                        Required = new HashSet<string> { "kind", "code", "name", "currency", "isActive" },
+                        Properties = new Dictionary<string, OpenApiSchema>
+                        {
+                            ["kind"] = new OpenApiSchema { Type = "string" },
+                            ["code"] = new OpenApiSchema { Type = "integer", Format = "int32" },
+                            ["name"] = new OpenApiSchema { Type = "string" },
+                            ["currency"] = new OpenApiSchema { Type = "string" },
+                            ["group"] = new OpenApiSchema { Type = "string", Nullable = true },
+                            ["isActive"] = new OpenApiSchema { Type = "boolean" },
+                            ["validFrom"] = new OpenApiSchema { Type = "string", Format = "date", Nullable = true },
+                            ["validTo"] = new OpenApiSchema { Type = "string", Format = "date", Nullable = true },
+                            ["fxPolicy"] = new OpenApiSchema { Type = "string", Nullable = true },
+                        },
+                    };
+                }
+
+                if (operation.OperationId is "ImportAccountGroups")
+                {
+                    document.Components.Schemas["GroupImportRequest"] = new OpenApiSchema
+                    {
+                        Type = "object",
+                        Required = new HashSet<string> { "rows" },
+                        Properties = new Dictionary<string, OpenApiSchema>
+                        {
+                            ["rows"] = SchemaReferenceArray("GroupImportRow"),
+                        },
+                    };
+                    document.Components.Schemas["GroupImportRow"] = new OpenApiSchema
+                    {
+                        Type = "object",
+                        Required = new HashSet<string> { "name", "rangeStart", "rangeEnd" },
+                        Properties = new Dictionary<string, OpenApiSchema>
+                        {
+                            ["name"] = new OpenApiSchema { Type = "string" },
+                            ["rangeStart"] = new OpenApiSchema { Type = "integer", Format = "int32" },
+                            ["rangeEnd"] = new OpenApiSchema { Type = "integer", Format = "int32" },
+                            ["parent"] = new OpenApiSchema { Type = "string", Nullable = true },
+                            ["fxPolicy"] = new OpenApiSchema { Type = "string", Nullable = true },
+                        },
+                    };
+                }
             }
         }
+
+        static OpenApiSchema SchemaReferenceArray(string schemaName) => new()
+        {
+            Type = "array",
+            Items = new OpenApiSchema
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.Schema,
+                    Id = schemaName,
+                },
+            },
+        };
 
         return Task.CompletedTask;
     });

@@ -10,9 +10,13 @@ import { useCreateAccountGroup } from '../../application/query/useCreateAccountG
 import { useSetAccountActive } from '../../application/query/useSetAccountActive'
 import { useUpdateAccount } from '../../application/query/useUpdateAccount'
 import { useUpdateAccountGroup } from '../../application/query/useUpdateAccountGroup'
+import { useImportAccounts } from '../../application/query/useImportAccounts'
+import { useImportGroups } from '../../application/query/useImportGroups'
+import { exportAccountsCsv, exportGroupsCsv } from '../../application/accountImport'
 import { DataTable, type ColumnDef } from '../../shared'
 import { AccountFormModal } from './AccountFormModal'
 import { GroupFormModal } from './GroupFormModal'
+import { ImportModal } from './ImportModal'
 
 const demoSpaceId = import.meta.env.VITE_DEMO_SPACE_ID || '8f8f31e1-5cf4-4d87-a4ef-4f2aa1f8f8a1'
 
@@ -25,8 +29,12 @@ export function AccountsPage() {
   const setActiveMutation = useSetAccountActive(demoSpaceId)
   const createGroupMutation = useCreateAccountGroup(demoSpaceId)
   const updateGroupMutation = useUpdateAccountGroup(demoSpaceId)
+  const importAccountsMutation = useImportAccounts(demoSpaceId)
+  const importGroupsMutation = useImportGroups(demoSpaceId)
   const [accountModal, setAccountModal] = useState<Account | 'new' | null>(null)
   const [groupModal, setGroupModal] = useState<AccountGroup | 'new' | null>(null)
+  const [importOpen, setImportOpen] = useState(false)
+  const [exportError, setExportError] = useState<AccountManagementError | null>(null)
 
   if (accountsQuery.isPending || groupsQuery.isPending) return <p role="status">{t('accountsPage.loading')}</p>
   if (accountsQuery.isError) throw accountsQuery.error
@@ -34,10 +42,21 @@ export function AccountsPage() {
 
   const accounts = accountsQuery.data
   const groups = groupsQuery.data
-  const mutationError = [createAccountMutation.error, updateAccountMutation.error, setActiveMutation.error, createGroupMutation.error, updateGroupMutation.error].find(Boolean)
+  const mutationError = [createAccountMutation.error, updateAccountMutation.error, setActiveMutation.error, createGroupMutation.error, updateGroupMutation.error, importAccountsMutation.error, importGroupsMutation.error].find(Boolean)
   const managementError = mutationError instanceof AccountManagementError ? mutationError : undefined
   const errorFor = (error: unknown) => error instanceof AccountManagementError ? error : null
-  const busy = createAccountMutation.isPending || updateAccountMutation.isPending || setActiveMutation.isPending || createGroupMutation.isPending || updateGroupMutation.isPending
+  const busy = createAccountMutation.isPending || updateAccountMutation.isPending || setActiveMutation.isPending || createGroupMutation.isPending || updateGroupMutation.isPending || importAccountsMutation.isPending || importGroupsMutation.isPending
+  const download = (name: string, content: string) => { const url = URL.createObjectURL(new Blob([content], { type: 'text/csv;charset=utf-8' })); const link = document.createElement('a'); link.href = url; link.download = name; link.click(); URL.revokeObjectURL(url) }
+  const exportCatalog = async (kind: 'accounts' | 'groups') => {
+    setExportError(null)
+    try {
+      const csv = kind === 'accounts' ? await exportAccountsCsv(demoSpaceId) : await exportGroupsCsv(demoSpaceId)
+      download(kind === 'accounts' ? 'accounts.csv' : 'account-groups.csv', csv)
+    } catch (error) {
+      if (error instanceof AccountManagementError) setExportError(error)
+      else throw error
+    }
+  }
   const columns: ColumnDef<Account>[] = [
     { header: t('accountsPage.columns.code'), render: (account) => account.code, width: 100 },
     { header: t('accountsPage.columns.name'), render: (account) => <Link to={`/reports/account/${account.id}`}>{account.name}</Link>, width: 280 },
@@ -71,13 +90,15 @@ export function AccountsPage() {
     <p className="eyebrow">{t('accountsPage.eyebrow')}</p>
     <h1>{t('accountsPage.title')}</h1>
     <p className="lead">{t('accountsPage.description')}</p>
-    <div className="accounts-toolbar"><button type="button" onClick={() => setAccountModal('new')}>{t('accountsPage.newAccount')}</button><button type="button" onClick={() => setGroupModal('new')}>{t('accountsPage.newGroup')}</button></div>
-    {managementError?.status === 403 && <p role="alert">{t('accountsPage.permissionDenied')}</p>}
+    <div className="accounts-toolbar"><button type="button" onClick={() => setAccountModal('new')}>{t('accountsPage.newAccount')}</button><button type="button" onClick={() => setGroupModal('new')}>{t('accountsPage.newGroup')}</button><button type="button" onClick={() => setImportOpen(true)}>{t('accountsPage.import.open')}</button><button type="button" onClick={() => void exportCatalog('accounts')} disabled={busy}>{t('accountsPage.export.accounts')}</button><button type="button" onClick={() => void exportCatalog('groups')} disabled={busy}>{t('accountsPage.export.groups')}</button></div>
+    {(managementError?.status === 403 || exportError?.status === 403) && <p role="alert">{t('accountsPage.permissionDenied')}</p>}
     {managementError && managementError.status !== 403 && <p role="alert">{t('accountsPage.serverError')}</p>}
+    {exportError && exportError.status !== 403 && <p role="alert">{t('accountsPage.serverError')}</p>}
     <DataTable data={accounts} rows={accounts} columns={columns} rowKey={(account) => account.id} emptyState={emptyState} noMatchState={emptyState} ariaLabel={t('accountsPage.tableLabel')} />
     <h2>{t('accountsPage.groupsTitle')}</h2>
     <DataTable data={groups} rows={groups} columns={groupColumns} rowKey={(group) => group.id} emptyState={<p role="status">{t('accountsPage.empty')}</p>} noMatchState={<p role="status">{t('accountsPage.empty')}</p>} ariaLabel={t('accountsPage.groupsTableLabel')} />
     <AccountFormModal key={accountModal && accountModal !== 'new' ? accountModal.id : 'new'} {...(accountModal && accountModal !== 'new' ? { account: accountModal } : {})} groups={groups} open={accountModal !== null} submitting={createAccountMutation.isPending || updateAccountMutation.isPending} error={accountModalError} onClose={() => setAccountModal(null)} onSubmit={submitAccount} />
     <GroupFormModal key={groupModal && groupModal !== 'new' ? groupModal.id : 'new'} {...(groupModal && groupModal !== 'new' ? { group: groupModal } : {})} open={groupModal !== null} submitting={createGroupMutation.isPending || updateGroupMutation.isPending} error={groupModalError} onClose={() => setGroupModal(null)} onSubmit={submitGroup} />
+    <ImportModal open={importOpen} submitting={busy} report={importAccountsMutation.data ?? importGroupsMutation.data} error={importAccountsMutation.error ?? importGroupsMutation.error} onClose={() => { setImportOpen(false); importAccountsMutation.reset(); importGroupsMutation.reset() }} onSubmit={async (kind, csv) => { if (kind === 'accounts') await importAccountsMutation.mutateAsync(csv); else await importGroupsMutation.mutateAsync(csv) }} />
   </section>
 }

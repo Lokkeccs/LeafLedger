@@ -2,6 +2,7 @@ using LeafLedger.Modules.Ledger.Application.Posting;
 using LeafLedger.Modules.Ledger.Application.Reporting;
 using LeafLedger.Modules.Ledger.Application.Accounts;
 using System.Text;
+using System.Text.Json;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -12,6 +13,8 @@ namespace LeafLedger.Modules.Ledger.Infrastructure;
 
 public static class LedgerEndpoints
 {
+    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+
     public static IEndpointRouteBuilder MapLedgerEndpoints(
         this IEndpointRouteBuilder endpoints,
         Action<RouteHandlerBuilder, string>? configureAuthorization = null)
@@ -57,6 +60,21 @@ public static class LedgerEndpoints
             .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
         configureAuthorization?.Invoke(groupsEndpoint, "ledger.read");
 
+        var accountExportEndpoint = reportGroup.MapGet("/accounts/export", ExportAccountsAsync)
+            .WithName("ExportAccounts")
+            .WithTags("ChartOfAccounts")
+            .Produces<string>(StatusCodes.Status200OK, "text/csv")
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(accountExportEndpoint, "ledger.read");
+        var groupExportEndpoint = reportGroup.MapGet("/groups/export", ExportGroupsAsync)
+            .WithName("ExportAccountGroups")
+            .WithTags("ChartOfAccounts")
+            .Produces<string>(StatusCodes.Status200OK, "text/csv")
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(groupExportEndpoint, "ledger.read");
+
         var accountWriteGroup = reportGroup.MapGroup("/accounts")
             .WithTags("ChartOfAccounts");
         var createAccountEndpoint = accountWriteGroup.MapPost("/", CreateAccountAsync)
@@ -96,6 +114,15 @@ public static class LedgerEndpoints
             .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
             .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
         configureAuthorization?.Invoke(deactivateAccountEndpoint, "accounts.manage");
+        var importAccountsEndpoint = accountWriteGroup.MapPost("/import", ImportAccountsAsync)
+            .WithName("ImportAccounts")
+            .Produces<ImportReport>(StatusCodes.Status200OK)
+            .Produces<ImportReport>(StatusCodes.Status422UnprocessableEntity)
+            .Produces<LedgerProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status409Conflict, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(importAccountsEndpoint, "accounts.manage");
 
         var groupWriteGroup = reportGroup.MapGroup("/groups")
             .WithTags("ChartOfAccounts");
@@ -118,6 +145,15 @@ public static class LedgerEndpoints
             .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
             .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
         configureAuthorization?.Invoke(updateGroupEndpoint, "accounts.manage");
+        var importGroupsEndpoint = groupWriteGroup.MapPost("/import", ImportGroupsAsync)
+            .WithName("ImportAccountGroups")
+            .Produces<ImportReport>(StatusCodes.Status200OK)
+            .Produces<ImportReport>(StatusCodes.Status422UnprocessableEntity)
+            .Produces<LedgerProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status409Conflict, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(importGroupsEndpoint, "accounts.manage");
         var accountLedgerEndpoint = reportGroup.MapGet(
                 "/reports/account-ledger/{accountId:guid}",
                 GetAccountLedgerAsync)
@@ -153,6 +189,47 @@ public static class LedgerEndpoints
 
     private static Task<GroupCatalogReport> GetGroupsAsync(Guid spaceId, [FromServices] IGroupCatalogService service, CancellationToken cancellationToken) =>
         service.GetGroupsAsync(spaceId, cancellationToken);
+
+    private static async Task<IResult> ExportAccountsAsync(
+        Guid spaceId,
+        [FromServices] IAccountCatalogService accountService,
+        [FromServices] IGroupCatalogService groupService,
+        CancellationToken cancellationToken)
+    {
+        var accounts = await accountService.GetAccountsAsync(spaceId, cancellationToken).ConfigureAwait(false);
+        var groups = await groupService.GetGroupsAsync(spaceId, cancellationToken).ConfigureAwait(false);
+        var names = groups.Groups.ToDictionary(group => group.Id, group => group.Name);
+        var rows = accounts.Accounts.Select(account => new AccountImportRow(
+            account.Kind,
+            account.Code,
+            account.Name,
+            account.Currency,
+            names.GetValueOrDefault(account.GroupId),
+            account.IsActive,
+            account.ValidFrom,
+            account.ValidTo,
+            account.FxPolicy));
+        return Results.File(Encoding.UTF8.GetBytes(AccountCsv.WriteAccounts(rows)), "text/csv", "accounts.csv");
+    }
+
+    private static async Task<IResult> ExportGroupsAsync(
+        Guid spaceId,
+        [FromServices] IGroupCatalogService service,
+        CancellationToken cancellationToken)
+    {
+        var groups = await service.GetGroupsAsync(spaceId, cancellationToken).ConfigureAwait(false);
+        var names = groups.Groups.ToDictionary(group => group.Id, group => group.Name);
+        var rows = groups.Groups
+            .OrderBy(group => group.RangeStart)
+            .ThenBy(group => group.Id)
+            .Select(group => new GroupImportRow(
+                group.Name,
+                group.RangeStart,
+                group.RangeEnd,
+                group.ParentId is Guid parentId ? names.GetValueOrDefault(parentId) : null,
+                group.FxPolicy));
+        return Results.File(Encoding.UTF8.GetBytes(AccountCsv.WriteGroups(rows)), "text/csv", "account-groups.csv");
+    }
 
     private static async Task<IResult> CreateAccountAsync(Guid spaceId, CreateAccountCommand request, [FromServices] IAccountManagementService service, HttpRequest httpRequest, CancellationToken cancellationToken)
     {
@@ -190,6 +267,121 @@ public static class LedgerEndpoints
         if (!TryGetIdempotencyKey(httpRequest, out var idempotencyKey, out var keyError)) return keyError!;
         var outcome = await service.UpdateAccountGroupAsync(spaceId, actorId, groupId, idempotencyKey!, request, cancellationToken);
         return ToAccountManagementResult(spaceId, outcome, httpRequest.HttpContext.Response, "groups");
+    }
+
+    private static async Task<IResult> ImportAccountsAsync(
+        Guid spaceId,
+        [FromServices] IAccountImportService service,
+        HttpRequest httpRequest,
+        CancellationToken cancellationToken)
+    {
+        if (!TryGetActor(httpRequest.HttpContext, out var actorId)) return AuthorizationFailure();
+        if (!TryGetIdempotencyKey(httpRequest, out var idempotencyKey, out var keyError)) return keyError!;
+        try
+        {
+            var rows = await ReadAccountRowsAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+            var outcome = await service.ImportAccountsAsync(spaceId, actorId, idempotencyKey!, rows, cancellationToken).ConfigureAwait(false);
+            return ToAccountImportResult(outcome, httpRequest.HttpContext.Response);
+        }
+        catch (FormatException exception)
+        {
+            return Results.Problem(statusCode: StatusCodes.Status400BadRequest,
+                title: "The import file is invalid.", detail: exception.Message,
+                type: "https://leafledger.dev/problems/account-import");
+        }
+    }
+
+    private static async Task<IResult> ImportGroupsAsync(
+        Guid spaceId,
+        [FromServices] IAccountImportService service,
+        HttpRequest httpRequest,
+        CancellationToken cancellationToken)
+    {
+        if (!TryGetActor(httpRequest.HttpContext, out var actorId)) return AuthorizationFailure();
+        if (!TryGetIdempotencyKey(httpRequest, out var idempotencyKey, out var keyError)) return keyError!;
+        try
+        {
+            var rows = await ReadGroupRowsAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+            var outcome = await service.ImportGroupsAsync(spaceId, actorId, idempotencyKey!, rows, cancellationToken).ConfigureAwait(false);
+            return ToAccountImportResult(outcome, httpRequest.HttpContext.Response);
+        }
+        catch (FormatException exception)
+        {
+            return Results.Problem(statusCode: StatusCodes.Status400BadRequest,
+                title: "The import file is invalid.", detail: exception.Message,
+                type: "https://leafledger.dev/problems/account-import");
+        }
+    }
+
+    private static async Task<IReadOnlyList<CsvImportRow<AccountImportRow>>> ReadAccountRowsAsync(HttpRequest request, CancellationToken cancellationToken)
+    {
+        using var reader = new StreamReader(request.Body, Encoding.UTF8);
+        var body = await reader.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
+        if (request.ContentType?.StartsWith("application/json", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            var rows = JsonSerializer.Deserialize<AccountImportRequest>(body, JsonOptions)?.Rows;
+            if (rows is null)
+            {
+                rows = JsonSerializer.Deserialize<AccountImportRow[]>(body, JsonOptions);
+            }
+
+            if (rows is null)
+            {
+                throw new FormatException("JSON import rows are required.");
+            }
+
+            return rows.Select((row, index) => new CsvImportRow<AccountImportRow>(index + 1, row, [])).ToArray();
+        }
+
+        return AccountCsv.ReadAccountsWithWarnings(body).Rows;
+    }
+
+    private static async Task<IReadOnlyList<CsvImportRow<GroupImportRow>>> ReadGroupRowsAsync(HttpRequest request, CancellationToken cancellationToken)
+    {
+        using var reader = new StreamReader(request.Body, Encoding.UTF8);
+        var body = await reader.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
+        if (request.ContentType?.StartsWith("application/json", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            var rows = JsonSerializer.Deserialize<GroupImportRequest>(body, JsonOptions)?.Rows;
+            if (rows is null)
+            {
+                rows = JsonSerializer.Deserialize<GroupImportRow[]>(body, JsonOptions);
+            }
+
+            if (rows is null)
+            {
+                throw new FormatException("JSON import rows are required.");
+            }
+
+            return rows.Select((row, index) => new CsvImportRow<GroupImportRow>(index + 1, row, [])).ToArray();
+        }
+
+        return AccountCsv.ReadGroupsWithWarnings(body).Rows;
+    }
+
+    private static IResult ToAccountImportResult(AccountImportOutcome outcome, HttpResponse response)
+    {
+        if (outcome.IsReplay)
+        {
+            response.Headers["Idempotent-Replayed"] = "true";
+            return Results.Content(outcome.Replay!.Body, "application/json", Encoding.UTF8, outcome.Replay.Status);
+        }
+
+        if (outcome.Report is not null)
+        {
+            return Results.Json(outcome.Report, statusCode: outcome.SuccessStatus);
+        }
+
+        var failure = outcome.Failure!;
+        var problem = new ProblemDetails
+        {
+            Status = failure.Status,
+            Title = "The account import could not be completed.",
+            Type = "https://leafledger.dev/problems/account-import",
+        };
+        problem.Extensions["errors"] = failure.Issues;
+        problem.Extensions["issues"] = failure.Issues;
+        return Results.Problem(problem);
     }
 
     private static async Task<IResult> ExecuteAccountActiveWriteAsync(Guid spaceId, Guid accountId, bool active, IAccountManagementService service, HttpRequest httpRequest, CancellationToken cancellationToken)

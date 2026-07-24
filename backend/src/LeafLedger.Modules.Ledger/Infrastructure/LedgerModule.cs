@@ -24,10 +24,12 @@ public static class LedgerModule
         services.AddDbContext<LedgerDbContext>(options => options.UseNpgsql(connectionString));
         services.AddScoped<IJournalPostingService, JournalPostingService>();
         services.AddScoped<ILedgerReportService, LedgerReportService>();
+        services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IAccountLedgerService, AccountLedgerService>();
         services.AddScoped<IAccountCatalogService, AccountCatalogService>();
         services.AddScoped<AccountManagementService>();
         services.AddScoped<IAccountManagementService>(serviceProvider => serviceProvider.GetRequiredService<AccountManagementService>());
+        services.AddScoped<IAccountImportService>(serviceProvider => serviceProvider.GetRequiredService<AccountManagementService>());
         services.AddScoped<IGroupCatalogService>(serviceProvider => serviceProvider.GetRequiredService<AccountManagementService>());
         services.AddScoped<IPeriodLifecycleService, PeriodLifecycleService>();
         services.AddScoped<ISpaceMembershipQuery, SpaceMembershipQuery>();
