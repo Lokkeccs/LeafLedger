@@ -5,6 +5,7 @@ using LeafLedger.Modules.Ledger.Application.Posting;
 using LeafLedger.Modules.Ledger.Application.Reporting;
 using LeafLedger.Modules.Ledger.Application.Periods;
 using LeafLedger.Modules.Ledger.Application.Accounts;
+using LeafLedger.Modules.Ledger.Application.MasterData;
 
 namespace LeafLedger.Modules.Ledger.Infrastructure;
 
@@ -31,6 +32,7 @@ public static class LedgerModule
         services.AddScoped<IAccountManagementService>(serviceProvider => serviceProvider.GetRequiredService<AccountManagementService>());
         services.AddScoped<IAccountImportService>(serviceProvider => serviceProvider.GetRequiredService<AccountManagementService>());
         services.AddScoped<IGroupCatalogService>(serviceProvider => serviceProvider.GetRequiredService<AccountManagementService>());
+        services.AddScoped<IBusinessPartnerService, BusinessPartnerService>();
         services.AddScoped<IPeriodLifecycleService, PeriodLifecycleService>();
         services.AddScoped<ISpaceMembershipQuery, SpaceMembershipQuery>();
         services.AddScoped<IIdentityResolver, IdentityResolver>();

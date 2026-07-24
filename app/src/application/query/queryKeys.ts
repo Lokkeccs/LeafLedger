@@ -1,6 +1,7 @@
 export const qk = {
   meta: () => ['meta'] as const,
   accounts: { list: (spaceId: string) => ['accounts', 'list', spaceId] as const },
+  businessPartners: { list: (spaceId: string) => ['businessPartners', 'list', spaceId] as const },
   accountGroups: { list: (spaceId: string) => ['accountGroups', 'list', spaceId] as const },
   journalEntries: { list: (spaceId: string) => ['journalEntries', 'list', spaceId] as const },
   reports: {

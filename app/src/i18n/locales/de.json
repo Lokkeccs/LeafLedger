@@ -162,6 +162,28 @@
       "active": "Status"
     }
   },
+  "businessPartnersPage": {
+    "eyebrow": "Stammdaten",
+    "title": "Geschäftspartner",
+    "description": "Verwalten Sie Kunden, Lieferanten und weitere Partner in diesem Bereich.",
+    "loading": "Geschäftspartner werden geladen …",
+    "empty": "Keine Geschäftspartner gefunden.",
+    "tableLabel": "Geschäftspartner",
+    "newPartner": "Neuer Partner",
+    "editPartner": "Partner bearbeiten",
+    "activate": "Aktivieren",
+    "deactivate": "Deaktivieren",
+    "permissionDenied": "Sie haben keine Berechtigung, Geschäftspartner in diesem Bereich zu verwalten.",
+    "serverError": "Diese Änderungen konnten nicht gespeichert werden.",
+    "inUse": "Dieser Partner wird verwendet und kann nicht gelöscht werden.",
+    "versionConflict": "Dieser Partner wurde an anderer Stelle geändert. Laden Sie die Liste neu und versuchen Sie es erneut.",
+    "confirmDelete": "{{name}} löschen?",
+    "sections": { "details": "Partnerdetails", "validity": "Gültigkeit" },
+    "fields": { "name": "Name", "partnerNumber": "Partnernummer", "type": "Typ", "countryCode": "Ländercode", "active": "Aktiv", "validFrom": "Gültig ab", "validTo": "Gültig bis", "notes": "Notizen" },
+    "types": { "customer": "Kunde", "vendor": "Lieferant", "both": "Kunde und Lieferant", "financial-services": "Finanzdienstleistungen" },
+    "columns": { "name": "Name", "number": "Nummer", "type": "Typ", "country": "Land", "active": "Status" },
+    "validation": { "required": "Geben Sie einen Partnernamen ein.", "dateOrder": "Gültig ab muss vor Gültig bis liegen." }
+  },
   "trialBalancePage": {
     "eyebrow": "Berichte",
     "title": "Summen- und Saldenliste",

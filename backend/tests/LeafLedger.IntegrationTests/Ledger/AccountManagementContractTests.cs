@@ -99,6 +99,46 @@ public sealed class AccountManagementContractTests
         }
     }
 
+    [Fact]
+    public void Business_partner_operations_expose_the_approved_contract()
+    {
+        var contractPath = FindRepositoryFile("backend", "openapi", "leafledger-v1.json");
+        using var document = JsonDocument.Parse(File.ReadAllText(contractPath));
+        var operations = document.RootElement.GetProperty("paths")
+            .EnumerateObject()
+            .SelectMany(path => path.Value.EnumerateObject()
+                .Where(property => property.Name is "get" or "post" or "patch" or "delete")
+                .Select(property => property.Value))
+            .Where(operation => operation.TryGetProperty("operationId", out var operationId) &&
+                operationId.GetString() is "GetBusinessPartners" or "GetBusinessPartner" or "CreateBusinessPartner" or "UpdateBusinessPartner" or "DeleteBusinessPartner")
+            .ToArray();
+
+        Assert.Equal(5, operations.Length);
+        foreach (var operation in operations)
+        {
+            Assert.True(operation.GetProperty("responses").TryGetProperty("401", out _));
+            Assert.True(operation.GetProperty("responses").TryGetProperty("403", out _));
+        }
+
+        foreach (var operation in operations.Where(operation =>
+            operation.GetProperty("operationId").GetString() is "CreateBusinessPartner" or "UpdateBusinessPartner" or "DeleteBusinessPartner"))
+        {
+            Assert.Contains(
+                operation.GetProperty("parameters").EnumerateArray(),
+                parameter => parameter.GetProperty("name").GetString() == "Idempotency-Key" &&
+                    parameter.GetProperty("in").GetString() == "header" &&
+                    parameter.GetProperty("required").GetBoolean());
+        }
+
+        var schemas = document.RootElement.GetProperty("components").GetProperty("schemas");
+        Assert.True(schemas.TryGetProperty("BusinessPartnerView", out var view));
+        var properties = view.GetProperty("properties");
+        Assert.Contains(properties.EnumerateObject(), property => property.Name == "partnerNumber");
+        Assert.Contains(properties.EnumerateObject(), property => property.Name == "countryCode");
+        Assert.Contains(properties.EnumerateObject(), property => property.Name == "notes");
+        Assert.Contains(properties.EnumerateObject(), property => property.Name == "version");
+    }
+
     private static string FindRepositoryFile(params string[] path)
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
