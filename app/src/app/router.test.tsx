@@ -8,7 +8,7 @@ import { createQueryClient } from '../application/query/queryClient'
 import { i18n } from '../i18n'
 import { createAppRouter } from './router'
 
-const { useAccounts, useAccountGroups, useTrialBalance, useBalanceSheet, useIncomeStatement, useAccountLedger, useDashboardSummary } = vi.hoisted(() => ({ useAccounts: vi.fn(), useAccountGroups: vi.fn(), useTrialBalance: vi.fn(), useBalanceSheet: vi.fn(), useIncomeStatement: vi.fn(), useAccountLedger: vi.fn(), useDashboardSummary: vi.fn() }))
+const { useAccounts, useAccountGroups, useTrialBalance, useBalanceSheet, useIncomeStatement, useAccountLedger, useDashboardSummary, useBusinessPartners, useCreateBusinessPartner, useUpdateBusinessPartner, useDeleteBusinessPartner } = vi.hoisted(() => ({ useAccounts: vi.fn(), useAccountGroups: vi.fn(), useTrialBalance: vi.fn(), useBalanceSheet: vi.fn(), useIncomeStatement: vi.fn(), useAccountLedger: vi.fn(), useDashboardSummary: vi.fn(), useBusinessPartners: vi.fn(), useCreateBusinessPartner: vi.fn(), useUpdateBusinessPartner: vi.fn(), useDeleteBusinessPartner: vi.fn() }))
 vi.mock('../application/query/useAccounts', () => ({ useAccounts }))
 vi.mock('../application/query/useAccountGroups', () => ({ useAccountGroups }))
 vi.mock('../application/query/useTrialBalance', () => ({ useTrialBalance }))
@@ -16,6 +16,10 @@ vi.mock('../application/query/useBalanceSheet', () => ({ useBalanceSheet }))
 vi.mock('../application/query/useIncomeStatement', () => ({ useIncomeStatement }))
 vi.mock('../application/query/useAccountLedger', () => ({ useAccountLedger }))
 vi.mock('../application/query/useDashboardSummary', () => ({ useDashboardSummary }))
+vi.mock('../application/query/useBusinessPartners', () => ({ useBusinessPartners }))
+vi.mock('../application/query/useCreateBusinessPartner', () => ({ useCreateBusinessPartner }))
+vi.mock('../application/query/useUpdateBusinessPartner', () => ({ useUpdateBusinessPartner }))
+vi.mock('../application/query/useDeleteBusinessPartner', () => ({ useDeleteBusinessPartner }))
 vi.mock('../application/auth/useAuth', () => ({
   useAuth: () => ({ account: undefined, error: undefined, isConfigured: false, isSignedIn: false, signIn: vi.fn(), signOut: vi.fn() }),
 }))
@@ -24,8 +28,14 @@ function renderRouter(initialEntry: string) {
   return render(<I18nextProvider i18n={i18n}><QueryClientProvider client={createQueryClient()}><RouterProvider router={createAppRouter(initialEntry)} /></QueryClientProvider></I18nextProvider>)
 }
 
-describe('accounts route', () => {
-  beforeEach(() => { useAccounts.mockReset(); useAccountGroups.mockReset(); useTrialBalance.mockReset(); useBalanceSheet.mockReset(); useIncomeStatement.mockReset(); useAccountLedger.mockReset(); useDashboardSummary.mockReset(); useAccountGroups.mockReturnValue({ isPending: false, isError: false, data: [] }) })
+describe('app routes', () => {
+  beforeEach(() => {
+    useAccounts.mockReset(); useAccountGroups.mockReset(); useTrialBalance.mockReset(); useBalanceSheet.mockReset(); useIncomeStatement.mockReset(); useAccountLedger.mockReset(); useDashboardSummary.mockReset(); useBusinessPartners.mockReset(); useCreateBusinessPartner.mockReset(); useUpdateBusinessPartner.mockReset(); useDeleteBusinessPartner.mockReset()
+    useAccountGroups.mockReturnValue({ isPending: false, isError: false, data: [] })
+    useBusinessPartners.mockReturnValue({ isPending: false, isError: false, data: [] })
+    const idleMutation = { isPending: false, error: null, mutate: vi.fn(), mutateAsync: vi.fn() }
+    useCreateBusinessPartner.mockReturnValue(idleMutation); useUpdateBusinessPartner.mockReturnValue(idleMutation); useDeleteBusinessPartner.mockReturnValue(idleMutation)
+  })
 
   it('resolves the overview route and renders the dashboard', async () => {
     useDashboardSummary.mockReturnValue({ isPending: false, isError: false, data: { spaceId: 'space-1', totalAssetsMinor: 0, totalLiabilitiesMinor: 0, totalEquityMinor: 0, totalIncomeMinor: 0, totalExpensesMinor: 0, netResultMinor: 0, netWorthMinor: 0, accountCount: 0, balanced: true } })
@@ -52,6 +62,19 @@ describe('accounts route', () => {
     renderRouter('/accounts')
     await waitFor(() => expect(screen.getByRole('heading', { name: 'We could not open this view' })).toBeTruthy())
     expect(screen.queryByText('request failed')).toBeNull()
+  })
+
+  it('resolves the lazy business-partners route and shell navigation', async () => {
+    renderRouter('/business-partners')
+    expect(await screen.findByRole('heading', { name: 'Business partners' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Business Partners' })).toBeTruthy()
+  })
+
+  it('renders the route error boundary when the business-partners query fails', async () => {
+    useBusinessPartners.mockReturnValue({ isPending: false, isError: true, error: new Error('partner request failed') })
+    renderRouter('/business-partners')
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'We could not open this view' })).toBeTruthy())
+    expect(screen.queryByText('partner request failed')).toBeNull()
   })
 
   it('resolves the lazy new journal-entry route under the app shell', async () => {

@@ -27,6 +27,7 @@ public sealed class LedgerDbContext : DbContext
     public DbSet<JournalLine> JournalLines => Set<JournalLine>();
     public DbSet<LineAttribution> LineAttributions => Set<LineAttribution>();
     public DbSet<AuditLogEntry> AuditLog => Set<AuditLogEntry>();
+    public DbSet<BusinessPartner> BusinessPartners => Set<BusinessPartner>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

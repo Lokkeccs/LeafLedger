@@ -165,6 +165,28 @@
       "active": "Status"
     }
   },
+  "businessPartnersPage": {
+    "eyebrow": "Master data",
+    "title": "Business partners",
+    "description": "Manage the customers, vendors, and other partners used in this space.",
+    "loading": "Loading business partners…",
+    "empty": "No business partners found.",
+    "tableLabel": "Business partners",
+    "newPartner": "New partner",
+    "editPartner": "Edit partner",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "permissionDenied": "You do not have permission to manage business partners in this space.",
+    "serverError": "The server could not save these changes.",
+    "inUse": "This partner is in use and cannot be deleted.",
+    "versionConflict": "This partner changed elsewhere. Reload the list and try again.",
+    "confirmDelete": "Delete {{name}}?",
+    "sections": { "details": "Partner details", "validity": "Validity" },
+    "fields": { "name": "Name", "partnerNumber": "Partner number", "type": "Type", "countryCode": "Country code", "active": "Active", "validFrom": "Valid from", "validTo": "Valid to", "notes": "Notes" },
+    "types": { "customer": "Customer", "vendor": "Vendor", "both": "Customer and vendor", "financial-services": "Financial services" },
+    "columns": { "name": "Name", "number": "Number", "type": "Type", "country": "Country", "active": "Status" },
+    "validation": { "required": "Enter a partner name.", "dateOrder": "Valid from must be before valid to." }
+  },
   "trialBalancePage": {
     "eyebrow": "Reports",
     "title": "Trial balance",

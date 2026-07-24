@@ -75,7 +75,7 @@ builder.Services.AddOpenApi("v1", options =>
                     }] = Array.Empty<string>(),
                 });
 
-                if (operation.OperationId is "PostJournalEntry" or "ReverseJournalEntry" or "CreatePeriod" or "ClosePeriod" or "ReopenPeriod" or "LockPeriod" or "CreateAccount" or "UpdateAccount" or "ActivateAccount" or "DeactivateAccount" or "CreateAccountGroup" or "UpdateAccountGroup" or "ImportAccounts" or "ImportAccountGroups")
+                if (operation.OperationId is "PostJournalEntry" or "ReverseJournalEntry" or "CreatePeriod" or "ClosePeriod" or "ReopenPeriod" or "LockPeriod" or "CreateAccount" or "UpdateAccount" or "ActivateAccount" or "DeactivateAccount" or "CreateAccountGroup" or "UpdateAccountGroup" or "ImportAccounts" or "ImportAccountGroups" or "CreateBusinessPartner" or "UpdateBusinessPartner" or "DeleteBusinessPartner")
                 {
                     operation.Parameters ??= new List<OpenApiParameter>();
                     operation.Parameters.Add(new OpenApiParameter

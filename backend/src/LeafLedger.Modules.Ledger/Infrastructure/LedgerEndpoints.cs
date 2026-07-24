@@ -1,6 +1,7 @@
 using LeafLedger.Modules.Ledger.Application.Posting;
 using LeafLedger.Modules.Ledger.Application.Reporting;
 using LeafLedger.Modules.Ledger.Application.Accounts;
+using LeafLedger.Modules.Ledger.Application.MasterData;
 using System.Text;
 using System.Text.Json;
 using System.Security.Claims;
@@ -59,6 +60,51 @@ public static class LedgerEndpoints
             .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
             .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
         configureAuthorization?.Invoke(groupsEndpoint, "ledger.read");
+        var partnersEndpoint = reportGroup.MapGet("/partners", GetBusinessPartnersAsync)
+            .WithName("GetBusinessPartners")
+            .WithTags("BusinessPartners")
+            .Produces<BusinessPartnerCatalogReport>(StatusCodes.Status200OK)
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(partnersEndpoint, "ledger.read");
+        var partnerEndpoint = reportGroup.MapGet("/partners/{partnerId:guid}", GetBusinessPartnerAsync)
+            .WithName("GetBusinessPartner")
+            .WithTags("BusinessPartners")
+            .Produces<BusinessPartnerView>(StatusCodes.Status200OK)
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json");
+        configureAuthorization?.Invoke(partnerEndpoint, "ledger.read");
+
+        var partnerWriteGroup = reportGroup.MapGroup("/partners").WithTags("BusinessPartners");
+        var createPartnerEndpoint = partnerWriteGroup.MapPost("/", CreateBusinessPartnerAsync)
+            .WithName("CreateBusinessPartner")
+            .Produces<BusinessPartnerView>(StatusCodes.Status201Created)
+            .Produces<LedgerProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status409Conflict, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status422UnprocessableEntity, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(createPartnerEndpoint, "partners.manage");
+        var updatePartnerEndpoint = partnerWriteGroup.MapPatch("/{partnerId:guid}", UpdateBusinessPartnerAsync)
+            .WithName("UpdateBusinessPartner")
+            .Produces<BusinessPartnerView>(StatusCodes.Status200OK)
+            .Produces<LedgerProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status409Conflict, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status422UnprocessableEntity, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(updatePartnerEndpoint, "partners.manage");
+        var deletePartnerEndpoint = partnerWriteGroup.MapDelete("/{partnerId:guid}", DeleteBusinessPartnerAsync)
+            .WithName("DeleteBusinessPartner")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces<LedgerProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")
+            .Produces<LedgerProblemDetails>(StatusCodes.Status409Conflict, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json");
+        configureAuthorization?.Invoke(deletePartnerEndpoint, "partners.manage");
 
         var accountExportEndpoint = reportGroup.MapGet("/accounts/export", ExportAccountsAsync)
             .WithName("ExportAccounts")
@@ -189,6 +235,41 @@ public static class LedgerEndpoints
 
     private static Task<GroupCatalogReport> GetGroupsAsync(Guid spaceId, [FromServices] IGroupCatalogService service, CancellationToken cancellationToken) =>
         service.GetGroupsAsync(spaceId, cancellationToken);
+
+    private static Task<BusinessPartnerCatalogReport> GetBusinessPartnersAsync(Guid spaceId, [FromServices] IBusinessPartnerService service, CancellationToken cancellationToken) =>
+        service.GetBusinessPartnersAsync(spaceId, cancellationToken);
+
+    private static async Task<IResult> GetBusinessPartnerAsync(Guid spaceId, Guid partnerId, [FromServices] IBusinessPartnerService service, CancellationToken cancellationToken)
+    {
+        var partner = await service.GetBusinessPartnerAsync(spaceId, partnerId, cancellationToken).ConfigureAwait(false);
+        return partner is null
+            ? Results.Problem(statusCode: StatusCodes.Status404NotFound, title: "Business partner not found.", type: "https://leafledger.dev/problems/business-partner")
+            : Results.Ok(partner);
+    }
+
+    private static async Task<IResult> CreateBusinessPartnerAsync(Guid spaceId, CreateBusinessPartnerCommand request, [FromServices] IBusinessPartnerService service, HttpRequest httpRequest, CancellationToken cancellationToken)
+    {
+        if (!TryGetActor(httpRequest.HttpContext, out var actorId)) return AuthorizationFailure();
+        if (!TryGetIdempotencyKey(httpRequest, out var idempotencyKey, out var keyError)) return keyError!;
+        var outcome = await service.CreateAsync(spaceId, actorId, idempotencyKey!, request, cancellationToken).ConfigureAwait(false);
+        return ToBusinessPartnerResult(spaceId, outcome, httpRequest.HttpContext.Response);
+    }
+
+    private static async Task<IResult> UpdateBusinessPartnerAsync(Guid spaceId, Guid partnerId, UpdateBusinessPartnerCommand request, [FromServices] IBusinessPartnerService service, HttpRequest httpRequest, CancellationToken cancellationToken)
+    {
+        if (!TryGetActor(httpRequest.HttpContext, out var actorId)) return AuthorizationFailure();
+        if (!TryGetIdempotencyKey(httpRequest, out var idempotencyKey, out var keyError)) return keyError!;
+        var outcome = await service.UpdateAsync(spaceId, actorId, partnerId, idempotencyKey!, request, cancellationToken).ConfigureAwait(false);
+        return ToBusinessPartnerResult(spaceId, outcome, httpRequest.HttpContext.Response);
+    }
+
+    private static async Task<IResult> DeleteBusinessPartnerAsync(Guid spaceId, Guid partnerId, [FromServices] IBusinessPartnerService service, HttpRequest httpRequest, CancellationToken cancellationToken)
+    {
+        if (!TryGetActor(httpRequest.HttpContext, out var actorId)) return AuthorizationFailure();
+        if (!TryGetIdempotencyKey(httpRequest, out var idempotencyKey, out var keyError)) return keyError!;
+        var outcome = await service.DeleteAsync(spaceId, actorId, partnerId, idempotencyKey!, cancellationToken).ConfigureAwait(false);
+        return ToBusinessPartnerResult(spaceId, outcome, httpRequest.HttpContext.Response);
+    }
 
     private static async Task<IResult> ExportAccountsAsync(
         Guid spaceId,
@@ -413,6 +494,38 @@ public static class LedgerEndpoints
             Status = failure.Status,
             Title = "The account management request could not be completed.",
             Type = "https://leafledger.dev/problems/account-management",
+        };
+        problem.Extensions["errors"] = failure.Issues;
+        problem.Extensions["issues"] = failure.Issues;
+        return Results.Problem(problem);
+    }
+
+    private static IResult ToBusinessPartnerResult(Guid spaceId, BusinessPartnerOutcome<BusinessPartnerView> outcome, HttpResponse response)
+    {
+        if (outcome.IsReplay)
+        {
+            response.Headers["Idempotent-Replayed"] = "true";
+            return outcome.Replay!.Status == StatusCodes.Status204NoContent
+                ? Results.NoContent()
+                : Results.Content(outcome.Replay.Body, "application/json", Encoding.UTF8, outcome.Replay.Status);
+        }
+
+        if (outcome.IsSuccess)
+        {
+            return outcome.SuccessStatus switch
+            {
+                StatusCodes.Status201Created => Results.Created($"/api/v1/spaces/{spaceId}/partners/{outcome.Value!.Id}", outcome.Value),
+                StatusCodes.Status204NoContent => Results.NoContent(),
+                _ => Results.Ok(outcome.Value),
+            };
+        }
+
+        var failure = outcome.Failure!;
+        var problem = new ProblemDetails
+        {
+            Status = failure.Status,
+            Title = "The business partner request could not be completed.",
+            Type = "https://leafledger.dev/problems/business-partner",
         };
         problem.Extensions["errors"] = failure.Issues;
         problem.Extensions["issues"] = failure.Issues;
