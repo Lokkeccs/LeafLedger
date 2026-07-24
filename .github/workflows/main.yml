@@ -190,10 +190,3 @@ jobs:
     needs: [frontend, backend, integration, property, contract, gitleaks, dependency-audit, e2e-smoke]
     steps:
       - run: echo "No-op — real API deploy wired in P2/P3."
-
-  deploy-frontend:
-    name: Deploy frontend (placeholder)
-    runs-on: ubuntu-latest
-    needs: [frontend, backend, integration, property, contract, gitleaks, dependency-audit, e2e-smoke]
-    steps:
-      - run: echo "No-op — real Vercel deploy wired in P3."

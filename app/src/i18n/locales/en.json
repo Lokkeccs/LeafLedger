@@ -142,6 +142,8 @@
     "newAccount": "New account",
     "editAccount": "Edit account",
     "newGroup": "New group",
+    "import": { "title": "Import catalog", "open": "Import CSV", "file": "CSV file", "kind": "Catalog type", "accounts": "Accounts", "groups": "Account groups", "submit": "Import", "emptyFile": "Choose a CSV file.", "invalidHeader": "The CSV header is missing or invalid.", "serverError": "The server could not import this file.", "report": "Import report", "summary": "{{total}} rows: {{created}} created, {{updated}} updated, {{failed}} failed.", "row": "Row", "outcome": "Outcome", "errors": "Errors", "warnings": "Warnings" },
+    "export": { "accounts": "Export accounts", "groups": "Export groups" },
     "editGroup": "Edit group",
     "createAccount": "Create account",
     "createGroup": "Create group",

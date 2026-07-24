@@ -88,6 +88,253 @@ public sealed class AccountManagementEndpointTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Viewer_can_export_accounts_as_canonical_csv()
+    {
+        var viewer = Guid.NewGuid();
+        var space = await _fixture.SeedSpaceAsync();
+        await _fixture.SeedMembershipAsync(space.SpaceId, viewer, "Viewer");
+
+        using var response = await SendGetAsync($"/api/v1/spaces/{space.SpaceId}/accounts/export", viewer, "ledger.write");
+        var csv = await response.Content.ReadAsStringAsync();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("text/csv", response.Content.Headers.ContentType?.MediaType);
+        Assert.Contains("kind,code,name,currency,group,isActive,validFrom,validTo,fxPolicy\r\n", csv, StringComparison.Ordinal);
+        Assert.Contains("Cash", csv, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Owner_can_import_accounts_and_replay_the_same_file()
+    {
+        var owner = Guid.NewGuid();
+        var space = await _fixture.SeedSpaceAsync();
+        await _fixture.SeedMembershipAsync(space.SpaceId, owner, "Owner");
+        const string csv = "kind,code,name,currency,group,isActive,validFrom,validTo,fxPolicy\r\n" +
+            "asset,1100,Imported Cash,CHF,Assets,TRUE,,,\r\n";
+        var key = NewKey();
+
+        using var first = await SendCsvAsync($"/api/v1/spaces/{space.SpaceId}/accounts/import", csv, owner, key);
+        using var replay = await SendCsvAsync($"/api/v1/spaces/{space.SpaceId}/accounts/import", csv, owner, key);
+        var firstBody = await ReadJsonAsync(first);
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(1, firstBody.GetProperty("created").GetInt32());
+        Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
+        Assert.Equal("true", replay.Headers.GetValues("Idempotent-Replayed").Single());
+        Assert.Equal(1L, await ScalarAsync(
+            "SELECT count(*) FROM accounts WHERE space_id = @space AND code = 1100 AND name = 'Imported Cash';",
+            ("space", space.SpaceId)));
+    }
+
+    [Fact]
+    public async Task Owner_can_import_accounts_and_groups_from_json_rows_envelopes()
+    {
+        var owner = Guid.NewGuid();
+        var space = await _fixture.SeedSpaceAsync();
+        await _fixture.SeedMembershipAsync(space.SpaceId, owner, "Owner");
+
+        using var groupImport = await SendJsonAsync(
+            HttpMethod.Post,
+            $"/api/v1/spaces/{space.SpaceId}/groups/import",
+            new
+            {
+                rows = new[]
+                {
+                    new { name = "Liabilities", rangeStart = 3000, rangeEnd = 3099, parent = (string?)null, fxPolicy = (string?)null },
+                },
+            },
+            owner,
+            NewKey());
+        using var accountImport = await SendJsonAsync(
+            HttpMethod.Post,
+            $"/api/v1/spaces/{space.SpaceId}/accounts/import",
+            new
+            {
+                rows = new[]
+                {
+                    new { kind = "liability", code = 3001, name = "Imported Payables", currency = "CHF", group = "Liabilities", isActive = true, validFrom = (string?)null, validTo = (string?)null, fxPolicy = (string?)null },
+                },
+            },
+            owner,
+            NewKey());
+
+        Assert.Equal(HttpStatusCode.OK, groupImport.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, accountImport.StatusCode);
+        Assert.Equal(1, (await ReadJsonAsync(groupImport)).GetProperty("created").GetInt32());
+        Assert.Equal(1, (await ReadJsonAsync(accountImport)).GetProperty("created").GetInt32());
+        Assert.Equal(1L, await ScalarAsync(
+            "SELECT count(*) FROM accounts WHERE space_id = @space AND code = 3001 AND name = 'Imported Payables';",
+            ("space", space.SpaceId)));
+    }
+
+    [Fact]
+    public async Task Invalid_account_row_rolls_back_the_entire_import()
+    {
+        var owner = Guid.NewGuid();
+        var space = await _fixture.SeedSpaceAsync();
+        await _fixture.SeedMembershipAsync(space.SpaceId, owner, "Owner");
+        const string csv = "kind,code,name,currency,group,isActive,validFrom,validTo,fxPolicy\r\n" +
+            "asset,1100,Should Roll Back,CHF,Assets,TRUE,,,\r\n" +
+            "asset,1101,Unknown Group,CHF,Missing,TRUE,,,\r\n";
+
+        using var response = await SendCsvAsync($"/api/v1/spaces/{space.SpaceId}/accounts/import", csv, owner, NewKey());
+        var body = await ReadJsonAsync(response);
+
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
+        Assert.Equal(1, body.GetProperty("failed").GetInt32());
+        Assert.Equal("account.group_unknown", body.GetProperty("rows")[1].GetProperty("errors")[0].GetProperty("code").GetString());
+        Assert.Equal(0L, await ScalarAsync(
+            "SELECT count(*) FROM accounts WHERE space_id = @space AND code IN (1100, 1101);",
+            ("space", space.SpaceId)));
+    }
+
+    [Fact]
+    public async Task Groups_can_be_exported_and_imported_with_a_created_row_and_audit()
+    {
+        var owner = Guid.NewGuid();
+        var viewer = Guid.NewGuid();
+        var space = await _fixture.SeedSpaceAsync();
+        await _fixture.SeedMembershipAsync(space.SpaceId, owner, "Owner");
+        await _fixture.SeedMembershipAsync(space.SpaceId, viewer, "Viewer");
+
+        using var export = await SendGetAsync($"/api/v1/spaces/{space.SpaceId}/groups/export", viewer, "ledger.write");
+        var exported = await export.Content.ReadAsStringAsync();
+        Assert.Equal(HttpStatusCode.OK, export.StatusCode);
+        Assert.StartsWith("name,rangeStart,rangeEnd,parent,fxPolicy\r\n", exported, StringComparison.Ordinal);
+
+        const string csv = "name,rangeStart,rangeEnd,parent,fxPolicy\r\n" +
+            "Liabilities,3000,3099,,\r\n";
+        using var imported = await SendCsvAsync($"/api/v1/spaces/{space.SpaceId}/groups/import", csv, owner, NewKey());
+        var body = await ReadJsonAsync(imported);
+
+        Assert.Equal(HttpStatusCode.OK, imported.StatusCode);
+        Assert.Equal(1, body.GetProperty("created").GetInt32());
+        Assert.Equal(1L, await ScalarAsync(
+            "SELECT count(*) FROM account_groups WHERE space_id = @space AND name = 'Liabilities';",
+            ("space", space.SpaceId)));
+        Assert.True(await ScalarAsync(
+            "SELECT count(*) FROM audit_log WHERE table_name = 'account_groups' AND action = 'INSERT' AND after->>'name' = 'Liabilities';") >= 1);
+    }
+
+    [Fact]
+    public async Task Exported_account_csv_round_trips_as_an_update()
+    {
+        var owner = Guid.NewGuid();
+        var space = await _fixture.SeedSpaceAsync();
+        await _fixture.SeedMembershipAsync(space.SpaceId, owner, "Owner");
+
+        using var export = await SendGetAsync($"/api/v1/spaces/{space.SpaceId}/accounts/export", owner, "ledger.write");
+        var csv = await export.Content.ReadAsStringAsync();
+        using var imported = await SendCsvAsync($"/api/v1/spaces/{space.SpaceId}/accounts/import", csv, owner, NewKey());
+        var body = await ReadJsonAsync(imported);
+
+        Assert.Equal(HttpStatusCode.OK, imported.StatusCode);
+        Assert.Equal(1, body.GetProperty("updated").GetInt32());
+        Assert.Equal(0, body.GetProperty("failed").GetInt32());
+        Assert.Equal("updated", body.GetProperty("rows")[0].GetProperty("outcome").GetString());
+    }
+
+    [Fact]
+    public async Task Posted_account_immutable_import_rolls_back()
+    {
+        var owner = Guid.NewGuid();
+        var space = await _fixture.SeedSpaceAsync();
+        await _fixture.SeedMembershipAsync(space.SpaceId, owner, "Owner");
+        await SeedPostedEntryAsync(space);
+        const string csv = "kind,code,name,currency,group,isActive,validFrom,validTo,fxPolicy\r\n" +
+            "asset,1000,Cash,EUR,Assets,TRUE,,,\r\n";
+
+        using var response = await SendCsvAsync($"/api/v1/spaces/{space.SpaceId}/accounts/import", csv, owner, NewKey());
+        var body = await ReadJsonAsync(response);
+
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
+        Assert.Equal("account.field_immutable_after_posting", body.GetProperty("rows")[0].GetProperty("errors")[0].GetProperty("code").GetString());
+        Assert.Equal(1L, await ScalarAsync(
+            "SELECT count(*) FROM accounts WHERE space_id = @space AND code = 1000 AND currency = 'CHF';",
+            ("space", space.SpaceId)));
+    }
+
+    [Fact]
+    public async Task Deferred_columns_are_ignored_with_a_warning_and_audit_is_written()
+    {
+        var owner = Guid.NewGuid();
+        var space = await _fixture.SeedSpaceAsync();
+        await _fixture.SeedMembershipAsync(space.SpaceId, owner, "Owner");
+        const string csv = "kind,code,name,currency,group,isActive,validFrom,validTo,fxPolicy,ownerEmail,cashFlowActivity\r\n" +
+            "asset,1102,Warned Import,CHF,Assets,TRUE,,,,owner@example.test,operating\r\n";
+
+        using var response = await SendCsvAsync($"/api/v1/spaces/{space.SpaceId}/accounts/import", csv, owner, NewKey());
+        var body = await ReadJsonAsync(response);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(2, body.GetProperty("rows")[0].GetProperty("warnings").GetArrayLength());
+        Assert.Equal(1L, await ScalarAsync(
+            "SELECT count(*) FROM audit_log WHERE table_name = 'accounts' AND action = 'INSERT' AND after->>'name' = 'Warned Import';"));
+    }
+
+    [Fact]
+    public async Task Import_same_key_with_a_different_file_returns_conflict()
+    {
+        var owner = Guid.NewGuid();
+        var space = await _fixture.SeedSpaceAsync();
+        await _fixture.SeedMembershipAsync(space.SpaceId, owner, "Owner");
+        const string header = "kind,code,name,currency,group,isActive,validFrom,validTo,fxPolicy\r\n";
+        var key = NewKey();
+
+        using var first = await SendCsvAsync($"/api/v1/spaces/{space.SpaceId}/accounts/import", header + "asset,1103,First,CHF,Assets,TRUE,,,\r\n", owner, key);
+        using var collision = await SendCsvAsync($"/api/v1/spaces/{space.SpaceId}/accounts/import", header + "asset,1104,Different,CHF,Assets,TRUE,,,\r\n", owner, key);
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, collision.StatusCode);
+        Assert.Equal("idempotency.key_reused", await FirstIssueCodeAsync(collision));
+        Assert.Equal(0L, await ScalarAsync(
+            "SELECT count(*) FROM accounts WHERE space_id = @space AND code = 1104;",
+            ("space", space.SpaceId)));
+    }
+
+    [Fact]
+    public async Task Imports_require_manage_permission_and_are_isolated_between_spaces()
+    {
+        var firstOwner = Guid.NewGuid();
+        var firstMember = Guid.NewGuid();
+        var firstViewer = Guid.NewGuid();
+        var secondOwner = Guid.NewGuid();
+        var first = await _fixture.SeedSpaceAsync();
+        var second = await _fixture.SeedSpaceAsync(codeLow: 2000, codeHigh: 3000, accountCode: 2000);
+        await _fixture.SeedMembershipAsync(first.SpaceId, firstOwner, "Owner");
+        await _fixture.SeedMembershipAsync(first.SpaceId, firstMember, "Member");
+        await _fixture.SeedMembershipAsync(first.SpaceId, firstViewer, "Viewer");
+        await _fixture.SeedMembershipAsync(second.SpaceId, secondOwner, "Owner");
+
+        const string firstCsv = "kind,code,name,currency,group,isActive,validFrom,validTo,fxPolicy\r\n" +
+            "asset,1104,First Space Import,CHF,Assets,TRUE,,,\r\n";
+        const string secondCsv = "kind,code,name,currency,group,isActive,validFrom,validTo,fxPolicy\r\n" +
+            "asset,2104,Second Space Import,CHF,Assets,TRUE,,,\r\n";
+
+        using var anonymous = await SendCsvAsync($"/api/v1/spaces/{first.SpaceId}/accounts/import", firstCsv, null, NewKey());
+        using var member = await SendCsvAsync($"/api/v1/spaces/{first.SpaceId}/accounts/import", firstCsv, firstMember, NewKey());
+        using var firstImport = await SendCsvAsync($"/api/v1/spaces/{first.SpaceId}/accounts/import", firstCsv, firstOwner, NewKey());
+        using var secondImport = await SendCsvAsync($"/api/v1/spaces/{second.SpaceId}/accounts/import", secondCsv, secondOwner, NewKey());
+        using var firstExport = await SendGetAsync($"/api/v1/spaces/{first.SpaceId}/accounts/export", firstViewer, "ledger.write");
+        using var secondExport = await SendGetAsync($"/api/v1/spaces/{second.SpaceId}/accounts/export", secondOwner, "ledger.write");
+
+        Assert.Equal(HttpStatusCode.Unauthorized, anonymous.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, member.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, firstImport.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, secondImport.StatusCode);
+        var firstCsvExport = await firstExport.Content.ReadAsStringAsync();
+        var secondCsvExport = await secondExport.Content.ReadAsStringAsync();
+        Assert.DoesNotContain("Second Space Import", firstCsvExport, StringComparison.Ordinal);
+        Assert.DoesNotContain("First Space Import", secondCsvExport, StringComparison.Ordinal);
+        Assert.Equal(1L, await ScalarAsync(
+            "SELECT count(*) FROM accounts WHERE space_id = @space AND code = 1104 AND name = 'First Space Import';",
+            ("space", first.SpaceId)));
+        Assert.Equal(1L, await ScalarAsync(
+            "SELECT count(*) FROM accounts WHERE space_id = @space AND code = 2104 AND name = 'Second Space Import';",
+            ("space", second.SpaceId)));
+    }
+
+    [Fact]
     public async Task Same_idempotency_key_replays_once_and_collision_returns_409()
     {
         var owner = Guid.NewGuid();
@@ -415,6 +662,17 @@ public sealed class AccountManagementEndpointTests : IAsyncLifetime
         using var request = new HttpRequestMessage(method, path)
         {
             Content = JsonContent.Create(payload),
+        };
+        AddAuth(request, subject, "ledger.write");
+        request.Headers.Add("Idempotency-Key", key);
+        return await _client!.SendAsync(request);
+    }
+
+    private async Task<HttpResponseMessage> SendCsvAsync(string path, string csv, Guid? subject, string key)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Post, path)
+        {
+            Content = new StringContent(csv, Encoding.UTF8, "text/csv"),
         };
         AddAuth(request, subject, "ledger.write");
         request.Headers.Add("Idempotency-Key", key);

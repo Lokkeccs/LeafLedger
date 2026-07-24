@@ -14,15 +14,20 @@ using LedgerAccountGroup = LeafLedger.Modules.Ledger.Infrastructure.Entities.Acc
 
 namespace LeafLedger.Modules.Ledger.Infrastructure;
 
-internal sealed class AccountManagementService : IAccountManagementService, IGroupCatalogService
+internal sealed class AccountManagementService : IAccountManagementService, IGroupCatalogService, IAccountImportService
 {
     private readonly LedgerDbContext _db;
     private readonly IdempotencyMetrics _metrics;
+    private readonly ISpaceInvalidationQueue _invalidationQueue;
 
-    public AccountManagementService(LedgerDbContext db, IdempotencyMetrics metrics)
+    public AccountManagementService(
+        LedgerDbContext db,
+        IdempotencyMetrics metrics,
+        ISpaceInvalidationQueue invalidationQueue)
     {
         _db = db;
         _metrics = metrics;
+        _invalidationQueue = invalidationQueue;
     }
 
     public Task<AccountManagementOutcome<AccountView>> CreateAccountAsync(
@@ -74,6 +79,24 @@ internal sealed class AccountManagementService : IAccountManagementService, IGro
         ExecuteAsync(spaceId, actorId, idempotencyKey, $"group.update:{groupId:D}", command, StatusCodes.Status200OK,
             (transaction, ct) => UpdateGroupWithinTransactionAsync(spaceId, groupId, command, ct), cancellationToken);
 
+    public Task<AccountImportOutcome> ImportAccountsAsync(
+        Guid spaceId,
+        Guid actorId,
+        string idempotencyKey,
+        IReadOnlyList<CsvImportRow<AccountImportRow>> rows,
+        CancellationToken cancellationToken = default) =>
+        ImportAsync(spaceId, actorId, idempotencyKey, "account.import", rows,
+            (row, ct) => ApplyAccountImportRowAsync(spaceId, row, ct), cancellationToken);
+
+    public Task<AccountImportOutcome> ImportGroupsAsync(
+        Guid spaceId,
+        Guid actorId,
+        string idempotencyKey,
+        IReadOnlyList<CsvImportRow<GroupImportRow>> rows,
+        CancellationToken cancellationToken = default) =>
+        ImportAsync(spaceId, actorId, idempotencyKey, "group.import", rows,
+            (row, ct) => ApplyGroupImportRowAsync(spaceId, row, ct), cancellationToken);
+
     public async Task<GroupCatalogReport> GetGroupsAsync(Guid spaceId, CancellationToken cancellationToken = default)
     {
         var connection = (NpgsqlConnection)_db.Database.GetDbConnection();
@@ -105,6 +128,177 @@ internal sealed class AccountManagementService : IAccountManagementService, IGro
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         return new GroupCatalogReport(spaceId, groups);
     }
+
+    private async Task<AccountImportOutcome> ImportAsync<T>(
+        Guid spaceId,
+        Guid actorId,
+        string idempotencyKey,
+        string target,
+        IReadOnlyList<CsvImportRow<T>> rows,
+        Func<CsvImportRow<T>, CancellationToken, Task<ImportRowResult>> apply,
+        CancellationToken cancellationToken)
+    {
+        var connection = (NpgsqlConnection)_db.Database.GetDbConnection();
+        if (connection.State != ConnectionState.Open)
+        {
+            await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        await using var transaction = (NpgsqlTransaction)await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+        _db.Database.UseTransaction(transaction);
+        await BindTransactionAsync(connection, transaction, spaceId, actorId, cancellationToken).ConfigureAwait(false);
+
+        Guid key;
+        try
+        {
+            key = IdempotencyStore.ParseKey(idempotencyKey);
+        }
+        catch (FormatException)
+        {
+            await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+            return AccountImportOutcome.Failed(400,
+                new AccountManagementIssue("idempotency.key_invalid", "Idempotency-Key must be a valid ULID."));
+        }
+
+        var requestHash = IdempotencyStore.HashPeriod(target, rows.Select(row => row.Value).ToArray());
+        await AcquireKeyLockAsync(spaceId, key, transaction, cancellationToken).ConfigureAwait(false);
+        var existing = await IdempotencyStore.FindLiveAsync(transaction, spaceId, key, cancellationToken).ConfigureAwait(false);
+        if (existing is not null)
+        {
+            await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+            if (IdempotencyStore.IsSameRequest(existing, requestHash))
+            {
+                return AccountImportOutcome.Replayed(new AccountManagementReplay(existing.ResponseStatus, existing.ResponseBody));
+            }
+
+            _metrics.RecordCollision(spaceId);
+            return AccountImportOutcome.Failed(409,
+                new AccountManagementIssue("idempotency.key_reused", "The idempotency key was already used for a different request."));
+        }
+
+        await IdempotencyStore.DeleteExpiredAsync(transaction, spaceId, key, cancellationToken).ConfigureAwait(false);
+        var results = new List<ImportRowResult>(rows.Count);
+        foreach (var row in rows)
+        {
+            results.Add(await apply(row, cancellationToken).ConfigureAwait(false));
+        }
+
+        var report = CreateImportReport(results);
+        if (report.Failed > 0)
+        {
+            await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+            return new AccountImportOutcome(report, new AccountManagementFailure(422, []), null, 422);
+        }
+
+        try
+        {
+            await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            await IdempotencyStore.InsertAsync(
+                transaction,
+                spaceId,
+                key,
+                actorId,
+                target,
+                requestHash,
+                StatusCodes.Status200OK,
+                IdempotencyStore.SerializeResponse(report),
+                cancellationToken).ConfigureAwait(false);
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            _invalidationQueue.TryEnqueue(spaceId, InvalidationTopics.AccountCatalogTopics);
+            return AccountImportOutcome.Success(report);
+        }
+        catch (DbUpdateException exception) when (exception.InnerException is PostgresException postgres &&
+            (postgres.SqlState == PostgresErrorCodes.UniqueViolation || postgres.SqlState == PostgresErrorCodes.ExclusionViolation))
+        {
+            await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+            return AccountImportOutcome.Failed(422, postgres.SqlState == PostgresErrorCodes.ExclusionViolation
+                ? new AccountManagementIssue("group.code_range_overlap", "The group code range overlaps a sibling group.", "rangeStart")
+                : new AccountManagementIssue("account.code_taken", "The account code is already used in this space.", "code"));
+        }
+    }
+
+    private async Task<ImportRowResult> ApplyAccountImportRowAsync(
+        Guid spaceId,
+        CsvImportRow<AccountImportRow> row,
+        CancellationToken cancellationToken)
+    {
+        var group = row.Value.Group is null
+            ? null
+            : await _db.AccountGroups.SingleOrDefaultAsync(item => item.SpaceId == spaceId && item.Name == row.Value.Group, cancellationToken).ConfigureAwait(false);
+        if (group is null)
+        {
+            return FailedImportRow(row.RowNumber, row.Warnings,
+                new AccountManagementIssue("account.group_unknown", "The account group does not exist in this space.", "group"));
+        }
+
+        var existing = await _db.Accounts.SingleOrDefaultAsync(
+            item => item.SpaceId == spaceId && item.Code == row.Value.Code,
+            cancellationToken).ConfigureAwait(false);
+        AccountManagementOutcome<AccountView> outcome;
+        if (existing is null)
+        {
+            outcome = await CreateAccountWithinTransactionAsync(spaceId, new CreateAccountCommand(
+                group.Id, row.Value.Code, row.Value.Name, row.Value.Currency, row.Value.Kind,
+                row.Value.IsActive, row.Value.ValidFrom, row.Value.ValidTo, row.Value.FxPolicy), cancellationToken).ConfigureAwait(false);
+        }
+        else
+        {
+            outcome = await UpdateAccountWithinTransactionAsync(spaceId, existing.Id, new UpdateAccountCommand(
+                group.Id, row.Value.Code, row.Value.Name, row.Value.Currency, row.Value.Kind,
+                row.Value.ValidFrom, row.Value.ValidTo, row.Value.FxPolicy), cancellationToken).ConfigureAwait(false);
+            if (outcome.IsSuccess && existing.IsActive != row.Value.IsActive)
+            {
+                outcome = await SetAccountActiveWithinTransactionAsync(spaceId, existing.Id, row.Value.IsActive, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
+        return outcome.IsSuccess
+            ? new ImportRowResult(row.RowNumber, existing is null ? "created" : "updated", [], row.Warnings)
+            : FailedImportRow(row.RowNumber, row.Warnings, outcome.Failure!.Issues.ToArray());
+    }
+
+    private async Task<ImportRowResult> ApplyGroupImportRowAsync(
+        Guid spaceId,
+        CsvImportRow<GroupImportRow> row,
+        CancellationToken cancellationToken)
+    {
+        Guid? parentId = null;
+        if (!string.IsNullOrWhiteSpace(row.Value.Parent))
+        {
+            parentId = await _db.AccountGroups
+                .Where(item => item.SpaceId == spaceId && item.Name == row.Value.Parent)
+                .Select(item => (Guid?)item.Id)
+                .SingleOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+            if (parentId is null)
+            {
+                return FailedImportRow(row.RowNumber, row.Warnings,
+                    new AccountManagementIssue("group.parent_not_found", "The parent group does not exist in this space.", "parent"));
+            }
+        }
+
+        var existing = await _db.AccountGroups.SingleOrDefaultAsync(
+            item => item.SpaceId == spaceId && item.Name == row.Value.Name,
+            cancellationToken).ConfigureAwait(false);
+        AccountManagementOutcome<GroupView> outcome = existing is null
+            ? await CreateGroupWithinTransactionAsync(spaceId, new CreateGroupCommand(
+                row.Value.Name, row.Value.RangeStart, row.Value.RangeEnd, parentId, row.Value.FxPolicy), cancellationToken).ConfigureAwait(false)
+            : await UpdateGroupWithinTransactionAsync(spaceId, existing.Id, new UpdateGroupCommand(
+                row.Value.Name, row.Value.RangeStart, row.Value.RangeEnd, parentId, row.Value.FxPolicy), cancellationToken).ConfigureAwait(false);
+
+        return outcome.IsSuccess
+            ? new ImportRowResult(row.RowNumber, existing is null ? "created" : "updated", [], row.Warnings)
+            : FailedImportRow(row.RowNumber, row.Warnings, outcome.Failure!.Issues.ToArray());
+    }
+
+    private static ImportRowResult FailedImportRow(int rowNumber, IReadOnlyList<string> warnings, params AccountManagementIssue[] issues) =>
+        new(rowNumber, "failed", issues, warnings);
+
+    private static ImportReport CreateImportReport(List<ImportRowResult> rows) =>
+        new(rows.Count,
+            rows.Count(row => row.Outcome == "created"),
+            rows.Count(row => row.Outcome == "updated"),
+            rows.Count(row => row.Outcome == "failed"),
+            rows);
 
     private async Task<AccountManagementOutcome<T>> ExecuteAsync<T>(
         Guid spaceId,

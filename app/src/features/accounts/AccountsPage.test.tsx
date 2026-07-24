@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { QueryClientProvider } from '@tanstack/react-query'
 import { I18nextProvider } from 'react-i18next'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createQueryClient } from '../../application/query/queryClient'
@@ -10,7 +10,7 @@ import type { Account } from '../../application/accounts'
 import { AccountManagementError } from '../../application/accounts'
 import { AccountsPage } from './AccountsPage'
 
-const { useAccounts, useAccountGroups, useCreateAccount, useCreateAccountGroup, useSetAccountActive, useUpdateAccount, useUpdateAccountGroup } = vi.hoisted(() => ({ useAccounts: vi.fn(), useAccountGroups: vi.fn(), useCreateAccount: vi.fn(), useCreateAccountGroup: vi.fn(), useSetAccountActive: vi.fn(), useUpdateAccount: vi.fn(), useUpdateAccountGroup: vi.fn() }))
+const { useAccounts, useAccountGroups, useCreateAccount, useCreateAccountGroup, useSetAccountActive, useUpdateAccount, useUpdateAccountGroup, exportAccountsCsv, exportGroupsCsv } = vi.hoisted(() => ({ useAccounts: vi.fn(), useAccountGroups: vi.fn(), useCreateAccount: vi.fn(), useCreateAccountGroup: vi.fn(), useSetAccountActive: vi.fn(), useUpdateAccount: vi.fn(), useUpdateAccountGroup: vi.fn(), exportAccountsCsv: vi.fn(), exportGroupsCsv: vi.fn() }))
 vi.mock('../../application/query/useAccounts', () => ({ useAccounts }))
 vi.mock('../../application/query/useAccountGroups', () => ({ useAccountGroups }))
 vi.mock('../../application/query/useCreateAccount', () => ({ useCreateAccount }))
@@ -18,6 +18,7 @@ vi.mock('../../application/query/useCreateAccountGroup', () => ({ useCreateAccou
 vi.mock('../../application/query/useSetAccountActive', () => ({ useSetAccountActive }))
 vi.mock('../../application/query/useUpdateAccount', () => ({ useUpdateAccount }))
 vi.mock('../../application/query/useUpdateAccountGroup', () => ({ useUpdateAccountGroup }))
+vi.mock('../../application/accountImport', () => ({ exportAccountsCsv, exportGroupsCsv, importAccountsCsv: vi.fn(), importGroupsCsv: vi.fn() }))
 
 const account: Account = {
   id: 'acc-1', code: 1000, name: 'Cash', currency: 'CHF', kind: 'Asset', isActive: true,
@@ -30,7 +31,7 @@ function renderPage() {
 
 describe('AccountsPage', () => {
   beforeEach(() => {
-    useAccounts.mockReset(); useAccountGroups.mockReset(); useCreateAccount.mockReset(); useCreateAccountGroup.mockReset(); useSetAccountActive.mockReset(); useUpdateAccount.mockReset(); useUpdateAccountGroup.mockReset()
+    useAccounts.mockReset(); useAccountGroups.mockReset(); useCreateAccount.mockReset(); useCreateAccountGroup.mockReset(); useSetAccountActive.mockReset(); useUpdateAccount.mockReset(); useUpdateAccountGroup.mockReset(); exportAccountsCsv.mockReset(); exportGroupsCsv.mockReset()
     useAccountGroups.mockReturnValue({ isPending: false, isError: false, data: [] })
     const mutation = { isPending: false, error: null, mutate: vi.fn(), mutateAsync: vi.fn() }
     useCreateAccount.mockReturnValue(mutation); useCreateAccountGroup.mockReturnValue(mutation); useSetAccountActive.mockReturnValue(mutation); useUpdateAccount.mockReturnValue(mutation); useUpdateAccountGroup.mockReturnValue(mutation)
@@ -68,5 +69,15 @@ describe('AccountsPage', () => {
     useCreateAccount.mockReturnValue({ isPending: false, error: new AccountManagementError(403, [{ code: 'forbidden', message: 'Forbidden' }]), mutate: vi.fn(), mutateAsync: vi.fn() })
     renderPage()
     expect(screen.getByRole('alert').textContent).toBe('You do not have permission to manage accounts in this space.')
+  })
+
+  it('renders a friendly permission message when export is forbidden', async () => {
+    useAccounts.mockReturnValue({ isPending: false, isError: false, data: [account] })
+    exportAccountsCsv.mockRejectedValue(new AccountManagementError(403, [{ code: 'forbidden', message: 'Forbidden' }]))
+    renderPage()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Export accounts' }))
+
+    await waitFor(() => expect(screen.getByRole('alert').textContent).toBe('You do not have permission to manage accounts in this space.'))
   })
 })
